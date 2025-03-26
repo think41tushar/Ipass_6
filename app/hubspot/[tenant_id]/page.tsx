@@ -21,33 +21,43 @@ export default function ShipToHubspot() {
   useEffect(() => {
     const fetchSummaries = async () => {
       try {
-        setIsLoading(true)
-        const response = await fetch('http://127.0.0.1:8000/hubspot/receive/123/123')
-        
+        setIsLoading(true);
+        const user_id = 'fdb214f4-cb91-4893-b55c-82238648be9b'; // Replace with your actual user ID or variable
+        const response = await fetch(
+          'http://127.0.0.1:8000/hubspot/send/63c7704c-8ca1-4ec8-9bc4-ae11d66fd2f1/',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "user_id":user_id })
+          }
+        );
+  
         if (!response.ok) {
-          throw new Error('Failed to fetch summaries')
+          throw new Error('Failed to fetch summaries');
         }
-        
-        const data = await response.json()
-        
+  
+        const data = await response.json();
+  
         // Transform summaries into SummaryCard format with incrementing ids
         const fetchedCards = data.summaries.map((summary: string, index: number) => ({
           id: index + 1,
           summary
-        }))
-        
-        setCards(fetchedCards)
-        setError(null)
+        }));
+  
+        setCards(fetchedCards);
+        setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred')
-        setCards([])
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setCards([]);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-
-    fetchSummaries()
-  }, [])
+    };
+  
+    fetchSummaries();
+  }, []);
 
   // Filter cards based on search term
   const filteredCards = cards.filter((card) => 
