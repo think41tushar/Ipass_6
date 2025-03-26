@@ -60,6 +60,9 @@ const PromptScheduler: React.FC = () => {
     const requestBody = {
       query: input,
       session_id: session_id,
+      rerun: false,
+      history: [],
+      changed: false
     };
     try {
       const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {

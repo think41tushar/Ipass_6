@@ -11,14 +11,14 @@ export default function GlobalSearchPage() {
   const [filename, setFilename] = useState("");
   const [error, setError] = useState("");
   const [fileDetails, setFileDetails] = useState("");
-  const endpoint = `http://127.0.0.1:8000/tenant-admin/${tenant_id}/global-search/`;
+  const endpoint = `http://127.0.0.1:8000/tenant-admin/globalSearch/`;
 
   const searchFile = async () => {
     try {
       setLoading(true);
       setError("");
       const reqbody = {
-        fileName: filename,
+        filename: filename,
       };
       const response = await fetch(endpoint, {
         method: "POST",
