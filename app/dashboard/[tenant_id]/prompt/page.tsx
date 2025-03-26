@@ -1,12 +1,17 @@
 // src/components/PromptScheduler/index.tsx
 "use client";
 
-import React from "react";
-import { 
-  AlertCircle 
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { AlertCircle } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -14,6 +19,7 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledTasksSection } from "@/components/scheduledTasksSection";
+import { any } from "zod";
 
 const PromptScheduler: React.FC = () => {
   const {
@@ -46,7 +52,10 @@ const PromptScheduler: React.FC = () => {
     deleteTask,
     handleConnect,
   } = usePromptScheduler();
-  
+
+  const [updatedLogs, setUpdatedLogs] = useState([]);
+  const [history, setHistory] = useState([]);
+
   const backendUrl = "http://13.203.173.137:3000";
   const djangoUrl = "http://127.0.0.1:8000";
 
@@ -56,16 +65,40 @@ const PromptScheduler: React.FC = () => {
   };
 
   // Prompt request function
-  async function callPrompt(input: string, session_id: string) {
-    const requestBody = {
-      query: input,
-      session_id: session_id,
-      rerun: false,
-      history: [],
-      changed: false
-    };
+  async function callPrompt(
+    input: string,
+    session_id: string,
+    isRerun: boolean
+  ) {
+    let updated = "";
+    updatedLogs.forEach((log) => {
+      if (log !== null) {
+        updated = log;
+      }
+    });
+
+    console.log(updated);
+    let requestBody = {};
+    if (isRerun) {
+      requestBody = {
+        input: input,
+        session_id: session_id,
+        rerun: true,
+        history: history,
+        changed: updated,
+      };
+    } else {
+      requestBody = {
+        input: input,
+        session_id: session_id,
+        rerun: false,
+        history: [],
+        changed: false,
+      };
+    }
     try {
-      const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
+      console.log(JSON.stringify(requestBody));
+      const response = await fetch(`${backendUrl}/prompt`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -82,15 +115,19 @@ const PromptScheduler: React.FC = () => {
     }
   }
 
-   // Handle run prompt now
-   const handleRunTask = async () => {
+  // Handle run prompt now
+  const handleRunTask = async (isRerun: boolean) => {
+    if (!isRerun) {
+      setHistory([]);
+      setUpdatedLogs([]);
+    }
     console.log(`Handle run called with command : ${prompt}`);
     setLogs([]);
     if (prompt === "") {
       setError("Command is required");
       return;
     }
-    
+
     const sessid = getRandomString(10);
     setSession_id(sessid);
     // Log session id
@@ -103,20 +140,30 @@ const PromptScheduler: React.FC = () => {
         console.log("SSE connection opened");
         setIsSSEconnected(true);
         resolve(eventSource); // Resolve the promise when connected
-        
       };
 
       eventSource.onmessage = (event) => {
         const parsedData = JSON.parse(event.data);
         console.log("Message received: ", parsedData);
-        if (parsedData.step_type !== "interaction_complete" || "plan_final_response") {
+        if (parsedData.step_type === "interaction_complete") {
+          setHistory(parsedData.final_messages_state);
+        }
+
+        if (
+          parsedData.step_type !== "interaction_complete" ||
+          "plan_final_response"
+        ) {
           if (parsedData.response) {
             setLogs((prevLogs) => [...prevLogs, parsedData.response]);
           }
           if (parsedData.step_type === "execute_action") {
             setLogs((prevLogs) => [
               ...prevLogs,
-              "Executing tool: " + parsedData.executed_action_id,
+              "Executing tool: " +
+                parsedData.executed_action_id +
+                "\n" +
+                "Params: " +
+                JSON.stringify(parsedData.action_parameters),
             ]);
           }
         }
@@ -137,8 +184,10 @@ const PromptScheduler: React.FC = () => {
     });
     // Send prompt to backend
     try {
+      console.log("STARTING");
       const eventSource = await waitForSSE;
-      const result = await callPrompt(prompt, sessid);
+      console.log("ISRERUN: ", isRerun);
+      const result = await callPrompt(prompt, sessid, isRerun);
       console.log(result.message.response);
       setPromptResponse(result.message.response);
       return;
@@ -146,7 +195,6 @@ const PromptScheduler: React.FC = () => {
       console.error("Failed to establish sse connection: ", console.error);
     }
   };
-
 
   return (
     <div className="container mx-auto p-8 bg-background">
@@ -173,12 +221,6 @@ const PromptScheduler: React.FC = () => {
                 className="data-[state=active]:bg-slate-900 data-[state=active]:text-white"
               >
                 Prompt
-              </TabsTrigger>
-              <TabsTrigger
-                value="result"
-                className="data-[state=active]:bg-slate-900 data-[state=active]:text-white"
-              >
-                Logs & Result
               </TabsTrigger>
               <TabsTrigger
                 value="scheduled"
@@ -214,16 +256,14 @@ const PromptScheduler: React.FC = () => {
                 handleSchedule={handleSchedule}
                 handleRunTask={handleRunTask}
               />
-            </TabsContent>
 
-            <TabsContent
-              value="result"
-              className="p-6 bg-background text-white"
-            >
               <LogsAndResultSection
                 logs={logs}
-                result={result}
+                result={promptResponse}
                 isExecuting={isExecuting}
+                updatedLogs={updatedLogs}
+                setUpdatedLogs={setUpdatedLogs}
+                handleRunTask={handleRunTask}
               />
             </TabsContent>
 
@@ -231,14 +271,11 @@ const PromptScheduler: React.FC = () => {
               value="scheduled"
               className="p-6 bg-background text-white"
             >
-              <ScheduledTasksSection
-                tasks={tasks}
-                deleteTask={deleteTask}
-              />
+              <ScheduledTasksSection tasks={tasks} deleteTask={deleteTask} />
             </TabsContent>
           </Tabs>
         </CardContent>
-<CardFooter className="p-4 border-t border-background bg-background">
+        <CardFooter className="p-4 border-t border-background bg-background">
           <div className="flex items-center text-xs text-slate-500 justify-between">
             <div className="flex items-center">
               <AlertCircle className="h-3 w-3 mr-1" />

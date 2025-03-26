@@ -33,5 +33,5 @@ export interface PromptInputSectionProps {
   setError: (error: string) => void;
   handleExecute: () => void;
   handleSchedule: () => void;
-  handleRunTask:()=>void;
+  handleRunTask: (isRerun: boolean) => void;
 }

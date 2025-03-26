@@ -1123,8 +1123,8 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 children: "Date"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 59,
-                                columnNumber: 9
+                                lineNumber: 52,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Popover"], {
                                 children: [
@@ -1138,27 +1138,27 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                     className: "mr-2 h-4 w-4 text-slate-400"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 66,
-                                                    columnNumber: 15
+                                                    lineNumber: 61,
+                                                    columnNumber: 17
                                                 }, this),
                                                 date && date.from ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(date.from, "PPP") : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Pick a date"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 67,
-                                                    columnNumber: 63
+                                                    lineNumber: 65,
+                                                    columnNumber: 19
                                                 }, this),
                                                 " "
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/promptInputSection.tsx",
-                                            lineNumber: 62,
-                                            columnNumber: 13
+                                            lineNumber: 57,
+                                            columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 61,
-                                        columnNumber: 11
+                                        lineNumber: 56,
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PopoverContent"], {
                                         className: "w-auto p-0 border-slate-700 bg-background",
@@ -1168,27 +1168,27 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                 onChange: (newISO)=>setExecutionTime(newISO)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 71,
-                                                columnNumber: 11
+                                                lineNumber: 70,
+                                                columnNumber: 15
                                             }, this),
-                                            "          "
+                                            " "
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 70,
-                                        columnNumber: 11
+                                        lineNumber: 69,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 60,
-                                columnNumber: 9
+                                lineNumber: 55,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 58,
-                        columnNumber: 7
+                        lineNumber: 51,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-2",
@@ -1200,7 +1200,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
                                 lineNumber: 79,
-                                columnNumber: 9
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex space-x-2",
@@ -1213,8 +1213,8 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                         className: "border-slate-700 bg-background text-white"
                                     }, void 0, false, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 81,
-                                        columnNumber: 11
+                                        lineNumber: 83,
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
                                         value: recurrence,
@@ -1226,13 +1226,13 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                     placeholder: "Recurrence"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 94,
-                                                    columnNumber: 15
+                                                    lineNumber: 96,
+                                                    columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 93,
-                                                columnNumber: 13
+                                                lineNumber: 95,
+                                                columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
                                                 className: "border-slate-700 bg-background text-white",
@@ -1242,62 +1242,62 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                         children: "None"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 97,
-                                                        columnNumber: 15
+                                                        lineNumber: 99,
+                                                        columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                                         value: "daily",
                                                         children: "Daily"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 98,
-                                                        columnNumber: 15
+                                                        lineNumber: 100,
+                                                        columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                                         value: "weekly",
                                                         children: "Weekly"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 99,
-                                                        columnNumber: 15
+                                                        lineNumber: 101,
+                                                        columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                                         value: "monthly",
                                                         children: "Monthly"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 100,
-                                                        columnNumber: 15
+                                                        lineNumber: 102,
+                                                        columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 96,
-                                                columnNumber: 13
+                                                lineNumber: 98,
+                                                columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 89,
-                                        columnNumber: 11
+                                        lineNumber: 91,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 80,
-                                columnNumber: 9
+                                lineNumber: 82,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
                         lineNumber: 78,
-                        columnNumber: 7
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 57,
-                columnNumber: 5
+                lineNumber: 50,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "space-y-2",
@@ -1308,8 +1308,8 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                         children: "Prompt"
                     }, void 0, false, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 109,
-                        columnNumber: 7
+                        lineNumber: 111,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
                         id: "prompt",
@@ -1319,14 +1319,14 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                         className: "min-h-[120px] border-slate-700 bg-background text-white"
                     }, void 0, false, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 110,
-                        columnNumber: 7
+                        lineNumber: 114,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 108,
-                columnNumber: 5
+                lineNumber: 110,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex justify-end space-x-3",
@@ -1348,35 +1348,37 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 131,
-                                columnNumber: 9
+                                lineNumber: 135,
+                                columnNumber: 11
                             }, this),
                             "Reset"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 121,
-                        columnNumber: 7
+                        lineNumber: 125,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         variant: "default",
                         className: "bg-emerald-700 hover:bg-emerald-600 text-white transition-all duration-300",
-                        onClick: handleRunTask,
+                        onClick: ()=>{
+                            handleRunTask(false);
+                        },
                         disabled: isExecuting || !prompt.trim(),
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 140,
-                                columnNumber: 9
+                                lineNumber: 146,
+                                columnNumber: 11
                             }, this),
                             "Execute Now"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 134,
-                        columnNumber: 1
+                        lineNumber: 138,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         variant: "default",
@@ -1388,27 +1390,27 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 150,
-                                columnNumber: 9
+                                lineNumber: 156,
+                                columnNumber: 11
                             }, this),
                             "Schedule"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 144,
-                        columnNumber: 7
+                        lineNumber: 150,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 120,
-                columnNumber: 5
+                lineNumber: 124,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/promptInputSection.tsx",
-        lineNumber: 55,
-        columnNumber: 3
+        lineNumber: 48,
+        columnNumber: 5
     }, this);
 };
 _s(PromptInputSection, "mMqlYKbVn4TTecbmUAJDrD7H4Lg=");
@@ -1511,11 +1513,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$mo
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/components/AnimatePresence/index.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/card.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/scroll-area.tsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.tsx [app-client] (ecmascript)");
 ;
 ;
 ;
 ;
-const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+;
+const LogsAndResultSection = ({ logs, result, isExecuting, setUpdatedLogs, updatedLogs, handleRunTask })=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-6",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1526,57 +1531,115 @@ const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, 
                         children: "Execution Logs"
                     }, void 0, false, {
                         fileName: "[project]/components/logsAndResultSection.tsx",
-                        lineNumber: 22,
-                        columnNumber: 7
+                        lineNumber: 30,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
                         className: "border-background bg-background/30",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
                             className: "p-4",
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollArea"], {
-                                className: "h-[150px] rounded",
-                                children: logs.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "space-y-1 font-mono text-sm text-slate-300",
-                                    children: logs.map((log, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "border-l-2 border-slate-700 pl-3 py-1",
-                                            children: log
-                                        }, index, false, {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollArea"], {
+                                    className: "h-[300px] p-4 border rounded",
+                                    children: logs.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "space-y-1 font-mono pt-2 text-sm text-slate-300",
+                                        children: logs.map((log, index)=>{
+                                            const isToolExecution = log.startsWith("Executing tool:");
+                                            let formattedLog = log;
+                                            if (isToolExecution) {
+                                                const match = log.match(/Params:\s*(\{[\s\S]*\})/);
+                                                if (match) {
+                                                    try {
+                                                        const parsedJson = JSON.parse(match[1]);
+                                                        const prettyJson = JSON.stringify(parsedJson, null, 2);
+                                                        formattedLog = log.replace(match[1], prettyJson); // Replace raw JSON with formatted JSON
+                                                    } catch (error) {
+                                                        console.error("Invalid JSON:", error);
+                                                    }
+                                                }
+                                            }
+                                            return isToolExecution ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                                                value: updatedLogs[index] !== undefined ? updatedLogs[index] : formattedLog,
+                                                className: "w-full bg-background text-yellow-300 font-mono text-sm p-2 my-2 border border-yellow-500 rounded resize-y outline-none",
+                                                rows: Math.max(formattedLog.split("\n").length, 3),
+                                                onChange: (e)=>{
+                                                    const newLogs = [
+                                                        ...updatedLogs
+                                                    ];
+                                                    newLogs[index] = e.target.value;
+                                                    setUpdatedLogs(newLogs);
+                                                }
+                                            }, index, false, {
+                                                fileName: "[project]/components/logsAndResultSection.tsx",
+                                                lineNumber: 58,
+                                                columnNumber: 23
+                                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "border-l-2 border-slate-700 pl-3 py-1 my-2",
+                                                children: log
+                                            }, index, false, {
+                                                fileName: "[project]/components/logsAndResultSection.tsx",
+                                                lineNumber: 74,
+                                                columnNumber: 23
+                                            }, this);
+                                        })
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/logsAndResultSection.tsx",
+                                        lineNumber: 35,
+                                        columnNumber: 17
+                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "text-slate-500 italic text-center py-4",
+                                        children: "No logs available. Execute a prompt to see logs."
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/logsAndResultSection.tsx",
+                                        lineNumber: 84,
+                                        columnNumber: 17
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/components/logsAndResultSection.tsx",
+                                    lineNumber: 33,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex justify-between",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {}, void 0, false, {
                                             fileName: "[project]/components/logsAndResultSection.tsx",
-                                            lineNumber: 29,
-                                            columnNumber: 19
-                                        }, this))
-                                }, void 0, false, {
+                                            lineNumber: 91,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                            onClick: ()=>{
+                                                handleRunTask(true);
+                                            },
+                                            className: "mt-4",
+                                            children: "Run Again ?"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/logsAndResultSection.tsx",
+                                            lineNumber: 92,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/components/logsAndResultSection.tsx",
-                                    lineNumber: 27,
-                                    columnNumber: 15
-                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-slate-500 italic text-center py-4",
-                                    children: "No logs available. Execute a prompt to see logs."
-                                }, void 0, false, {
-                                    fileName: "[project]/components/logsAndResultSection.tsx",
-                                    lineNumber: 38,
-                                    columnNumber: 15
+                                    lineNumber: 90,
+                                    columnNumber: 13
                                 }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/components/logsAndResultSection.tsx",
-                                lineNumber: 25,
-                                columnNumber: 11
-                            }, this)
-                        }, void 0, false, {
+                            ]
+                        }, void 0, true, {
                             fileName: "[project]/components/logsAndResultSection.tsx",
-                            lineNumber: 24,
-                            columnNumber: 9
+                            lineNumber: 32,
+                            columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/logsAndResultSection.tsx",
-                        lineNumber: 23,
-                        columnNumber: 7
+                        lineNumber: 31,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/logsAndResultSection.tsx",
-                lineNumber: 21,
-                columnNumber: 5
+                lineNumber: 29,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "space-y-2",
@@ -1586,8 +1649,8 @@ const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, 
                         children: "Result"
                     }, void 0, false, {
                         fileName: "[project]/components/logsAndResultSection.tsx",
-                        lineNumber: 49,
-                        columnNumber: 7
+                        lineNumber: 107,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
                         className: "border-background bg-background/30",
@@ -1613,27 +1676,27 @@ const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, 
                                                 className: "h-8 w-8 rounded-full border-2 border-slate-600 border-t-blue-500 animate-spin mb-2"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/logsAndResultSection.tsx",
-                                                lineNumber: 62,
-                                                columnNumber: 19
+                                                lineNumber: 120,
+                                                columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "text-slate-400",
                                                 children: "Processing prompt..."
                                             }, void 0, false, {
                                                 fileName: "[project]/components/logsAndResultSection.tsx",
-                                                lineNumber: 63,
-                                                columnNumber: 19
+                                                lineNumber: 121,
+                                                columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/logsAndResultSection.tsx",
-                                        lineNumber: 61,
-                                        columnNumber: 17
+                                        lineNumber: 119,
+                                        columnNumber: 19
                                     }, this)
                                 }, "loading", false, {
                                     fileName: "[project]/components/logsAndResultSection.tsx",
-                                    lineNumber: 54,
-                                    columnNumber: 15
+                                    lineNumber: 112,
+                                    columnNumber: 17
                                 }, this) : result ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                     initial: {
                                         opacity: 0,
@@ -1652,13 +1715,13 @@ const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, 
                                         children: result
                                     }, void 0, false, {
                                         fileName: "[project]/components/logsAndResultSection.tsx",
-                                        lineNumber: 74,
-                                        columnNumber: 17
+                                        lineNumber: 132,
+                                        columnNumber: 19
                                     }, this)
                                 }, "result", false, {
                                     fileName: "[project]/components/logsAndResultSection.tsx",
-                                    lineNumber: 67,
-                                    columnNumber: 15
+                                    lineNumber: 125,
+                                    columnNumber: 17
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                     initial: {
                                         opacity: 0
@@ -1670,36 +1733,37 @@ const LogsAndResultSection = ({ logs, result, isExecuting })=>/*#__PURE__*/ (0, 
                                     children: "No result available. Execute a prompt to see results."
                                 }, "empty", false, {
                                     fileName: "[project]/components/logsAndResultSection.tsx",
-                                    lineNumber: 77,
-                                    columnNumber: 15
+                                    lineNumber: 137,
+                                    columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/logsAndResultSection.tsx",
-                                lineNumber: 52,
-                                columnNumber: 11
+                                lineNumber: 110,
+                                columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/logsAndResultSection.tsx",
-                            lineNumber: 51,
-                            columnNumber: 9
+                            lineNumber: 109,
+                            columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/logsAndResultSection.tsx",
-                        lineNumber: 50,
-                        columnNumber: 7
+                        lineNumber: 108,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/logsAndResultSection.tsx",
-                lineNumber: 48,
-                columnNumber: 5
+                lineNumber: 106,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/logsAndResultSection.tsx",
-        lineNumber: 19,
-        columnNumber: 3
+        lineNumber: 27,
+        columnNumber: 5
     }, this);
+};
 _c = LogsAndResultSection;
 var _c;
 __turbopack_context__.k.register(_c, "LogsAndResultSection");
@@ -2070,6 +2134,7 @@ __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/circle-alert.js [app-client] (ecmascript) <export default as AlertCircle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/card.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.tsx [app-client] (ecmascript)");
@@ -2089,9 +2154,12 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+;
 const PromptScheduler = ()=>{
     _s();
     const { date, setDate, error, setError, time, setTime, recurrence, setRecurrence, prompt, setPrompt, promptResponse, setPromptResponse, tasks, logs, setLogs, result, isSSEconnected, setIsSSEconnected, activeTab, session_id, setSession_id, setActiveTab, isExecuting, isConnected, handleExecute, handleSchedule, deleteTask, handleConnect } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$usePromptScheduler$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePromptScheduler"])();
+    const [updatedLogs, setUpdatedLogs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [history, setHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const backendUrl = "http://13.203.173.137:3000";
     const djangoUrl = "http://127.0.0.1:8000";
     // Function to generate random string
@@ -2101,13 +2169,35 @@ const PromptScheduler = ()=>{
         ].map(()=>Math.random().toString(36)[2]).join("");
     };
     // Prompt request function
-    async function callPrompt(input, session_id) {
-        const requestBody = {
-            query: input,
-            session_id: session_id
-        };
+    async function callPrompt(input, session_id, isRerun) {
+        let updated = "";
+        updatedLogs.forEach((log)=>{
+            if (log !== null) {
+                updated = log;
+            }
+        });
+        console.log(updated);
+        let requestBody = {};
+        if (isRerun) {
+            requestBody = {
+                input: input,
+                session_id: session_id,
+                rerun: true,
+                history: history,
+                changed: updated
+            };
+        } else {
+            requestBody = {
+                input: input,
+                session_id: session_id,
+                rerun: false,
+                history: [],
+                changed: false
+            };
+        }
         try {
-            const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
+            console.log(JSON.stringify(requestBody));
+            const response = await fetch(`${backendUrl}/prompt`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -2124,7 +2214,11 @@ const PromptScheduler = ()=>{
         }
     }
     // Handle run prompt now
-    const handleRunTask = async ()=>{
+    const handleRunTask = async (isRerun)=>{
+        if (!isRerun) {
+            setHistory([]);
+            setUpdatedLogs([]);
+        }
         console.log(`Handle run called with command : ${prompt}`);
         setLogs([]);
         if (prompt === "") {
@@ -2146,6 +2240,9 @@ const PromptScheduler = ()=>{
             eventSource.onmessage = (event)=>{
                 const parsedData = JSON.parse(event.data);
                 console.log("Message received: ", parsedData);
+                if (parsedData.step_type === "interaction_complete") {
+                    setHistory(parsedData.final_messages_state);
+                }
                 if ("TURBOPACK compile-time truthy", 1) {
                     if (parsedData.response) {
                         setLogs((prevLogs)=>[
@@ -2156,7 +2253,7 @@ const PromptScheduler = ()=>{
                     if (parsedData.step_type === "execute_action") {
                         setLogs((prevLogs)=>[
                                 ...prevLogs,
-                                "Executing tool: " + parsedData.executed_action_id
+                                "Executing tool: " + parsedData.executed_action_id + "\n" + "Params: " + JSON.stringify(parsedData.action_parameters)
                             ]);
                     }
                 }
@@ -2175,8 +2272,10 @@ const PromptScheduler = ()=>{
         });
         // Send prompt to backend
         try {
+            console.log("STARTING");
             const eventSource = await waitForSSE;
-            const result = await callPrompt(prompt, sessid);
+            console.log("ISRERUN: ", isRerun);
+            const result = await callPrompt(prompt, sessid, isRerun);
             console.log(result.message.response);
             setPromptResponse(result.message.response);
             return;
@@ -2200,7 +2299,7 @@ const PromptScheduler = ()=>{
                                     children: "Prompt Scheduler"
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                    lineNumber: 153,
+                                    lineNumber: 204,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -2208,13 +2307,13 @@ const PromptScheduler = ()=>{
                                     children: isConnected ? "Connected" : "Connect"
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                    lineNumber: 156,
+                                    lineNumber: 207,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                            lineNumber: 152,
+                            lineNumber: 203,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -2222,13 +2321,13 @@ const PromptScheduler = ()=>{
                             children: "Schedule and execute prompts with recurrence options"
                         }, void 0, false, {
                             fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                            lineNumber: 160,
+                            lineNumber: 211,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                    lineNumber: 151,
+                    lineNumber: 202,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2247,16 +2346,7 @@ const PromptScheduler = ()=>{
                                         children: "Prompt"
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                        lineNumber: 168,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                        value: "result",
-                                        className: "data-[state=active]:bg-slate-900 data-[state=active]:text-white",
-                                        children: "Logs & Result"
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                        lineNumber: 174,
+                                        lineNumber: 219,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -2265,64 +2355,61 @@ const PromptScheduler = ()=>{
                                         children: "Scheduled Tasks"
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                        lineNumber: 180,
+                                        lineNumber: 225,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 167,
+                                lineNumber: 218,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
                                 value: "prompt",
                                 className: "p-6 bg-background text-white",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$promptInputSection$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PromptInputSection"], {
-                                    date: date,
-                                    time: time,
-                                    recurrence: recurrence,
-                                    prompt: prompt,
-                                    isExecuting: isExecuting,
-                                    isSSEconnected: isSSEconnected,
-                                    setIsSSEconnected: setIsSSEconnected,
-                                    session_id: session_id,
-                                    setSessionid: setSession_id,
-                                    promptResponse: promptResponse,
-                                    setPromptResponse: setPromptResponse,
-                                    setError: setError,
-                                    setLogs: setLogs,
-                                    setDate: setDate,
-                                    setTime: setTime,
-                                    setRecurrence: setRecurrence,
-                                    setPrompt: setPrompt,
-                                    handleExecute: handleExecute,
-                                    handleSchedule: handleSchedule,
-                                    handleRunTask: handleRunTask
-                                }, void 0, false, {
-                                    fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                    lineNumber: 192,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$promptInputSection$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PromptInputSection"], {
+                                        date: date,
+                                        time: time,
+                                        recurrence: recurrence,
+                                        prompt: prompt,
+                                        isExecuting: isExecuting,
+                                        isSSEconnected: isSSEconnected,
+                                        setIsSSEconnected: setIsSSEconnected,
+                                        session_id: session_id,
+                                        setSessionid: setSession_id,
+                                        promptResponse: promptResponse,
+                                        setPromptResponse: setPromptResponse,
+                                        setError: setError,
+                                        setLogs: setLogs,
+                                        setDate: setDate,
+                                        setTime: setTime,
+                                        setRecurrence: setRecurrence,
+                                        setPrompt: setPrompt,
+                                        handleExecute: handleExecute,
+                                        handleSchedule: handleSchedule,
+                                        handleRunTask: handleRunTask
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
+                                        lineNumber: 237,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$logsAndResultSection$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LogsAndResultSection"], {
+                                        logs: logs,
+                                        result: promptResponse,
+                                        isExecuting: isExecuting,
+                                        updatedLogs: updatedLogs,
+                                        setUpdatedLogs: setUpdatedLogs,
+                                        handleRunTask: handleRunTask
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
+                                        lineNumber: 260,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 188,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
-                                value: "result",
-                                className: "p-6 bg-background text-white",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$logsAndResultSection$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LogsAndResultSection"], {
-                                    logs: logs,
-                                    result: result,
-                                    isExecuting: isExecuting
-                                }, void 0, false, {
-                                    fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                    lineNumber: 220,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 216,
+                                lineNumber: 233,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2333,23 +2420,23 @@ const PromptScheduler = ()=>{
                                     deleteTask: deleteTask
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                    lineNumber: 231,
+                                    lineNumber: 274,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 227,
+                                lineNumber: 270,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                        lineNumber: 166,
+                        lineNumber: 217,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                    lineNumber: 165,
+                    lineNumber: 216,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardFooter"], {
@@ -2364,20 +2451,20 @@ const PromptScheduler = ()=>{
                                         className: "h-3 w-3 mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                        lineNumber: 241,
+                                        lineNumber: 281,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "Tasks are stored locally and will persist between sessions"
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                        lineNumber: 242,
+                                        lineNumber: 282,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 240,
+                                lineNumber: 280,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2389,33 +2476,33 @@ const PromptScheduler = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                                lineNumber: 246,
+                                lineNumber: 286,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                        lineNumber: 239,
+                        lineNumber: 279,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-                    lineNumber: 238,
-                    columnNumber: 1
+                    lineNumber: 278,
+                    columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-            lineNumber: 150,
+            lineNumber: 201,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/dashboard/[tenant_id]/prompt/page.tsx",
-        lineNumber: 149,
+        lineNumber: 200,
         columnNumber: 5
     }, this);
 };
-_s(PromptScheduler, "B/mvrG0rz2unLo3Rrl4qTpCIIyk=", false, function() {
+_s(PromptScheduler, "xyumUgWfyesJV8PSvnTQRPvEBdc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$usePromptScheduler$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePromptScheduler"]
     ];
