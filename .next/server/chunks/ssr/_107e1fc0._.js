@@ -359,7 +359,7 @@ const usePromptScheduler = ()=>{
                 ...Array(length)
             ].map(()=>Math.random().toString(36)[2]).join("");
         };
-        const djangoUrl = "http://127.0.0.1:8000";
+        const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
         const tenant_id = localStorage.getItem("tenant_id");
         const user_id = localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
         const sessid = getRandomString(10);
@@ -2016,7 +2016,7 @@ const PromptScheduler = ()=>{
     const [updatedLogs, setUpdatedLogs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [history, setHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const backendUrl = "http://13.203.173.137:3000";
-    const djangoUrl = "http://127.0.0.1:8000";
+    const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
     // Function to generate random string
     const getRandomString = (length)=>{
         return [

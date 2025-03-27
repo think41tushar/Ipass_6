@@ -44,7 +44,7 @@ function ShipToHubspot() {
             return;
         }
         try {
-            const response = await fetch(`http://127.0.0.1:8000/hubspot/hubspotPost/${tenant_id}/`, {
+            const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/hubspotPost/${tenant_id}/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -74,10 +74,11 @@ function ShipToHubspot() {
         "ShipToHubspot.useEffect": ()=>{
             const fetchSummaries = {
                 "ShipToHubspot.useEffect.fetchSummaries": async ()=>{
+                    const tenant_id = localStorage.getItem("tenant_id");
                     try {
                         setIsLoading(true);
-                        const user_id = 'fdb214f4-cb91-4893-b55c-82238648be9b'; // Replace with your actual user ID or variable
-                        const response = await fetch('http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/send/63c7704c-8ca1-4ec8-9bc4-ae11d66fd2f1/', {
+                        const user_id = 'bff85ddd-d98f-44bf-b5c2-004693ed295b'; // Replace with your actual user ID or variable
+                        const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/send/c7708025-2553-448e-8380-ea7bee605e0b/`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -146,12 +147,12 @@ function ShipToHubspot() {
                 children: "Loading summaries..."
             }, void 0, false, {
                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                lineNumber: 135,
+                lineNumber: 136,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-            lineNumber: 134,
+            lineNumber: 135,
             columnNumber: 7
         }, this);
     }
@@ -170,7 +171,7 @@ function ShipToHubspot() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 145,
+                        lineNumber: 146,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -179,18 +180,18 @@ function ShipToHubspot() {
                         children: "Retry"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 146,
+                        lineNumber: 147,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                lineNumber: 144,
+                lineNumber: 145,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-            lineNumber: 143,
+            lineNumber: 144,
             columnNumber: 7
         }, this);
     }
@@ -205,7 +206,7 @@ function ShipToHubspot() {
                         children: "Ship to Hubspot"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 160,
+                        lineNumber: 161,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -213,7 +214,7 @@ function ShipToHubspot() {
                         children: "Sync your data with Hubspot CRM"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 161,
+                        lineNumber: 162,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -228,12 +229,12 @@ function ShipToHubspot() {
                                             className: "h-4 w-4 text-gray-500"
                                         }, void 0, false, {
                                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                            lineNumber: 167,
+                                            lineNumber: 168,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 166,
+                                        lineNumber: 167,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -244,13 +245,13 @@ function ShipToHubspot() {
                                         onChange: (e)=>setSearchTerm(e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 169,
+                                        lineNumber: 170,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                lineNumber: 165,
+                                lineNumber: 166,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -264,7 +265,7 @@ function ShipToHubspot() {
                                         className: "h-4 w-4"
                                     }, void 0, false, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 182,
+                                        lineNumber: 183,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -274,25 +275,25 @@ function ShipToHubspot() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 183,
+                                        lineNumber: 184,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                lineNumber: 177,
+                                lineNumber: 178,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 164,
+                        lineNumber: 165,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                lineNumber: 159,
+                lineNumber: 160,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -331,7 +332,7 @@ function ShipToHubspot() {
                                                         className: "h-2 w-2 rounded-full bg-emerald-500 mr-2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                        lineNumber: 207,
+                                                        lineNumber: 208,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -339,13 +340,13 @@ function ShipToHubspot() {
                                                         children: "Hubspot Entry"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                        lineNumber: 208,
+                                                        lineNumber: 209,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                lineNumber: 206,
+                                                lineNumber: 207,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -356,13 +357,13 @@ function ShipToHubspot() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                lineNumber: 210,
+                                                lineNumber: 211,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 205,
+                                        lineNumber: 206,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -372,12 +373,12 @@ function ShipToHubspot() {
                                             children: isExpanded ? card.summary : preview
                                         }, void 0, false, {
                                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                            lineNumber: 215,
+                                            lineNumber: 216,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 214,
+                                        lineNumber: 215,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -396,13 +397,13 @@ function ShipToHubspot() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                        lineNumber: 226,
+                                                        lineNumber: 227,
                                                         columnNumber: 66
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                lineNumber: 221,
+                                                lineNumber: 222,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -419,12 +420,12 @@ function ShipToHubspot() {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                            lineNumber: 236,
+                                                            lineNumber: 237,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                        lineNumber: 230,
+                                                        lineNumber: 231,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -438,46 +439,46 @@ function ShipToHubspot() {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                            lineNumber: 244,
+                                                            lineNumber: 245,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                        lineNumber: 238,
+                                                        lineNumber: 239,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                                lineNumber: 229,
+                                                lineNumber: 230,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                        lineNumber: 220,
+                                        lineNumber: 221,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                                lineNumber: 204,
+                                lineNumber: 205,
                                 columnNumber: 17
                             }, this)
                         }, card.id, false, {
                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                            lineNumber: 196,
+                            lineNumber: 197,
                             columnNumber: 15
                         }, this);
                     })
                 }, void 0, false, {
                     fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                    lineNumber: 190,
+                    lineNumber: 191,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                lineNumber: 189,
+                lineNumber: 190,
                 columnNumber: 7
             }, this),
             sortedCards.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -495,12 +496,12 @@ function ShipToHubspot() {
                             className: "h-5 w-5 text-gray-500"
                         }, void 0, false, {
                             fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                            lineNumber: 263,
+                            lineNumber: 264,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 262,
+                        lineNumber: 263,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -508,7 +509,7 @@ function ShipToHubspot() {
                         children: "No matching entries found"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 265,
+                        lineNumber: 266,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -516,7 +517,7 @@ function ShipToHubspot() {
                         children: "Try adjusting your search criteria"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 266,
+                        lineNumber: 267,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -525,19 +526,19 @@ function ShipToHubspot() {
                         children: "Clear search"
                     }, void 0, false, {
                         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                        lineNumber: 267,
+                        lineNumber: 268,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-                lineNumber: 257,
+                lineNumber: 258,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/hubspot/[tenant_id]/page.tsx",
-        lineNumber: 158,
+        lineNumber: 159,
         columnNumber: 5
     }, this);
 }
