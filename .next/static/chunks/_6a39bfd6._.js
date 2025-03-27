@@ -316,8 +316,8 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/date-fns/format.js [app-client] (ecmascript) <locals>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$taskUtil$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/taskUtil.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$taskUtil$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/taskUtil.ts [app-client] (ecmascript)");
 var _s = __turbopack_context__.k.signature();
 ;
 ;
@@ -325,7 +325,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 const usePromptScheduler = ()=>{
     _s();
-    var _s1 = __turbopack_context__.k.signature();
+    const params = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"])(); // Move useParams inside the hook
     const [date, setDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(undefined);
     const [time, setTime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("12:00");
     const [recurrence, setRecurrence] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("none");
@@ -339,7 +339,6 @@ const usePromptScheduler = ()=>{
     const [session_id, setSession_id] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [isSSEconnected, setIsSSEconnected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    // const [promptRespone, setPromptRespone] = useState("");
     const [promptResponse, setPromptResponse] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     // Load tasks from localStorage on component mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -386,7 +385,7 @@ const usePromptScheduler = ()=>{
             }, 800);
         }, 500);
     };
-    const handleSchedule = ()=>{
+    const handleSchedule = async ()=>{
         if (!prompt.trim()) {
             addLog("Error: Prompt cannot be empty");
             return;
@@ -402,30 +401,83 @@ const usePromptScheduler = ()=>{
             addLog("Error: Cannot schedule for a past date/time");
             return;
         }
-        const newTask = {
-            id: Date.now().toString(),
-            prompt,
-            dateTime: scheduledDateTime,
-            recurrence,
-            status: "pending"
+        // Function to generate random string
+        const getRandomString = (length)=>{
+            return [
+                ...Array(length)
+            ].map(()=>Math.random().toString(36)[2]).join("");
         };
-        setTasks([
-            ...tasks,
-            newTask
-        ]);
-        addLog(`Task scheduled for ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(scheduledDateTime, "PPpp")}`);
-        setPrompt("");
-        setActiveTab("scheduled");
+        const djangoUrl = "http://127.0.0.1:8000";
+        const tenant_id = localStorage.getItem("tenant_id");
+        const user_id = localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
+        const sessid = getRandomString(10);
+        try {
+            const schedulePayload = {
+                "execution_time": scheduledDateTime.toISOString(),
+                "is_recurring": recurrence !== "none",
+                "user_id": user_id,
+                "input": prompt,
+                "session_id": sessid,
+                "rerun": false,
+                "history": [],
+                "changed": false,
+                // Only include these if is_recurring is true
+                ...recurrence !== "none" && {
+                    recurrence_type: recurrence,
+                    // Add additional recurrence details as needed
+                    ...recurrence === "weekly" && {
+                        days_of_week: [
+                            scheduledDateTime.getDay()
+                        ]
+                    },
+                    ...recurrence === "monthly" && {
+                        days_of_month: [
+                            scheduledDateTime.getDate()
+                        ]
+                    }
+                }
+            };
+            const response = await fetch(`${djangoUrl}/schedule/prompt/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(schedulePayload)
+            });
+            if (!response.ok) {
+                throw new Error("Failed to schedule task");
+            }
+            const result = await response.json();
+            console.log("Task scheduled successfully:", result);
+            const newTask = {
+                id: sessid,
+                prompt,
+                dateTime: scheduledDateTime,
+                recurrence,
+                status: "pending"
+            };
+            setTasks([
+                ...tasks,
+                newTask
+            ]);
+            addLog(`Task scheduled for ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(scheduledDateTime, "PPpp")}`);
+            setPrompt("");
+            setActiveTab("scheduled");
+        } catch (error) {
+            console.error("Scheduling error:", error);
+            addLog(`Error scheduling task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
     };
     const deleteTask = (id)=>{
         setTasks(tasks.filter((task)=>task.id !== id));
     };
     const handleConnect = async ()=>{
-        _s1();
-        const { tenant_id } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"])();
-        const { user_id } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"])();
         try {
-            const response = await fetch(`http://127.0.0.1:8000/schedule/${tenant_id}/send-refresh-token/`, {
+            const { tenant_id } = params;
+            const user_id = localStorage.getItem("user_id");
+            console.log("This is the user_id: ", user_id);
+            // Use params here
+            const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/schedule/${tenant_id}/send-refresh-token/`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -440,15 +492,9 @@ const usePromptScheduler = ()=>{
             console.log("Connected successfully");
             setIsConnected(true);
         } catch (error) {
-            throw new Error("Failed to connect" + error.message);
+            setError("Failed to connect: " + error.message);
         }
     };
-    _s1(handleConnect, "Gm9z+zQB8bqlD4om9w+McisWhiw=", false, function() {
-        return [
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"],
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"]
-        ];
-    });
     const resetForm = ()=>{
         setPrompt("");
         setDate({
@@ -491,7 +537,11 @@ const usePromptScheduler = ()=>{
         resetForm
     };
 };
-_s(usePromptScheduler, "m+AZICVW0xRq6+VXWuSQJRDGCnA=");
+_s(usePromptScheduler, "4A4Ow8Fj5qzB2sdfmETaEo7Io0k=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"]
+    ];
+});
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -643,65 +693,35 @@ const Calendar = ({ value, onChange })=>{
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "grid grid-cols-2 gap-4",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                htmlFor: "date",
-                                className: "text-slate-300",
-                                children: "Date"
-                            }, void 0, false, {
-                                fileName: "[project]/components/ui/calendar.tsx",
-                                lineNumber: 39,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                type: "date",
-                                id: "date",
-                                value: dateValue,
-                                onChange: (e)=>setDateValue(e.target.value),
-                                className: "border-slate-700 bg-background text-white"
-                            }, void 0, false, {
-                                fileName: "[project]/components/ui/calendar.tsx",
-                                lineNumber: 42,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/components/ui/calendar.tsx",
-                        lineNumber: 38,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                htmlFor: "time",
-                                className: "text-slate-300",
-                                children: "Time"
-                            }, void 0, false, {
-                                fileName: "[project]/components/ui/calendar.tsx",
-                                lineNumber: 51,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                type: "time",
-                                id: "time",
-                                value: timeValue,
-                                onChange: (e)=>setTimeValue(e.target.value),
-                                className: "border-slate-700 bg-background text-white"
-                            }, void 0, false, {
-                                fileName: "[project]/components/ui/calendar.tsx",
-                                lineNumber: 54,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/components/ui/calendar.tsx",
-                        lineNumber: 50,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
+                            htmlFor: "date",
+                            className: "text-slate-300",
+                            children: "Date"
+                        }, void 0, false, {
+                            fileName: "[project]/components/ui/calendar.tsx",
+                            lineNumber: 39,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
+                            type: "date",
+                            id: "date",
+                            value: dateValue,
+                            onChange: (e)=>setDateValue(e.target.value),
+                            className: "border-slate-700 bg-background text-white"
+                        }, void 0, false, {
+                            fileName: "[project]/components/ui/calendar.tsx",
+                            lineNumber: 42,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/ui/calendar.tsx",
+                    lineNumber: 38,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
                 fileName: "[project]/components/ui/calendar.tsx",
                 lineNumber: 37,
                 columnNumber: 7
@@ -1075,11 +1095,11 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
-// src/components/PromptScheduler/PromptInputSection.tsx
 __turbopack_context__.s({
     "PromptInputSection": (()=>PromptInputSection)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/date-fns/format.js [app-client] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calendar$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CalendarIcon$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/calendar.js [app-client] (ecmascript) <export default as CalendarIcon>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/rotate-ccw.js [app-client] (ecmascript) <export default as RotateCcw>");
@@ -1092,7 +1112,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$calendar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/calendar.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/popover.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/select.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 ;
@@ -1105,9 +1124,43 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+// Memoize Calendar to prevent unnecessary re-renders
+const MemoizedCalendar = /*#__PURE__*/ __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].memo(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$calendar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"]);
+_c = MemoizedCalendar;
 const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDate, setTime, setRecurrence, setPrompt, promptResponse, setPromptResponse, setLogs, isSSEconnected, setIsSSEconnected, handleExecute, handleSchedule, handleRunTask })=>{
     _s();
     const [executionTime, setExecutionTime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    // Use useCallback to memoize the calendar change handler
+    const handleCalendarChange = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "PromptInputSection.useCallback[handleCalendarChange]": (newISO)=>{
+            const selectedDate = new Date(newISO);
+            setDate({
+                from: selectedDate,
+                to: selectedDate
+            });
+            setExecutionTime(newISO);
+        }
+    }["PromptInputSection.useCallback[handleCalendarChange]"], [
+        setDate
+    ]);
+    // Memoize reset function to prevent unnecessary re-renders
+    const handleReset = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "PromptInputSection.useCallback[handleReset]": ()=>{
+            setPrompt("");
+            setDate({
+                from: new Date(),
+                to: new Date()
+            });
+            setTime("12:00");
+            setRecurrence("none");
+            setExecutionTime("");
+        }
+    }["PromptInputSection.useCallback[handleReset]"], [
+        setPrompt,
+        setDate,
+        setTime,
+        setRecurrence
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-6",
         children: [
@@ -1123,7 +1176,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 children: "Date"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 52,
+                                lineNumber: 70,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Popover"], {
@@ -1138,56 +1191,53 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                     className: "mr-2 h-4 w-4 text-slate-400"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 61,
+                                                    lineNumber: 79,
                                                     columnNumber: 17
                                                 }, this),
                                                 date && date.from ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(date.from, "PPP") : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Pick a date"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 65,
+                                                    lineNumber: 83,
                                                     columnNumber: 19
                                                 }, this),
                                                 " "
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/promptInputSection.tsx",
-                                            lineNumber: 57,
+                                            lineNumber: 75,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 56,
+                                        lineNumber: 74,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PopoverContent"], {
                                         className: "w-auto p-0 border-slate-700 bg-background",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$calendar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                value: executionTime,
-                                                onChange: (newISO)=>setExecutionTime(newISO)
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 70,
-                                                columnNumber: 15
-                                            }, this),
-                                            " "
-                                        ]
-                                    }, void 0, true, {
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(MemoizedCalendar, {
+                                            value: executionTime,
+                                            onChange: handleCalendarChange
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/promptInputSection.tsx",
+                                            lineNumber: 88,
+                                            columnNumber: 15
+                                        }, this)
+                                    }, void 0, false, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 69,
+                                        lineNumber: 87,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 55,
+                                lineNumber: 73,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 51,
+                        lineNumber: 69,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1199,7 +1249,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 children: "Time"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 79,
+                                lineNumber: 97,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1213,7 +1263,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                         className: "border-slate-700 bg-background text-white"
                                     }, void 0, false, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 83,
+                                        lineNumber: 101,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -1226,12 +1276,12 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                     placeholder: "Recurrence"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/promptInputSection.tsx",
-                                                    lineNumber: 96,
+                                                    lineNumber: 114,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 95,
+                                                lineNumber: 113,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1242,7 +1292,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                         children: "None"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 99,
+                                                        lineNumber: 117,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1250,7 +1300,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                         children: "Daily"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 100,
+                                                        lineNumber: 118,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1258,7 +1308,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                         children: "Weekly"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 101,
+                                                        lineNumber: 119,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1266,37 +1316,37 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                                         children: "Monthly"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/promptInputSection.tsx",
-                                                        lineNumber: 102,
+                                                        lineNumber: 120,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/promptInputSection.tsx",
-                                                lineNumber: 98,
+                                                lineNumber: 116,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/promptInputSection.tsx",
-                                        lineNumber: 91,
+                                        lineNumber: 109,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 82,
+                                lineNumber: 100,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 78,
+                        lineNumber: 96,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 50,
+                lineNumber: 68,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1308,7 +1358,7 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                         children: "Prompt"
                     }, void 0, false, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 111,
+                        lineNumber: 129,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -1319,13 +1369,13 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                         className: "min-h-[120px] border-slate-700 bg-background text-white"
                     }, void 0, false, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 114,
+                        lineNumber: 132,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 110,
+                lineNumber: 128,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1334,28 +1384,20 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         variant: "outline",
                         className: "border-slate-700 text-slate-300 hover:bg-background hover:text-white transition-all duration-300",
-                        onClick: ()=>{
-                            setPrompt("");
-                            setDate({
-                                from: new Date(),
-                                to: new Date()
-                            });
-                            setTime("12:00");
-                            setRecurrence("none");
-                        },
+                        onClick: handleReset,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__["RotateCcw"], {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 135,
+                                lineNumber: 148,
                                 columnNumber: 11
                             }, this),
                             "Reset"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 125,
+                        lineNumber: 143,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1370,53 +1412,54 @@ const PromptInputSection = ({ date, time, recurrence, prompt, isExecuting, setDa
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 146,
+                                lineNumber: 159,
                                 columnNumber: 11
                             }, this),
                             "Execute Now"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 138,
+                        lineNumber: 151,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         variant: "default",
                         className: "bg-blue-700 hover:bg-blue-600 text-white transition-all duration-300",
                         onClick: handleSchedule,
-                        disabled: isExecuting || !prompt.trim() || !date,
+                        disabled: isExecuting || !prompt.trim() || !date || !time,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calendar$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__LucideCalendar$3e$__["LucideCalendar"], {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/components/promptInputSection.tsx",
-                                lineNumber: 156,
+                                lineNumber: 169,
                                 columnNumber: 11
                             }, this),
                             "Schedule"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/promptInputSection.tsx",
-                        lineNumber: 150,
+                        lineNumber: 163,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/promptInputSection.tsx",
-                lineNumber: 124,
+                lineNumber: 142,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/promptInputSection.tsx",
-        lineNumber: 48,
+        lineNumber: 66,
         columnNumber: 5
     }, this);
 };
-_s(PromptInputSection, "mMqlYKbVn4TTecbmUAJDrD7H4Lg=");
-_c = PromptInputSection;
-var _c;
-__turbopack_context__.k.register(_c, "PromptInputSection");
+_s(PromptInputSection, "M/mfgpUQWa+Ip0Iaf0sKuvVlDhM=");
+_c1 = PromptInputSection;
+var _c, _c1;
+__turbopack_context__.k.register(_c, "MemoizedCalendar");
+__turbopack_context__.k.register(_c1, "PromptInputSection");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -1962,25 +2005,7 @@ const ScheduledTasksSection = ({ tasks, deleteTask })=>/*#__PURE__*/ (0, __TURBO
                                         className: "flex items-center",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
-                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("mr-2", (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$renderUtils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getStatusColor"])(task.status)),
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "flex items-center",
-                                                    children: [
-                                                        (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$renderUtils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getStatusIcon"])(task.status),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "ml-1",
-                                                            children: task.status.charAt(0).toUpperCase() + task.status.slice(1)
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/scheduledTasksSection.tsx",
-                                                            lineNumber: 56,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/components/scheduledTasksSection.tsx",
-                                                    lineNumber: 54,
-                                                    columnNumber: 19
-                                                }, this)
+                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("mr-2", (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$renderUtils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getStatusColor"])(task.status))
                                             }, void 0, false, {
                                                 fileName: "[project]/components/scheduledTasksSection.tsx",
                                                 lineNumber: 48,
@@ -2180,24 +2205,24 @@ const PromptScheduler = ()=>{
         let requestBody = {};
         if (isRerun) {
             requestBody = {
-                input: input,
-                session_id: session_id,
-                rerun: true,
-                history: history,
-                changed: updated
+                "input": input,
+                "session_id": session_id,
+                "rerun": true,
+                "history": history,
+                "changed": updated
             };
         } else {
             requestBody = {
-                input: input,
-                session_id: session_id,
-                rerun: false,
-                history: [],
-                changed: false
+                "input": input,
+                "session_id": session_id,
+                "rerun": false,
+                "history": [],
+                "changed": false
             };
         }
         try {
             console.log(JSON.stringify(requestBody));
-            const response = await fetch(`${backendUrl}/prompt`, {
+            const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"

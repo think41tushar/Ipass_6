@@ -47,7 +47,7 @@ const Calendar: React.FC<CalendarProps> = ({ value, onChange }) => {
             className="border-slate-700 bg-background text-white"
           />
         </div>
-        <div>
+        {/* <div>
           <Label htmlFor="time" className="text-slate-300">
             Time
           </Label>
@@ -58,7 +58,7 @@ const Calendar: React.FC<CalendarProps> = ({ value, onChange }) => {
             onChange={(e) => setTimeValue(e.target.value)}
             className="border-slate-700 bg-background text-white"
           />
-        </div>
+        </div> */}
       </div>
       {dateValue && timeValue && (
         <div className="mt-2 text-slate-300">

@@ -51,13 +51,13 @@ export const ScheduledTasksSection: React.FC<ScheduledTasksSectionProps> = ({
                     getStatusColor(task.status)
                   )}
                 >
-                  <span className="flex items-center">
+                  {/* <span className="flex items-center">
                     {getStatusIcon(task.status)}
                     <span className="ml-1">
                       {task.status.charAt(0).toUpperCase() +
                         task.status.slice(1)}
                     </span>
-                  </span>
+                  </span> */}
                 </Badge>
                 <Badge
                   variant="outline"

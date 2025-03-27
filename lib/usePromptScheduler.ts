@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
+import { useParams } from "next/navigation";
 import {
   ScheduledTask,
   RecurrenceType
@@ -9,9 +10,9 @@ import {
   loadTasksFromLocalStorage,
   saveTasksToLocalStorage
 } from "@/lib/taskUtil";
-import { useParams } from "next/navigation";
 
 export const usePromptScheduler = () => {
+  const params = useParams(); // Move useParams inside the hook
   const [date, setDate] = useState<DateRange | undefined>(undefined);
   const [time, setTime] = useState("12:00");
   const [recurrence, setRecurrence] = useState<RecurrenceType>("none");
@@ -23,10 +24,10 @@ export const usePromptScheduler = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [session_id, setSession_id] = useState("");
-  const [error,setError]=useState("")
+  const [error, setError] = useState("");
   const [isSSEconnected, setIsSSEconnected] = useState(false);
-  // const [promptRespone, setPromptRespone] = useState("");
   const [promptResponse, setPromptResponse] = useState("");
+
   // Load tasks from localStorage on component mount
   useEffect(() => {
     const loadedTasks = loadTasksFromLocalStorage();
@@ -68,7 +69,7 @@ export const usePromptScheduler = () => {
     }, 500);
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (!prompt.trim()) {
       addLog("Error: Prompt cannot be empty");
       return;
@@ -80,21 +81,72 @@ export const usePromptScheduler = () => {
     const [hours, minutes] = time.split(":").map(Number);
     const scheduledDateTime = new Date(date.from);
     scheduledDateTime.setHours(hours, minutes);
+    
     if (scheduledDateTime < new Date()) {
       addLog("Error: Cannot schedule for a past date/time");
       return;
     }
-    const newTask: ScheduledTask = {
-      id: Date.now().toString(),
-      prompt,
-      dateTime: scheduledDateTime,
-      recurrence,
-      status: "pending",
+  
+    // Function to generate random string
+    const getRandomString = (length: number) => {
+      return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
     };
-    setTasks([...tasks, newTask]);
-    addLog(`Task scheduled for ${format(scheduledDateTime, "PPpp")}`);
-    setPrompt("");
-    setActiveTab("scheduled");
+    const djangoUrl = "http://127.0.0.1:8000";
+    const tenant_id=localStorage.getItem("tenant_id");
+    const user_id=localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
+    const sessid = getRandomString(10);
+  
+    try {
+      const schedulePayload = {
+        "execution_time": scheduledDateTime.toISOString(),
+        "is_recurring": recurrence !== "none", // Convert to boolean
+        "user_id": user_id,
+        "input": prompt,
+        "session_id": sessid,
+        "rerun": false,
+        "history": [],
+        "changed": false,
+        // Only include these if is_recurring is true
+        ...(recurrence !== "none" && {
+          recurrence_type: recurrence,
+          // Add additional recurrence details as needed
+          ...(recurrence === "weekly" && { days_of_week: [scheduledDateTime.getDay()] }),
+          ...(recurrence === "monthly" && { days_of_month: [scheduledDateTime.getDate()] }),
+          // ...(recurrence === "yearly" && { months: [scheduledDateTime.getMonth() + 1] })
+        })
+      };
+  
+      const response = await fetch(`${djangoUrl}/schedule/prompt/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(schedulePayload)
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to schedule task");
+      }
+  
+      const result = await response.json();
+      console.log("Task scheduled successfully:", result);
+  
+      const newTask: ScheduledTask = {
+        id: sessid,
+        prompt,
+        dateTime: scheduledDateTime,
+        recurrence,
+        status: "pending",
+      };
+  
+      setTasks([...tasks, newTask]);
+      addLog(`Task scheduled for ${format(scheduledDateTime, "PPpp")}`);
+      setPrompt("");
+      setActiveTab("scheduled");
+    } catch (error) {
+      console.error("Scheduling error:", error);
+      addLog(`Error scheduling task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   const deleteTask = (id: string) => {
@@ -102,10 +154,12 @@ export const usePromptScheduler = () => {
   };
 
   const handleConnect = async () => {
-    const {tenant_id} = useParams();
-    const {user_id} = useParams();
     try {
-      const response = await fetch(`http://127.0.0.1:8000/schedule/${tenant_id}/send-refresh-token/`, {
+      const { tenant_id} = params; 
+      const user_id=localStorage.getItem("user_id");
+      console.log("This is the user_id: ",user_id)
+      // Use params here
+      const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/schedule/${tenant_id}/send-refresh-token/`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -120,7 +174,7 @@ export const usePromptScheduler = () => {
       console.log("Connected successfully");
       setIsConnected(true);
     } catch (error: any) {
-      throw new Error("Failed to connect" + error.message);
+      setError("Failed to connect: " + error.message);
     }
   };
 

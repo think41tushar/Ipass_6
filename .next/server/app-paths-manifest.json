@@ -1,4 +1,3 @@
 {
-  "/dashboard/[tenant_id]/prompt/page": "app/dashboard/[tenant_id]/prompt/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/hubspot/[tenant_id]/page": "app/hubspot/[tenant_id]/page.js"
 }

@@ -17,7 +17,7 @@ export default function TenantAdminPortal() {
     async function fetchTenantInfo() {
       console.log("Attempting to fetch tenant info for tenant_id:", tenant_id);
       try {
-        const response = await fetch(`http://127.0.0.1:8000/tenant-admin/${tenant_id}/getTenant/`);
+        const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/getTenant/`);
         console.log("Fetch response status:", response.status);
         if (!response.ok) {
           console.error("Fetch failed with status:", response.status);

@@ -81,24 +81,24 @@ const PromptScheduler: React.FC = () => {
     let requestBody = {};
     if (isRerun) {
       requestBody = {
-        input: input,
-        session_id: session_id,
-        rerun: true,
-        history: history,
-        changed: updated,
+        "input": input,
+        "session_id": session_id,
+        "rerun": true,
+        "history": history,
+        "changed": updated,
       };
     } else {
       requestBody = {
-        input: input,
-        session_id: session_id,
-        rerun: false,
-        history: [],
-        changed: false,
+        "input": input,
+        "session_id": session_id,
+        "rerun": false,
+        "history": [],
+        "changed": false,
       };
     }
     try {
       console.log(JSON.stringify(requestBody));
-      const response = await fetch(`${backendUrl}/prompt`, {
+      const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

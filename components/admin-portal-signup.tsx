@@ -159,7 +159,7 @@ export default function AdminPortalSignup() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/tenant-admin/${tenant_id}/signup/generate/`,
+        `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/signup/generate/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -193,7 +193,7 @@ export default function AdminPortalSignup() {
     try {
       console.log("Submitting OTP verification:", values);
       const response = await fetch(
-        `http://127.0.0.1:8000/tenant-admin/${tenant_id}/signup/verify/`,
+        `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/signup/verify/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

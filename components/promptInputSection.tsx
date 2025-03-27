@@ -1,5 +1,4 @@
-// src/components/PromptScheduler/PromptInputSection.tsx
-import React from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, RotateCcw, Play, LucideCalendar } from "lucide-react";
 
@@ -22,7 +21,9 @@ import {
 } from "@/components/ui/select";
 
 import { PromptInputSectionProps } from "@/lib/types";
-import { useState } from "react";
+
+// Memoize Calendar to prevent unnecessary re-renders
+const MemoizedCalendar = React.memo(Calendar);
 
 export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   date,
@@ -44,6 +45,23 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   handleRunTask,
 }) => {
   const [executionTime, setExecutionTime] = useState("");
+  
+  // Use useCallback to memoize the calendar change handler
+  const handleCalendarChange = useCallback((newISO: string) => {
+    const selectedDate = new Date(newISO);
+    setDate({ from: selectedDate, to: selectedDate });
+    setExecutionTime(newISO);
+  }, [setDate]);
+
+  // Memoize reset function to prevent unnecessary re-renders
+  const handleReset = useCallback(() => {
+    setPrompt("");
+    setDate({ from: new Date(), to: new Date() });
+    setTime("12:00");
+    setRecurrence("none");
+    setExecutionTime("");
+  }, [setPrompt, setDate, setTime, setRecurrence]);
+
   return (
     <div className="space-y-6">
       {/* Date and Time Selection */}
@@ -67,10 +85,10 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 border-slate-700 bg-background">
-              <Calendar
+              <MemoizedCalendar
                 value={executionTime}
-                onChange={(newISO) => setExecutionTime(newISO)}
-              />{" "}
+                onChange={handleCalendarChange}
+              />
             </PopoverContent>
           </Popover>
         </div>
@@ -125,12 +143,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
         <Button
           variant="outline"
           className="border-slate-700 text-slate-300 hover:bg-background hover:text-white transition-all duration-300"
-          onClick={() => {
-            setPrompt("");
-            setDate({ from: new Date(), to: new Date() });
-            setTime("12:00");
-            setRecurrence("none");
-          }}
+          onClick={handleReset}
         >
           <RotateCcw className="mr-2 h-4 w-4" />
           Reset
@@ -151,7 +164,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           variant="default"
           className="bg-blue-700 hover:bg-blue-600 text-white transition-all duration-300"
           onClick={handleSchedule}
-          disabled={isExecuting || !prompt.trim() || !date}
+          disabled={isExecuting || !prompt.trim() || !date || !time}
         >
           <LucideCalendar className="mr-2 h-4 w-4" />
           Schedule

@@ -12,7 +12,7 @@ import {
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-export default function dashboard() {
+export default function Dashboard() {
   const { tenant_id } = useParams();
   const [tenantName, setTenantName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,9 @@ export default function dashboard() {
   useEffect(() => {
     async function fetchTenantInfo() {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/tenant-admin/${tenant_id}/getTenant/`);
+        const response = await fetch(
+          `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/getTenant/`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch tenant info");
         }
@@ -42,67 +44,73 @@ export default function dashboard() {
       setError("No tenant ID provided in URL.");
     }
   }, [tenant_id]);
+
   const router = useRouter();
+
   return (
-    <div className="container mx-auto flex flex-col items-center mt-8">
-      <div className="text-4xl font-bold">Dashboard Tenant {tenantName}</div>
-      <div className="text-lg text-muted-foreground">
-        Overview of your tenant administration
+    <div className="container mx-auto p-8 mt-8 flex flex-col items-start">
+      <div className="mb-6">
+        <h1 className="text-4xl font-bold text-white">
+          Dashboard Tenant {tenantName}
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Overview of your tenant administration
+        </p>
       </div>
-      <div className="grid grid-cols-3 gap-4 mt-8">
-        <div className="col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Tenant Information</CardTitle>
-              <CardDescription>Icon</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Tenant {tenantName}</p>
-            </CardContent>
-            <CardFooter>
-              <p>
-                Status: <span className="text-green-400">Active</span>
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
-        <div className="col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Users</CardTitle>
-              <CardDescription>Icon</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl">234</p>
-            </CardContent>
-            <CardFooter>
-              <p>
-                Last Login:{" "}
-                <span className="text-muted-foreground">2 days ago</span>
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
-        <div className="col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Integrations</CardTitle>
-              <CardDescription>Icon</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl">0</p>
-              <p className="text-muted-foreground">Active Integrations</p>
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full"
-                onClick={() => router.push("/dashboard/${tenant_id}/integrations")}
-              >
-                Configure
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">
+              Tenant Information
+            </CardTitle>
+            <CardDescription>Icon</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-white">Tenant {tenantName}</p>
+          </CardContent>
+          <CardFooter>
+            <p className="text-sm">
+              Status: <span className="text-green-400">Active</span>
+            </p>
+          </CardFooter>
+        </Card>
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">Users</CardTitle>
+            <CardDescription>Icon</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl text-white">234</p>
+          </CardContent>
+          <CardFooter>
+            <p className="text-sm">
+              Last Login:{" "}
+              <span className="text-muted-foreground">2 days ago</span>
+            </p>
+          </CardFooter>
+        </Card>
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">
+              Integrations
+            </CardTitle>
+            <CardDescription>Icon</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl text-white">0</p>
+            <p className="text-muted-foreground">Active Integrations</p>
+          </CardContent>
+          <CardFooter>
+            <Button
+              className="w-full"
+              onClick={() =>
+                router.push(`/dashboard/${tenant_id}/integrations`)
+              }
+            >
+              Configure
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );
