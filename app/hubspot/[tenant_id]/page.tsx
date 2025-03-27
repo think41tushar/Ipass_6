@@ -31,7 +31,7 @@ export default function ShipToHubspot() {
       return
     }
     try {
-      const response = await fetch(`http://127.0.0.1:8000/hubspot/hubspotPost/${tenant_id}/`, {
+      const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/hubspotPost/${tenant_id}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

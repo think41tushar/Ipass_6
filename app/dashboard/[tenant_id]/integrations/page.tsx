@@ -82,7 +82,7 @@ const handleHubspotAuth = async () => {
   }
   const token = window.prompt("Please enter your HubSpot token:");
   if (!token) return;
-  const callbackUrl = `http://127.0.0.1:8000/hubspot/hubspot_token/${tenant_id}/callback/`;
+  const callbackUrl = `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/hubspot_token/${tenant_id}/callback/`;
   try {
     const response = await fetch(callbackUrl, {
       method: "POST",

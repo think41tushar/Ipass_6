@@ -91,7 +91,7 @@ export const usePromptScheduler = () => {
     const getRandomString = (length: number) => {
       return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
     };
-    const djangoUrl = "http://127.0.0.1:8000";
+    const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
     const tenant_id=localStorage.getItem("tenant_id");
     const user_id=localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
     const sessid = getRandomString(10);

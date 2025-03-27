@@ -57,7 +57,7 @@ const PromptScheduler: React.FC = () => {
   const [history, setHistory] = useState([]);
 
   const backendUrl = "http://13.203.173.137:3000";
-  const djangoUrl = "http://127.0.0.1:8000";
+  const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
 
   // Function to generate random string
   const getRandomString = (length: number) => {
