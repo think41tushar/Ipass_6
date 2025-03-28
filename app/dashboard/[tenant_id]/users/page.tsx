@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-// import { motion } from 'framer-motion';
+import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
@@ -14,28 +14,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const UserComponent = ({ users = [] }) => {
-  // Animation variants (for demonstration, you can integrate framer-motion if needed)
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-        when: "beforeChildren",
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 },
-    },
-  };
+const UserComponent: React.FC = () => {
+  // Use the useParams hook to get the dynamic tenant_id from the URL if needed.
+  const { tenant_id } = useParams();
 
   // Default user if none provided
   const defaultUser = {
@@ -47,7 +28,9 @@ const UserComponent = ({ users = [] }) => {
     status: "Active",
   };
 
-  const displayUsers = users.length ? users : [defaultUser];
+  // Instead of accepting props, we define the display users here.
+  // If you plan to fetch or pass users later, you can update this logic.
+  const displayUsers = [defaultUser];
 
   return (
     <div className="min-h-screen bg-background text-white p-8">
@@ -65,19 +48,11 @@ const UserComponent = ({ users = [] }) => {
                   <Users size={16} />
                   <span>Invite User</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center"
-                >
+                <Button variant="outline" size="sm" className="flex items-center">
                   <Settings size={16} />
                   <span>User Settings</span>
                 </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="flex items-center"
-                >
+                <Button variant="secondary" size="sm" className="flex items-center">
                   <Shield size={16} />
                   <span>Permissions</span>
                 </Button>

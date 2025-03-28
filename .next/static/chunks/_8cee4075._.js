@@ -218,9 +218,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/components/AnimatePresence/index.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -288,8 +290,14 @@ const handleHubspotAuth = async ()=>{
         alert("An error occurred while submitting the token.");
     }
 };
-const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} })=>{
+// If you need initial integrations from somewhere, you might get it from searchParams or some other logic.
+// For now, we'll assume initial integrations are false.
+const IntegrationComponent = ()=>{
     _s();
+    // Use the tenant_id from params as your tenantId
+    const tenantId = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"])().tenant_id;
+    // For simplicity, we assume no initial integrations are provided from the page props.
+    const initialIntegrations = {};
     const [integrations, setIntegrations] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         google: initialIntegrations.google || false,
         github: initialIntegrations.github || false,
@@ -437,7 +445,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                     children: "Integration Management"
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 280,
+                                    lineNumber: 282,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -445,13 +453,13 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                     children: "Manage your connected services and applications"
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 283,
+                                    lineNumber: 285,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                            lineNumber: 279,
+                            lineNumber: 281,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -483,7 +491,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     children: "Active"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 301,
+                                                    lineNumber: 303,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -491,13 +499,13 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     children: activeIntegrationsCount
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 302,
+                                                    lineNumber: 304,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 291,
+                                            lineNumber: 293,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -524,7 +532,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     children: "Total Available"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 317,
+                                                    lineNumber: 319,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -532,13 +540,13 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     children: integrationData.length
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 318,
+                                                    lineNumber: 320,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 307,
+                                            lineNumber: 309,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -565,7 +573,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     children: "Status"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 333,
+                                                    lineNumber: 335,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -583,14 +591,14 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                                 className: "w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                lineNumber: 341,
+                                                                lineNumber: 343,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Connected"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                        lineNumber: 336,
+                                                        lineNumber: 338,
                                                         columnNumber: 21
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].span, {
                                                         initial: {
@@ -605,31 +613,31 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                                 className: "w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                lineNumber: 350,
+                                                                lineNumber: 352,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Not configured"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                        lineNumber: 345,
+                                                        lineNumber: 347,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 334,
+                                                    lineNumber: 336,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 323,
+                                            lineNumber: 325,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 290,
+                                    lineNumber: 292,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -645,20 +653,20 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     className: "text-slate-300"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 365,
+                                                    lineNumber: 367,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Add Integration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 366,
+                                                    lineNumber: 368,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 360,
+                                            lineNumber: 362,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -670,20 +678,20 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 374,
+                                                    lineNumber: 376,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Configure"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 375,
+                                                    lineNumber: 377,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 369,
+                                            lineNumber: 371,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -698,33 +706,33 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     className: "animate-spin text-slate-300"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 386,
+                                                    lineNumber: 388,
                                                     columnNumber: 19
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__["Activity"], {
                                                     size: 16,
                                                     className: "text-slate-300"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 388,
+                                                    lineNumber: 390,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: isRefreshing ? "Refreshing..." : "Refresh Status"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 390,
+                                                    lineNumber: 392,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                            lineNumber: 378,
+                                            lineNumber: 380,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 359,
+                                    lineNumber: 361,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -771,12 +779,12 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                             height: 24
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                            lineNumber: 423,
+                                                            lineNumber: 425,
                                                             columnNumber: 23
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                        lineNumber: 419,
+                                                        lineNumber: 421,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -790,7 +798,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                                         children: integration.name
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                        lineNumber: 433,
+                                                                        lineNumber: 435,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -828,37 +836,37 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                                                     className: "absolute -inset-1 rounded-full bg-green-500/20"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                                    lineNumber: 448,
+                                                                                    lineNumber: 450,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2d$big$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle$3e$__["CheckCircle"], {
                                                                                     className: "h-5 w-5 text-green-500 relative z-10"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                                    lineNumber: 454,
+                                                                                    lineNumber: 456,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                            lineNumber: 447,
+                                                                            lineNumber: 449,
                                                                             columnNumber: 29
                                                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
                                                                             className: "h-5 w-5 text-amber-500"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                            lineNumber: 457,
+                                                                            lineNumber: 459,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                        lineNumber: 436,
+                                                                        lineNumber: 438,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                lineNumber: 432,
+                                                                lineNumber: 434,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -866,29 +874,29 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                                 children: integration.description
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                                lineNumber: 461,
+                                                                lineNumber: 463,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                        lineNumber: 431,
+                                                        lineNumber: 433,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, integration.id, true, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                lineNumber: 398,
+                                                lineNumber: 400,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                        lineNumber: 396,
+                                        lineNumber: 398,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 395,
+                                    lineNumber: 397,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -902,7 +910,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                 children: "Explore all integrations"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                lineNumber: 477,
+                                                lineNumber: 479,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -922,40 +930,40 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 488,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                lineNumber: 478,
+                                                lineNumber: 480,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 474,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                    lineNumber: 471,
+                                    lineNumber: 473,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                            lineNumber: 288,
+                            lineNumber: 290,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                    lineNumber: 278,
+                    lineNumber: 280,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                lineNumber: 277,
+                lineNumber: 279,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -975,7 +983,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                             className: "absolute inset-0 bg-black/80 backdrop-blur-lg"
                         }, void 0, false, {
                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                            lineNumber: 504,
+                            lineNumber: 506,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1000,7 +1008,7 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                 className: "text-blue-400 mr-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                lineNumber: 514,
+                                                lineNumber: 516,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1008,13 +1016,13 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                                 children: "Integrations are configured at the tenant level and will be available to all users. Manage permissions in the user settings."
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                                lineNumber: 515,
+                                                lineNumber: 517,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                        lineNumber: 513,
+                                        lineNumber: 515,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1025,35 +1033,39 @@ const IntegrationComponent = ({ tenantId = "default", initialIntegrations = {} }
                                         children: "Close"
                                     }, void 0, false, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                        lineNumber: 521,
+                                        lineNumber: 523,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                                lineNumber: 512,
+                                lineNumber: 514,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                            lineNumber: 506,
+                            lineNumber: 508,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                    lineNumber: 497,
+                    lineNumber: 499,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/dashboard/[tenant_id]/integrations/page.tsx",
-                lineNumber: 495,
+                lineNumber: 497,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 };
-_s(IntegrationComponent, "14PFr26lHEcnKpxitMVAqJdw89s=");
+_s(IntegrationComponent, "6irQagl9SbhJ8ovLRvyfyhKaygw=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"]
+    ];
+});
 _c = IntegrationComponent;
 const __TURBOPACK__default__export__ = IntegrationComponent;
 var _c;

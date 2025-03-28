@@ -238,7 +238,7 @@ __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-// import { motion } from 'framer-motion';
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/card.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$users$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Users$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/users.js [app-client] (ecmascript) <export default as Users>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$settings$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Settings$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/settings.js [app-client] (ecmascript) <export default as Settings>");
@@ -248,42 +248,18 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/arrow-right.js [app-client] (ecmascript) <export default as ArrowRight>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/input.tsx [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
 ;
 ;
 ;
-const UserComponent = ({ users = [] })=>{
-    // Animation variants (for demonstration, you can integrate framer-motion if needed)
-    const containerVariants = {
-        hidden: {
-            opacity: 0
-        },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2,
-                when: "beforeChildren"
-            }
-        }
-    };
-    const itemVariants = {
-        hidden: {
-            y: 20,
-            opacity: 0
-        },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 24
-            }
-        }
-    };
+const UserComponent = ()=>{
+    _s();
+    // Use the useParams hook to get the dynamic tenant_id from the URL if needed.
+    const { tenant_id } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"])();
     // Default user if none provided
     const defaultUser = {
         id: "1",
@@ -293,7 +269,9 @@ const UserComponent = ({ users = [] })=>{
         lastLogin: new Date().toLocaleString(),
         status: "Active"
     };
-    const displayUsers = users.length ? users : [
+    // Instead of accepting props, we define the display users here.
+    // If you plan to fetch or pass users later, you can update this logic.
+    const displayUsers = [
         defaultUser
     ];
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -308,12 +286,12 @@ const UserComponent = ({ users = [] })=>{
                             children: "User Management"
                         }, void 0, false, {
                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                            lineNumber: 57,
+                            lineNumber: 40,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                        lineNumber: 56,
+                        lineNumber: 39,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -331,20 +309,20 @@ const UserComponent = ({ users = [] })=>{
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 65,
+                                                    lineNumber: 48,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Invite User"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 66,
+                                                    lineNumber: 49,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 64,
+                                            lineNumber: 47,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -356,20 +334,20 @@ const UserComponent = ({ users = [] })=>{
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 73,
+                                                    lineNumber: 52,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "User Settings"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 74,
+                                                    lineNumber: 53,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 68,
+                                            lineNumber: 51,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -381,20 +359,20 @@ const UserComponent = ({ users = [] })=>{
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 81,
+                                                    lineNumber: 56,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Permissions"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 82,
+                                                    lineNumber: 57,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 76,
+                                            lineNumber: 55,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -404,23 +382,23 @@ const UserComponent = ({ users = [] })=>{
                                                 placeholder: "Search Users..."
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                lineNumber: 85,
+                                                lineNumber: 60,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 84,
+                                            lineNumber: 59,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                    lineNumber: 63,
+                                    lineNumber: 46,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                lineNumber: 62,
+                                lineNumber: 45,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -435,12 +413,12 @@ const UserComponent = ({ users = [] })=>{
                                                     children: user.name.split(" ").map((n)=>n[0]).join("")
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                    lineNumber: 97,
+                                                    lineNumber: 72,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                lineNumber: 96,
+                                                lineNumber: 71,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -454,7 +432,7 @@ const UserComponent = ({ users = [] })=>{
                                                                 children: user.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                lineNumber: 106,
+                                                                lineNumber: 81,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -462,13 +440,13 @@ const UserComponent = ({ users = [] })=>{
                                                                 children: user.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                lineNumber: 107,
+                                                                lineNumber: 82,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                        lineNumber: 105,
+                                                        lineNumber: 80,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -482,20 +460,20 @@ const UserComponent = ({ users = [] })=>{
                                                                         className: "mr-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 119,
+                                                                        lineNumber: 94,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         children: user.email
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 120,
+                                                                        lineNumber: 95,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                lineNumber: 118,
+                                                                lineNumber: 93,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -506,20 +484,20 @@ const UserComponent = ({ users = [] })=>{
                                                                         className: "mr-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 123,
+                                                                        lineNumber: 98,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         children: user.role
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 124,
+                                                                        lineNumber: 99,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                lineNumber: 122,
+                                                                lineNumber: 97,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -530,7 +508,7 @@ const UserComponent = ({ users = [] })=>{
                                                                         className: "mr-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 127,
+                                                                        lineNumber: 102,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -540,36 +518,36 @@ const UserComponent = ({ users = [] })=>{
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                        lineNumber: 128,
+                                                                        lineNumber: 103,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                                lineNumber: 126,
+                                                                lineNumber: 101,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                        lineNumber: 117,
+                                                        lineNumber: 92,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                                lineNumber: 104,
+                                                lineNumber: 79,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, user.id, true, {
                                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                        lineNumber: 92,
+                                        lineNumber: 67,
                                         columnNumber: 17
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                lineNumber: 90,
+                                lineNumber: 65,
                                 columnNumber: 13
                             }, this),
                             displayUsers.length > 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -583,50 +561,55 @@ const UserComponent = ({ users = [] })=>{
                                             children: "View all users"
                                         }, void 0, false, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 143,
+                                            lineNumber: 118,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                            lineNumber: 144,
+                                            lineNumber: 119,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                    lineNumber: 138,
+                                    lineNumber: 113,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                                lineNumber: 137,
+                                lineNumber: 112,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                        lineNumber: 61,
+                        lineNumber: 44,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-                lineNumber: 55,
+                lineNumber: 38,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-            lineNumber: 54,
+            lineNumber: 37,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/dashboard/[tenant_id]/users/page.tsx",
-        lineNumber: 53,
+        lineNumber: 36,
         columnNumber: 5
     }, this);
 };
+_s(UserComponent, "NpNfyC2P7cSGUCkrT3KhyzS6jXw=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"]
+    ];
+});
 _c = UserComponent;
 const __TURBOPACK__default__export__ = UserComponent;
 var _c;

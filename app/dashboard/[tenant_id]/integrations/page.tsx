@@ -24,13 +24,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 
 interface IntegrationComponentProps {
-  tenantId: string;
-  initialIntegrations?: {
-    google?: boolean;
-    github?: boolean;
-    slack?: boolean;
-    hubspot?: boolean;
-  };
+  google?: boolean;
+  github?: boolean;
+  slack?: boolean;
+  hubspot?: boolean;
 }
 
 const handleGoogleAuth = async () => {
@@ -102,10 +99,15 @@ const handleHubspotAuth = async () => {
   }
 };
 
-const IntegrationComponent: React.FC<IntegrationComponentProps> = ({
-  tenantId = "default",
-  initialIntegrations = {},
-}) => {
+// If you need initial integrations from somewhere, you might get it from searchParams or some other logic.
+// For now, we'll assume initial integrations are false.
+const IntegrationComponent: React.FC = () => {
+  // Use the tenant_id from params as your tenantId
+  const tenantId = useParams().tenant_id;
+
+  // For simplicity, we assume no initial integrations are provided from the page props.
+  const initialIntegrations: IntegrationComponentProps = {};
+
   const [integrations, setIntegrations] = useState<
     Record<"google" | "github" | "slack" | "hubspot", boolean>
   >({

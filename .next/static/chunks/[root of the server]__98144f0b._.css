@@ -367,10 +367,6 @@
     pointer-events: none;
   }
 
-  .visible {
-    visibility: visible;
-  }
-
   .absolute {
     position: absolute;
   }
@@ -598,10 +594,6 @@
 
   .grid {
     display: grid;
-  }
-
-  .hidden {
-    display: none;
   }
 
   .inline-block {
@@ -1419,10 +1411,6 @@
 
   .bg-white\/5 {
     background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
-  }
-
-  .bg-white\/30 {
-    background-color: color-mix(in oklab, var(--color-white) 30%, transparent);
   }
 
   .bg-yellow-600 {
