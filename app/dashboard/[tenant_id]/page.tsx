@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Loading from "@/components/ui/loading";
 
 export default function Dashboard() {
   const { tenant_id } = useParams();
@@ -20,6 +21,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchTenantInfo() {
+      setError("");
+      setLoading(true);
       try {
         const response = await fetch(
           `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/getTenant/`
@@ -30,6 +33,8 @@ export default function Dashboard() {
         const data = await response.json();
         console.log(data);
         setTenantName(data.name);
+        localStorage.setItem("data", JSON.stringify(data));
+        console.log(data.tenant_name);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -46,6 +51,14 @@ export default function Dashboard() {
   }, [tenant_id]);
 
   const router = useRouter();
+
+  if (loading) {
+    return (
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-8 mt-8 flex flex-col items-start">

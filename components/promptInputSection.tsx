@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Calendar from "@/components/ui/calendar";
+import Loading from "@/components/ui/loading";
 import {
   Popover,
   PopoverContent,
@@ -31,6 +32,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   recurrence,
   prompt,
   isExecuting,
+  isScheduled,
   setDate,
   setTime,
   setRecurrence,
@@ -156,7 +158,14 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           }}
           disabled={isExecuting || !prompt.trim()}
         >
-          <Play className="mr-2 h-4 w-4" />
+          
+          {isExecuting ? (
+            <div className="container mx-auto h-[100vh] flex items-center justify-center">
+            <Loading/>
+          </div>
+          ) : (
+            <Play className="mr-2 h-4 w-4" />
+          )}
           Execute Now
         </Button>
 
@@ -164,9 +173,15 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           variant="default"
           className="bg-blue-700 hover:bg-blue-600 text-white transition-all duration-300"
           onClick={handleSchedule}
-          disabled={isExecuting || !prompt.trim() || !date || !time}
+          disabled={isScheduled || !prompt.trim() || !date || !time}
         >
-          <LucideCalendar className="mr-2 h-4 w-4" />
+          {isScheduled ? (
+            <div className="container mx-auto h-[100vh] flex items-center justify-center">
+            <Loading/>
+          </div>
+          ) : (
+            <LucideCalendar className="mr-2 h-4 w-4" />
+          )}
           Schedule
         </Button>
       </div>

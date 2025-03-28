@@ -2,12 +2,26 @@
 
 import Link from "next/link";
 import { LayoutDashboard, User, Settings, Search, Rocket } from "lucide-react";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, usePathname } from "next/navigation";
+import Loading from "@/components/ui/loading";
 
 export default function DashboardSidebar() {
   const [selected, setSelected] = useState("dashboard");
   const { tenant_id } = useParams();
+  const pathname = usePathname(); // ADDED: Hook to detect route changes
+  const [loading, setLoading] = useState(false); // loading state for route change
+
+  // Reset loading state when the route changes
+  useEffect(() => {
+    setLoading(false);
+  }, [pathname]);
+
+  // Handler to update selection and trigger loading overlay.
+  const handleLinkClick = (section: string) => {
+    setSelected(section);
+    setLoading(true); // Set loading true on click.
+  };
 
   return (
     <div>
@@ -19,7 +33,7 @@ export default function DashboardSidebar() {
               ? "bg-white text-black"
               : "text-muted-foreground"
           } hover:bg-muted hover:text-white`}
-          onClick={() => setSelected("dashboard")}
+          onClick={() => handleLinkClick("dashboard")}
         >
           <LayoutDashboard className="h-6 w-6" />
           <span className="text-lg">Dashboard</span>
@@ -32,7 +46,7 @@ export default function DashboardSidebar() {
               ? "bg-white text-black"
               : "text-muted-foreground"
           } hover:bg-muted hover:text-white`}
-          onClick={() => setSelected("users")}
+          onClick={() => handleLinkClick("users")}
         >
           <User className="h-6 w-6" />
           <span className="text-lg">Users</span>
@@ -45,7 +59,7 @@ export default function DashboardSidebar() {
               ? "bg-white text-black"
               : "text-muted-foreground"
           } hover:bg-muted hover:text-white`}
-          onClick={() => setSelected("integrations")}
+          onClick={() => handleLinkClick("integrations")}
         >
           <Settings className="h-6 w-6" />
           <span className="text-lg">Integrations</span>
@@ -58,7 +72,7 @@ export default function DashboardSidebar() {
               ? "bg-white text-black"
               : "text-muted-foreground"
           } hover:bg-muted hover:text-white`}
-          onClick={() => setSelected("global-search")}
+          onClick={() => handleLinkClick("global-search")}
         >
           <Search className="h-6 w-6" />
           <span className="text-lg">Search</span>
@@ -70,12 +84,19 @@ export default function DashboardSidebar() {
               ? "bg-white text-black"
               : "text-muted-foreground"
           } hover:bg-muted hover:text-white`}
-          onClick={() => setSelected("prompt")}
+          onClick={() => handleLinkClick("prompt")}
         >
           <Rocket className="h-6 w-6" />
           <span className="text-lg">Prompt</span>
         </Link>
       </div>
+
+      {/* Loading overlay using your existing class */}
+      {loading && (
+        <div className="container mx-auto h-[100vh] flex items-center justify-center">
+          <Loading />
+        </div>
+      )}
     </div>
   );
 }

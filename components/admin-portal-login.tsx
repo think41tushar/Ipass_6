@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Loading from "@/components/ui/loading"; // ADDED: Import Loading component
 
 const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -125,10 +126,12 @@ export default function AdminPortalLogin() {
   const [step, setStep] = useState<"email" | "otp">("email");
   const [error, setError] = useState("");
   const [otpId, setOtpId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false); // ADDED: loading state
 
   // Handle email submission to generate OTP
   const handleEmailSubmit = async (values: { email: string }) => {
     setError("");
+    setLoading(true); // ADDED: Set loading true when submission begins
 
     try {
       const response = await fetch(
@@ -153,13 +156,15 @@ export default function AdminPortalLogin() {
     } catch (err: any) {
       console.error("Error during OTP generation:", err);
       setError(err.message || "Something went wrong during OTP generation.");
+    }finally{
+      setLoading(false); // ADDED: Set loading false after completion
     }
   };
 
   // Handle OTP verification
   const handleOtpSubmit = async (values: { otp: string; otp_id: number }) => {
     setError("");
-
+    setLoading(true); // ADDED: Set loading true when OTP verification starts
     try {
       console.log("Submitting OTP verification:", values);
       const response = await fetch(
@@ -187,8 +192,19 @@ export default function AdminPortalLogin() {
     } catch (err: any) {
       console.error("Error during OTP verification:", err);
       setError(err.message || "Something went wrong during OTP verification.");
+    }finally {
+      setLoading(false); // ADDED: Set loading false after OTP verification
     }
   };
+
+   // ADDED: Check loading state and render <Loading /> if true
+   if (loading) {
+    return (
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto space-y-8">

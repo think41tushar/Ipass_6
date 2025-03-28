@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -90,6 +90,8 @@ const handleHubspotAuth = async () => {
       body: JSON.stringify({ hubToken: token, user_id: user_id }),
     });
     if (response.ok) {
+      const tenant_id = localStorage.getItem("tenant_id");
+      localStorage.setItem(`tenant_${tenant_id}_hubspot_integration`, "true");
       alert("HubSpot token submitted successfully!");
     } else {
       alert("Failed to submit HubSpot token.");
@@ -115,6 +117,62 @@ const IntegrationComponent: React.FC<IntegrationComponentProps> = ({
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
+
+  // Check for Google and HubSpot authentication on component mount and when the component rerenders
+  useEffect(() => {
+    // Ensure we're running in the browser
+    if (typeof window !== 'undefined') {
+      const tenant_id = localStorage.getItem("tenant_id");
+      
+      // Check Google integration status from localStorage
+      const googleIntegration = 
+        localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true";
+      
+      // Check HubSpot integration status
+      const hubspotIntegration = 
+        localStorage.getItem(`tenant_${tenant_id}_hubspot_integration`) === "true";
+
+      // Update integration states if changed
+      setIntegrations(prev => ({
+        ...prev,
+        google: googleIntegration,
+        hubspot: hubspotIntegration
+      }));
+
+      // Check for Google OAuth callback
+      checkGoogleCallback();
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  // Check for Google OAuth callback and update integration status
+  const checkGoogleCallback = () => {
+    // Check if the current URL contains the Google callback parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+
+    if (code && state) {
+      try {
+        // Parse the state parameter
+        const stateData = JSON.parse(decodeURIComponent(state));
+        const tenant_id = stateData.tenant_id;
+
+        // Update Google integration in localStorage
+        localStorage.setItem(`tenant_${tenant_id}_google_integration`, "true");
+        
+        // Update component state
+        setIntegrations(prev => ({
+          ...prev,
+          google: true
+        }));
+
+        // Optional: Clear the URL parameters to prevent repeated processing
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (error) {
+        console.error("Error processing Google callback:", error);
+      }
+    }
+  };
 
   // Integration data with additional details
   const integrationData = [
@@ -167,30 +225,29 @@ const IntegrationComponent: React.FC<IntegrationComponentProps> = ({
   const activeIntegrationsCount =
     Object.values(integrations).filter(Boolean).length;
 
-  // Refresh integration status
   const refreshIntegrations = () => {
     setIsRefreshing(true);
-
+  
     // Simulate API call delay
     setTimeout(() => {
+      const tenant_id = localStorage.getItem("tenant_id");
+      // NEW: Directly check localStorage for integration statuses
       const googleIntegration =
-        localStorage.getItem(`tenant_${tenantId}_google_integration`) ===
-        "true";
+        localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true";
       const githubIntegration =
-        localStorage.getItem(`tenant_${tenantId}_github_integration`) ===
-        "true";
+        localStorage.getItem(`tenant_${tenant_id}_github_integration`) === "true";
       const slackIntegration =
-        localStorage.getItem(`tenant_${tenantId}_slack_integration`) === "true";
+        localStorage.getItem(`tenant_${tenant_id}_slack_integration`) === "true";
       const hubspotIntegration =
-        localStorage.getItem(`tenant_${tenantId}_hubspot_integration`) === "true";
-
+        localStorage.getItem(`tenant_${tenant_id}_hubspot_integration`) === "true";
+  
       setIntegrations({
         google: googleIntegration,
         github: githubIntegration,
         slack: slackIntegration,
         hubspot: hubspotIntegration,
       });
-
+  
       setIsRefreshing(false);
     }, 1000);
   };
@@ -349,7 +406,15 @@ const IntegrationComponent: React.FC<IntegrationComponentProps> = ({
                       borderColor: "rgba(71, 85, 105, 0.8)",
                     }}
                     className="flex items-center p-4 border border-slate-800 bg-slate-800/30 rounded-lg cursor-pointer transition-all duration-300"
-                    onClick={integration.authHandler}
+                    onClick={() => {
+                      // If the integration is not connected, trigger the auth handler
+                      if (!integrations[integration.id as IntegrationId]) {
+                        integration.authHandler();
+                      } else {
+                        // If already connected, use connectIntegration to toggle
+                        connectIntegration(integration.id);
+                      }
+                    }}
                   >
                     <motion.div
                       className="h-10 w-10 flex items-center justify-center bg-slate-700 rounded-md mr-4"

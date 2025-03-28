@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import Loading from "@/components/ui/loading"
 import Link from "next/link";
 
 export default function CreateTenant() {
@@ -13,8 +14,10 @@ export default function CreateTenant() {
   const [tenantName, setTenantName] = useState("");
   const [tenantEmail, setTenantEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading,setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
 
     const payload = {
@@ -47,8 +50,18 @@ export default function CreateTenant() {
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Something went wrong");
+    }finally{
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto h-[100vh] flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto h-[100vh] flex flex-col justify-center items-center px-4">

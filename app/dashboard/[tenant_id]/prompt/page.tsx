@@ -19,6 +19,7 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledTasksSection } from "@/components/scheduledTasksSection";
+import Loading from "@/components/ui/loading"
 import { any } from "zod";
 
 const PromptScheduler: React.FC = () => {
@@ -46,6 +47,7 @@ const PromptScheduler: React.FC = () => {
     setSession_id,
     setActiveTab,
     isExecuting,
+    isScheduled,
     isConnected,
     handleExecute,
     handleSchedule,
@@ -55,6 +57,8 @@ const PromptScheduler: React.FC = () => {
 
   const [updatedLogs, setUpdatedLogs] = useState([]);
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [connectLoading, setConnectLoading] = useState(false);
 
   const backendUrl = "http://13.203.173.137:3000";
   const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
@@ -97,6 +101,8 @@ const PromptScheduler: React.FC = () => {
       };
     }
     try {
+      setLoading(true);
+      setError("");
       console.log(JSON.stringify(requestBody));
       const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
         method: "POST",
@@ -112,6 +118,8 @@ const PromptScheduler: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to send prompt request: ", console.error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -184,6 +192,7 @@ const PromptScheduler: React.FC = () => {
     });
     // Send prompt to backend
     try {
+      setLoading(true);
       console.log("STARTING");
       const eventSource = await waitForSSE;
       console.log("ISRERUN: ", isRerun);
@@ -193,8 +202,25 @@ const PromptScheduler: React.FC = () => {
       return;
     } catch (error) {
       console.error("Failed to establish sse connection: ", console.error);
+    } finally {
+      setLoading(false);
     }
   };
+
+    // NEW: Wrapper for Connect to handle loading indicator
+    const handleConnectWithLoading = async () => {
+      setConnectLoading(true);
+      await handleConnect();
+      setConnectLoading(false);
+    };
+
+  if (loading) {
+    return (
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-8 bg-background">
@@ -204,8 +230,14 @@ const PromptScheduler: React.FC = () => {
             <div className="text-4xl font-bold text-white">
               Prompt Scheduler
             </div>
-            <Button onClick={handleConnect}>
-              {isConnected ? "Connected" : "Connect"}
+            <Button onClick={handleConnectWithLoading}>
+            {connectLoading ? (
+              <div className="container mx-auto h-[100vh] flex items-center justify-center">
+                <Loading/>
+              </div>
+              ) : (
+                isConnected ? "Connected" : "Connect"
+              )}
             </Button>
           </CardTitle>
           <CardDescription className="text-slate-400">
@@ -239,6 +271,7 @@ const PromptScheduler: React.FC = () => {
                 time={time}
                 recurrence={recurrence}
                 prompt={prompt}
+                isScheduled={isScheduled}
                 isExecuting={isExecuting}
                 isSSEconnected={isSSEconnected}
                 setIsSSEconnected={setIsSSEconnected}

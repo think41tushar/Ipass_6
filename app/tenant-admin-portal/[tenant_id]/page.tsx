@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminPortalLogin from "@/components/admin-portal-login";
 import AdminPortalSignup from "@/components/admin-portal-signup";
 import { useParams } from "next/navigation";
+import Loading from "@/components/ui/loading";
 
 export default function TenantAdminPortal() {
   const [tenantName, setTenantName] = useState("");
@@ -44,6 +45,14 @@ export default function TenantAdminPortal() {
     }
   }, [tenant_id]);
   
+  // ADDED: If loading, render the Loading component instead of the rest of the content.
+  if (loading) {
+    return (
+      <div className="container mx-auto h-[100vh] flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto w-fit h-[100vh] flex flex-col justify-center gap-4">

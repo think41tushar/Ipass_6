@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Check, X, ArrowUpDown, ArrowRight } from "lucide-react"
 import ReactMarkdown from "react-markdown"  // Added for markdown formatting
+import Loading from "@/components/ui/loading";
 
 // Type definition for summary card
 interface SummaryCard {
@@ -24,6 +25,7 @@ export default function ShipToHubspot() {
   const sendApproval = async (content: string) => {
     console.log(content)
     console.log(JSON.stringify(content))
+    setIsLoading(true);
 
     const tenant_id = localStorage.getItem("tenant_id")
     if (!tenant_id) {
@@ -52,6 +54,8 @@ export default function ShipToHubspot() {
     } catch (error) {
       console.error(error)
       alert("An error occurred while sending data.")
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -129,13 +133,12 @@ export default function ShipToHubspot() {
     )
   }
 
-  // Render loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-gray-500">Loading summaries...</p>
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
       </div>
-    )
+    );
   }
 
   // Render error state

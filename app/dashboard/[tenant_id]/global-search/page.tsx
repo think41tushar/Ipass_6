@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { FileIcon, MailIcon, CalendarIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import Loading from "@/components/ui/loading"
 
 interface SearchResult {
   results: {
@@ -74,6 +75,14 @@ export default function GlobalSearchPage() {
       setError(`Error searching file: ${error.message}`);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto flex flex-col p-8">

@@ -19,6 +19,7 @@ export interface PromptInputSectionProps {
   recurrence: RecurrenceType;
   prompt: string;
   isExecuting: boolean;
+  isScheduled: boolean;
   setSessionid: (sessionid: string) => void;
   setIsSSEconnected: (isSSE: boolean) => void;
   session_id: string;

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter, useParams } from "next/navigation";
+import Loading from "@/components/ui/loading";
 
 // Full signup details schema
 const signupDetailsSchema = z.object({
@@ -51,6 +52,7 @@ function SignupDetailsForm({ onSubmit, error }: SignupDetailsFormProps) {
       email: "",
     },
   });
+  
 
   return (
     <Form {...form}>
@@ -151,10 +153,12 @@ export default function AdminPortalSignup() {
   const [error, setError] = useState("");
   const [otpId, setOtpId] = useState<number | null>(null);
   const [signupData, setSignupData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   // Handle signup form submission to generate OTP
   const handleSignupSubmit = async (values: z.infer<typeof signupDetailsSchema>) => {
     setError("");
+    setLoading(true);
     setSignupData(values);
 
     try {
@@ -183,12 +187,15 @@ export default function AdminPortalSignup() {
     } catch (err: any) {
       console.error("Error during signup OTP generation:", err);
       setError(err.message || "Something went wrong during OTP generation.");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle OTP verification to complete signup
   const handleOtpSubmit = async (values: { otp: string; otp_id: number }) => {
     setError("");
+    setLoading(true);
 
     try {
       console.log("Submitting OTP verification:", values);
@@ -220,8 +227,18 @@ export default function AdminPortalSignup() {
     } catch (err: any) {
       console.error("Error during OTP verification:", err);
       setError(err.message || "Something went wrong during OTP verification.");
+    } finally{
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="w-[600px] h-auto flex items-center">

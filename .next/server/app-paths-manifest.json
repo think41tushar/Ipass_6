@@ -1,11 +1,9 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/callback/page": "app/callback/page.js",
   "/dashboard/[tenant_id]/global-search/page": "app/dashboard/[tenant_id]/global-search/page.js",
   "/dashboard/[tenant_id]/integrations/page": "app/dashboard/[tenant_id]/integrations/page.js",
   "/dashboard/[tenant_id]/page": "app/dashboard/[tenant_id]/page.js",
   "/dashboard/[tenant_id]/prompt/page": "app/dashboard/[tenant_id]/prompt/page.js",
   "/dashboard/[tenant_id]/users/page": "app/dashboard/[tenant_id]/users/page.js",
-  "/hubspot/[tenant_id]/page": "app/hubspot/[tenant_id]/page.js",
   "/tenant-admin-portal/[tenant_id]/page": "app/tenant-admin-portal/[tenant_id]/page.js"
 }

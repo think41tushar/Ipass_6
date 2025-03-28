@@ -35,7 +35,7 @@ const CallbackPage = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Backend Response:", data);
-        router.push(`/dashboard/${tenant_id}`);
+        router.push(`/dashboard/${tenant_id}/integrations`);
       })
       .catch((error) => {
         console.error("Error sending data to backend:", error);

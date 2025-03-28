@@ -22,6 +22,7 @@ export const usePromptScheduler = () => {
   const [result, setResult] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("prompt");
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isScheduled, setIsScheduled] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [session_id, setSession_id] = useState("");
   const [error, setError] = useState("");
@@ -209,6 +210,7 @@ export const usePromptScheduler = () => {
     setError,
     setActiveTab,
     isExecuting,
+    isScheduled,
     isConnected,
     addLog,
     handleExecute,
