@@ -40,7 +40,7 @@ const handleGoogleAuth = async () => {
   }
   const CLIENT_ID =
     "934128942917-lel7crgqajr5dffnhh054sgosffke9fl.apps.googleusercontent.com";
-  const REDIRECT_URI = "http://localhost:3000/callback";
+  const REDIRECT_URI = "https://ipass-5-tusharbisht-think41coms-projects.vercel.app/callback";
   const SCOPES = [
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",
@@ -79,7 +79,7 @@ const handleHubspotAuth = async () => {
   }
   const token = window.prompt("Please enter your HubSpot token:");
   if (!token) return;
-  const callbackUrl = `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/hubspot_token/${tenant_id}/callback/`;
+  const callbackUrl = `https://syncdjango.site/hubspot/hubspot_token/${tenant_id}/callback/`;
   try {
     const response = await fetch(callbackUrl, {
       method: "POST",

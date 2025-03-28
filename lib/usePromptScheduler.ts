@@ -92,7 +92,7 @@ export const usePromptScheduler = () => {
     const getRandomString = (length: number) => {
       return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
     };
-    const djangoUrl = "http://ec2-3-91-217-18.compute-1.amazonaws.com:8000";
+    const djangoUrl = "https://syncdjango.site";
     const tenant_id=localStorage.getItem("tenant_id");
     const user_id=localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
     const sessid = getRandomString(10);
@@ -160,7 +160,7 @@ export const usePromptScheduler = () => {
       const user_id=localStorage.getItem("user_id");
       console.log("This is the user_id: ",user_id)
       // Use params here
-      const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/schedule/${tenant_id}/send-refresh-token/`, {
+      const response = await fetch(`https://syncdjango.site/schedule/${tenant_id}/send-refresh-token/`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

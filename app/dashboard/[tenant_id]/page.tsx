@@ -25,7 +25,7 @@ export default function Dashboard() {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/getTenant/`
+          `https://syncdjango.site/tenant-admin/${tenant_id}/getTenant/`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch tenant info");

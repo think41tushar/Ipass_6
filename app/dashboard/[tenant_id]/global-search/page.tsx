@@ -42,7 +42,7 @@ export default function GlobalSearchPage() {
   const [error, setError] = useState("");
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
 
-  const endpoint = `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/globalSearch/`;
+  const endpoint = `https://syncdjango.site/tenant-admin/globalSearch/`;
 
   const searchFile = async () => {
     try {

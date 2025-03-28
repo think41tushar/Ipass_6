@@ -33,7 +33,7 @@ export default function ShipToHubspot() {
       return
     }
     try {
-      const response = await fetch(`http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/hubspotPost/${tenant_id}/`, {
+      const response = await fetch(`https://syncdjango.site/hubspot/hubspotPost/${tenant_id}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -67,7 +67,7 @@ export default function ShipToHubspot() {
         setIsLoading(true);
         const user_id = 'bff85ddd-d98f-44bf-b5c2-004693ed295b'; // Replace with your actual user ID or variable
         const response = await fetch(
-          `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/hubspot/send/c7708025-2553-448e-8380-ea7bee605e0b/`,
+          `https://syncdjango.site/hubspot/send/c7708025-2553-448e-8380-ea7bee605e0b/`,
           {
             method: 'POST',
             headers: {

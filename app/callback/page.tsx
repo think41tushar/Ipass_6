@@ -25,7 +25,7 @@ const CallbackContent: React.FC = () => {
 
     // Call the backend API route
     fetch(
-      `http://ec2-3-91-217-18.compute-1.amazonaws.com:8000/tenant-admin/${tenant_id}/google/callback/`,
+      `https://syncdjango.site/tenant-admin/${tenant_id}/google/callback/`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
