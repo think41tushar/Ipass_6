@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import type React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "./ui/button"
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "./ui/button";
 
 interface LogsAndResultSectionProps {
-  logs: string[]
-  result: string | null
-  isExecuting: boolean
-  setUpdatedLogs: any
-  updatedLogs: any
-  handleRunTask: any
+  logs: string[];
+  result: string | null;
+  isExecuting: boolean;
+  setUpdatedLogs: any;
+  updatedLogs: any;
+  handleRunTask: any;
 }
 
 export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
@@ -28,25 +28,31 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
     <div className="space-y-6">
       {/* Logs Section */}
       <div className="space-y-2">
-        <h3 className="text-lg font-medium text-white">Execution Logs</h3>
         <Card className="border border-gray-800 bg-gray-900/30 rounded-lg shadow-lg">
+          <h3 className="text-lg font-medium text-white px-6">
+            Execution Logs
+          </h3>
           <CardContent className="p-4">
             <ScrollArea className="h-[300px] p-4 border border-gray-800 rounded bg-[#111827]">
               {logs.length > 0 ? (
                 <div className="space-y-1 font-mono pt-2 text-sm text-gray-300">
                   {logs.map((log, index) => {
-                    const isToolExecution = log.startsWith("Executing tool:")
-                    let formattedLog = log
+                    const isToolExecution = log.startsWith("Executing tool:");
+                    let formattedLog = log;
 
                     if (isToolExecution) {
-                      const match = log.match(/Params:\s*(\{[\s\S]*\})/)
+                      const match = log.match(/Params:\s*(\{[\s\S]*\})/);
                       if (match) {
                         try {
-                          const parsedJson = JSON.parse(match[1])
-                          const prettyJson = JSON.stringify(parsedJson, null, 2)
-                          formattedLog = log.replace(match[1], prettyJson) // Replace raw JSON with formatted JSON
+                          const parsedJson = JSON.parse(match[1]);
+                          const prettyJson = JSON.stringify(
+                            parsedJson,
+                            null,
+                            2
+                          );
+                          formattedLog = log.replace(match[1], prettyJson); // Replace raw JSON with formatted JSON
                         } catch (error) {
-                          console.error("Invalid JSON:", error)
+                          console.error("Invalid JSON:", error);
                         }
                       }
                     }
@@ -54,20 +60,27 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                     return isToolExecution ? (
                       <textarea
                         key={index}
-                        value={updatedLogs[index] !== undefined ? updatedLogs[index] : formattedLog}
+                        value={
+                          updatedLogs[index] !== undefined
+                            ? updatedLogs[index]
+                            : formattedLog
+                        }
                         className="w-full bg-[#111827] text-purple-300 font-mono text-sm p-2 my-2 border border-gray-700 rounded resize-y outline-none"
                         rows={Math.max(formattedLog.split("\n").length, 3)}
                         onChange={(e) => {
-                          const newLogs = [...updatedLogs]
-                          newLogs[index] = e.target.value
-                          setUpdatedLogs(newLogs)
+                          const newLogs = [...updatedLogs];
+                          newLogs[index] = e.target.value;
+                          setUpdatedLogs(newLogs);
                         }}
                       />
                     ) : (
-                      <div key={index} className="border-l-2 border-gray-700 pl-3 py-1 my-2">
+                      <div
+                        key={index}
+                        className="border-l-2 border-gray-700 pl-3 py-1 my-2"
+                      >
                         {log}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               ) : (
@@ -81,7 +94,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
               <div></div>
               <Button
                 onClick={() => {
-                  handleRunTask(true)
+                  handleRunTask(true);
                 }}
                 className="mt-4 bg-purple-600 hover:bg-purple-700 text-white"
               >
@@ -119,7 +132,9 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   transition={{ duration: 0.3 }}
                   className="p-4 bg-[#111827] rounded-md border border-gray-800"
                 >
-                  <pre className="whitespace-pre-wrap text-gray-300">{result}</pre>
+                  <pre className="whitespace-pre-wrap text-gray-300">
+                    {result}
+                  </pre>
                 </motion.div>
               ) : (
                 <motion.div
@@ -136,5 +151,5 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
