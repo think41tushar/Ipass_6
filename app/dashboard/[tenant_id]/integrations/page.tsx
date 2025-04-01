@@ -343,6 +343,17 @@ const IntegrationComponent: React.FC = () => {
       features: ["Email", "Calendar", "Drive", "Sheets"],
     },
     {
+      id: "hubspot",
+      name: "HubSpot",
+      iconSrc: "https://img.icons8.com/?size=100&id=Xq3RA1kWzz3X&format=png&color=000000",
+      description: integrations.hubspot
+        ? "Connected and available for all users"
+        : "Connect CRM, marketing and sales tools",
+      connectUrl: "/integrations/connect/hubspot",
+      authHandler: handleHubspotAuth,
+      features: ["CRM", "Marketing", "Sales", "Service"],
+    },
+    {
       id: "github",
       name: "GitHub",
       iconSrc: "https://img.icons8.com/?size=100&id=63777&format=png&color=000000",
@@ -361,17 +372,6 @@ const IntegrationComponent: React.FC = () => {
       connectUrl: "/integrations/connect/slack",
       authHandler: () => {}, // Add Slack auth handler if needed
       features: ["Channels", "Messaging", "Notifications", "Bots"],
-    },
-    {
-      id: "hubspot",
-      name: "HubSpot",
-      iconSrc: "https://img.icons8.com/?size=100&id=Xq3RA1kWzz3X&format=png&color=000000",
-      description: integrations.hubspot
-        ? "Connected and available for all users"
-        : "Connect CRM, marketing and sales tools",
-      connectUrl: "/integrations/connect/hubspot",
-      authHandler: handleHubspotAuth,
-      features: ["CRM", "Marketing", "Sales", "Service"],
     },
   ]
 
@@ -684,7 +684,9 @@ const IntegrationComponent: React.FC = () => {
                           className={`w-full md:w-auto ${
                             integrations[integration.id as IntegrationId]
                               ? "bg-[#1c2333] hover:bg-[#252e42] text-white"
-                              : "bg-purple-600 hover:bg-purple-700 text-white"
+                              : integration.id === "github" || integration.id === "slack"
+                                ? "bg-gray-600 hover:bg-gray-700 text-white cursor-not-allowed"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                           } transition-all duration-300 flex items-center gap-2`}
                         >
                           {isLoading === integration.id ? (
