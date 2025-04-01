@@ -117,7 +117,7 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
             <FormItem className="space-y-1">
               <FormLabel>OTP</FormLabel>
               <FormControl>
-                <Input className="h-9 min-w-[300px]" placeholder="Enter OTP" {...field} />
+                <Input placeholder="Enter OTP" {...field} />
               </FormControl>
               <FormDescription>Enter the OTP sent to your email</FormDescription>
               <FormMessage />
@@ -126,13 +126,13 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
         />
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" className="w-full h-9 rounded-md min-w-[300px]">
+        <Button type="submit" className="w-full py-3 rounded-xl">
           Verify & Complete Signup
         </Button>
         <Button 
           type="button" 
           variant="outline" 
-          className="w-full h-9 rounded-md mt-2 min-w-[300px]"
+          className="w-full py-3 rounded-xl mt-2"
           onClick={onBack}
         >
           Back to Signup Form

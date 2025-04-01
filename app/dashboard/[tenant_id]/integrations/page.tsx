@@ -2,6 +2,8 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 import {
   Activity,
   Plus,
@@ -67,29 +69,160 @@ const handleHubspotAuth = async () => {
   console.log("This is the user_id: ", user_id)
   console.log("This is the tenant_id: ", tenant_id)
   if (!tenant_id) {
-    alert("Tenant ID not found")
+    toast.error("Tenant ID not found")
     return
   }
-  const token = window.prompt("Please enter your HubSpot token:")
-  if (!token) return
-  const callbackUrl = `https://syncdjango.site/hubspot/hubspot_token/${tenant_id}/callback/`
-  try {
-    const response = await fetch(callbackUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hubToken: token, user_id: user_id }),
-    })
-    if (response.ok) {
-      const tenant_id = localStorage.getItem("tenant_id")
-      localStorage.setItem(`tenant_${tenant_id}_hubspot_integration`, "true")
-      alert("HubSpot token submitted successfully!")
-    } else {
-      alert("Failed to submit HubSpot token.")
+
+  // Create a custom toast with the input
+  toast.info(
+    ({ closeToast }) => (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        className="relative backdrop-blur-xl backdrop-saturate-150 bg-[#1a1f2e]/30 p-8 rounded-2xl shadow-2xl border border-white/10"
+        style={{
+          WebkitBackdropFilter: 'blur(16px)',
+          backdropFilter: 'blur(16px)',
+        }}
+      >
+        {/* Background gradient effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-blue-600/10 to-transparent rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-transparent rounded-2xl backdrop-blur-xl"></div>
+        
+        {/* Content */}
+        <div className="relative z-10">
+          <div className="flex items-center mb-6">
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
+              <div className="relative bg-[#1c2333]/40 p-2 rounded-lg backdrop-blur-lg">
+                <img 
+                  src="https://img.icons8.com/?size=100&id=Xq3RA1kWzz3X&format=png&color=000000" 
+                  alt="HubSpot" 
+                  className="w-8 h-8"
+                />
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold ml-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-100 to-blue-100">
+              Connect HubSpot
+            </h3>
+          </div>
+          
+          <p className="text-gray-300/90 text-sm mb-6 leading-relaxed backdrop-blur-sm">
+            Enter your HubSpot API token to connect your account. You can find this in your HubSpot developer settings.
+          </p>
+
+          <div className="relative group mb-8">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
+            <input
+              type="text"
+              id="hubspotTokenInput"
+              placeholder="Enter your HubSpot token"
+              className="relative w-full px-4 py-3 bg-[#1c2333]/40 backdrop-blur-lg border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+              style={{ minWidth: '300px' }}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={closeToast}
+              className="px-4 py-2 rounded-lg bg-[#1c2333]/40 backdrop-blur-lg text-gray-300 border border-white/10 hover:bg-[#252e42]/40 hover:border-white/20 transition-all duration-300"
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ 
+                scale: 1.02, 
+                boxShadow: '0 0 20px rgba(124, 58, 237, 0.3)',
+              }}
+              whileTap={{ scale: 0.98 }}
+              onClick={async () => {
+                const input = document.getElementById('hubspotTokenInput') as HTMLInputElement
+                const token = input.value.trim()
+                if (!token) {
+                  toast.error("Please enter a token", {
+                    style: {
+                      background: 'rgba(28, 35, 51, 0.4)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      color: '#fff',
+                      borderColor: '#ef4444',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                    },
+                  })
+                  return
+                }
+                
+                const callbackUrl = `https://syncdjango.site/hubspot/hubspot_token/${tenant_id}/callback/`
+                try {
+                  const response = await fetch(callbackUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ hubToken: token, user_id: user_id }),
+                  })
+                  if (response.ok) {
+                    localStorage.setItem(`tenant_${tenant_id}_hubspot_integration`, "true")
+                    toast.success("HubSpot connected successfully!", {
+                      style: {
+                        background: 'rgba(28, 35, 51, 0.4)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        color: '#fff',
+                        borderColor: '#22c55e',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                      },
+                    })
+                    closeToast()
+                  } else {
+                    toast.error("Failed to connect HubSpot. Please check your token and try again.", {
+                      style: {
+                        background: 'rgba(28, 35, 51, 0.4)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        color: '#fff',
+                        borderColor: '#ef4444',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                      },
+                    })
+                  }
+                } catch (error) {
+                  console.error(error)
+                  toast.error("An error occurred while connecting to HubSpot.", {
+                    style: {
+                      background: 'rgba(28, 35, 51, 0.4)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      color: '#fff',
+                      borderColor: '#ef4444',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                    },
+                  })
+                }
+              }}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600/80 to-blue-600/80 backdrop-blur-lg text-white hover:from-purple-600/90 hover:to-blue-600/90 transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+            >
+              Connect
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
+    ),
+    {
+      position: "top-center",
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+      className: "!bg-transparent !shadow-none",
+      style: {
+        background: 'transparent',
+        maxWidth: '450px',
+        width: '100%',
+      },
     }
-  } catch (error) {
-    console.error(error)
-    alert("An error occurred while submitting the token.")
-  }
+  )
 }
 
 const IntegrationComponent: React.FC = () => {
@@ -98,6 +231,8 @@ const IntegrationComponent: React.FC = () => {
 
   // For simplicity, we assume no initial integrations are provided from the page props.
   const initialIntegrations: IntegrationComponentProps = {}
+
+  const [isLoading, setIsLoading] = useState<string | null>(null)
 
   const [integrations, setIntegrations] = useState<Record<"google" | "github" | "slack" | "hubspot", boolean>>({
     google: initialIntegrations.google || false,
@@ -108,6 +243,37 @@ const IntegrationComponent: React.FC = () => {
 
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showAlertModal, setShowAlertModal] = useState(false)
+
+  // Handle integration click
+  const handleIntegrationClick = async (integration: typeof integrationData[0], e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (isLoading) return // Prevent multiple clicks while loading
+
+    setIsLoading(integration.id)
+    
+    try {
+      if (!integrations[integration.id as IntegrationId]) {
+        if (integration.id === 'hubspot') {
+          await handleHubspotAuth()
+          setIntegrations(prev => ({
+            ...prev,
+            hubspot: true
+          }))
+        } else {
+          await integration.authHandler()
+        }
+      } else {
+        await connectIntegration(integration.id)
+      }
+    } catch (error) {
+      console.error("Error handling integration:", error)
+      toast.error("Failed to process integration request")
+    } finally {
+      setIsLoading(null)
+    }
+  }
 
   // Check for Google and HubSpot authentication on component mount and when the component rerenders
   useEffect(() => {
@@ -253,6 +419,21 @@ const IntegrationComponent: React.FC = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        toastClassName={() => 
+          "relative flex p-4 min-h-10 rounded-lg justify-between overflow-hidden cursor-pointer backdrop-blur-xl backdrop-saturate-150 bg-[#1c2333]/40 border border-white/10 mb-4 shadow-lg"
+        }
+      />
       <div className="min-h-screen w-full bg-gradient-to-b from-[#0a0d14] to-[#111827] text-white p-4 md:p-8">
         {/* Header with purple glow */}
         <div className="relative mb-8">
@@ -419,6 +600,15 @@ const IntegrationComponent: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="bg-[#131825] border border-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-purple-900/10 transition-all duration-300 group"
+                  onClick={(e) => handleIntegrationClick(integration, e)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleIntegrationClick(integration, e as any)
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="relative">
                     {/* Purple gradient overlay that appears on hover */}
@@ -489,20 +679,20 @@ const IntegrationComponent: React.FC = () => {
                       {/* Action button */}
                       <div className="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
                         <Button
-                          onClick={() => {
-                            if (!integrations[integration.id as IntegrationId]) {
-                              integration.authHandler()
-                            } else {
-                              connectIntegration(integration.id)
-                            }
-                          }}
+                          onClick={(e) => handleIntegrationClick(integration, e)}
+                          disabled={isLoading === integration.id}
                           className={`w-full md:w-auto ${
                             integrations[integration.id as IntegrationId]
                               ? "bg-[#1c2333] hover:bg-[#252e42] text-white"
                               : "bg-purple-600 hover:bg-purple-700 text-white"
                           } transition-all duration-300 flex items-center gap-2`}
                         >
-                          {integrations[integration.id as IntegrationId] ? (
+                          {isLoading === integration.id ? (
+                            <>
+                              <RefreshCw size={16} className="animate-spin" />
+                              <span>Processing...</span>
+                            </>
+                          ) : integrations[integration.id as IntegrationId] ? (
                             <>
                               <Settings size={16} />
                               <span>Configure</span>
@@ -608,4 +798,3 @@ const IntegrationComponent: React.FC = () => {
 }
 
 export default IntegrationComponent
-
