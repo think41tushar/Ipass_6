@@ -56,41 +56,38 @@ function SignupDetailsForm({ onSubmit, error }: SignupDetailsFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
-        {/* Two-column grid for email and username */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="hello@example.com" {...field} />
-                </FormControl>
-                <FormDescription>Your email ID.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="admin" {...field} />
-                </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem className="space-y-1">
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input className="h-9 min-w-[300px]" placeholder="hello@example.com" {...field} />
+              </FormControl>
+              <FormDescription>Your email ID.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="space-y-1">
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input className="h-9 min-w-[350px]" placeholder="admin" {...field} />
+              </FormControl>
+              <FormDescription>This is your public display name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button className="p-6 rounded-xl w-full" type="submit">
+        <Button type="submit" className="w-full h-9 rounded-md min-w-[300px]">
           Send OTP
         </Button>
       </form>
@@ -112,15 +109,15 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="otp"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1">
               <FormLabel>OTP</FormLabel>
               <FormControl>
-                <Input placeholder="Enter OTP" {...field} />
+                <Input className="h-9 min-w-[300px]" placeholder="Enter OTP" {...field} />
               </FormControl>
               <FormDescription>Enter the OTP sent to your email</FormDescription>
               <FormMessage />
@@ -129,13 +126,13 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
         />
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" className="p-6 rounded-xl w-full">
+        <Button type="submit" className="w-full h-9 rounded-md min-w-[300px]">
           Verify & Complete Signup
         </Button>
         <Button 
           type="button" 
           variant="outline" 
-          className="p-6 rounded-xl w-full"
+          className="w-full h-9 rounded-md mt-2 min-w-[300px]"
           onClick={onBack}
         >
           Back to Signup Form
@@ -234,7 +231,7 @@ export default function AdminPortalSignup() {
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+      <div className="flex justify-center items-center min-h-[200px]">
         <Loading />
       </div>
     );
