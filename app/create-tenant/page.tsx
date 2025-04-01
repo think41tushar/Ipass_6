@@ -23,8 +23,8 @@ export default function CreateTenant() {
     e.preventDefault()
 
     const payload = {
-      tenant_name: tenantName,
-      email: tenantEmail,
+      "tenant_name": tenantName,
+      "email": tenantEmail,
     }
 
     try {
