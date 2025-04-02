@@ -48,7 +48,7 @@ export const ScheduledTasksSection: React.FC<ScheduledTasksSectionProps> = ({ ta
                   </span>
                 </Badge>
                 <Badge variant="outline" className="border-gray-700 text-gray-400">
-                  {getRecurrenceLabel(task.recurrence)}
+                  {getRecurrenceLabel(task.recurrenceType)}
                 </Badge>
               </div>
               <Button
@@ -64,7 +64,7 @@ export const ScheduledTasksSection: React.FC<ScheduledTasksSectionProps> = ({ ta
             <div className="mb-2 text-sm text-gray-400">
               <div className="flex items-center">
                 <CalendarIcon className="h-4 w-4 mr-2 text-gray-500" />
-                <span>{format(task.dateTime, "PPpp")}</span>
+                <span>{format(task.date || new Date(), "PPpp")}</span>
               </div>
             </div>
 
