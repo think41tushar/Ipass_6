@@ -2,7 +2,13 @@
 
 import React, { useState, useCallback } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, RotateCcw, Play, LucideCalendar } from "lucide-react";
+import {
+  CalendarIcon,
+  RotateCcw,
+  Play,
+  LucideCalendar,
+  ListTodo,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,11 +99,14 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
       // Use selected time from the state instead of defaulting to 12:00
       const formattedTime = time ? time : "12:00"; // Fallback in case time isn't set
-      const executionDateTime = `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`;
+      const executionDateTime = `${format(
+        selectedDate,
+        "yyyy-MM-dd"
+      )}T${formattedTime}:00`;
 
       setExecutionTime(executionDateTime);
     },
-    [setDate, time], // Ensure it reacts to time changes
+    [setDate, time] // Ensure it reacts to time changes
   );
 
   // Memoize reset function to prevent unnecessary re-renders
@@ -115,13 +124,13 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
   const toggleDayOfWeek = (day: number) => {
     setDaysOfWeek((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
   const toggleMonth = (month: number) => {
     setMonths((prev) =>
-      prev.includes(month) ? prev.filter((m) => m !== month) : [...prev, month],
+      prev.includes(month) ? prev.filter((m) => m !== month) : [...prev, month]
     );
   };
 
@@ -369,7 +378,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
               <Loading />
             </div>
           ) : (
-            <LucideCalendar className="mr-2 h-4 w-4" />
+            <ListTodo className="mr-2 h-4 w-4" />
           )}
           Todo
         </Button>
@@ -378,4 +387,3 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
     </div>
   );
 };
-
