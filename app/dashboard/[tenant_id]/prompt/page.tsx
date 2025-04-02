@@ -20,6 +20,7 @@ import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledTasksSection } from "@/components/scheduledTasksSection";
 import Loading from "@/components/ui/loading";
+import { ScheduledTask } from "@/lib/types";
 
 const PromptScheduler: React.FC = () => {
   const {
@@ -59,13 +60,24 @@ const PromptScheduler: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [connectLoading, setConnectLoading] = useState(false);
 
-  const backendUrl = "http://13.203.173.137:3000";
+  const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
 
   // Function to generate random string
   const getRandomString = (length: number) => {
     return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
   };
+
+  const scheduledTaskInstance: ScheduledTask = {
+    id: "task-123",
+    status: "pending",
+    date: new Date(),
+    time: "12:00",
+    recurrence: false,
+    recurrenceType: "none",
+    prompt: "Sample task",
+  };
+  
 
   // Prompt request function
   async function callPrompt(
@@ -284,6 +296,7 @@ const PromptScheduler: React.FC = () => {
                 time={time}
                 recurrence={recurrence}
                 prompt={prompt}
+                ScheduledTask={scheduledTaskInstance}
                 isScheduled={isScheduled}
                 isExecuting={isExecuting}
                 isSSEconnected={isSSEconnected}

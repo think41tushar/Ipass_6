@@ -271,15 +271,15 @@ export default function ShipToHubspot() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="max-w-md mx-auto text-center py-12 px-6 bg-[#151823] rounded-md border border-[#2a2d3a]"
+          className="mx-auto text-center w-[70%] py-12 px-6 bg-[#151823] rounded-md border border-[#2a2d3a]"
         >
           <div className="inline-flex justify-center items-center p-3 rounded-full bg-[#1c1f2e] mb-4">
             <Search className="h-5 w-5 text-gray-500" />
           </div>
-          <p className="text-gray-300 text-sm font-medium mb-2">No matching entries found</p>
-          <p className="text-gray-500 text-xs mb-4">Try adjusting your search criteria</p>
+          <p className="text-gray-300 text-[2rem] font-medium mb-2">No matching entries found</p>
+          <p className="text-gray-500 text-[1rem] mb-4">Try adjusting your search criteria</p>
           <button
-            className="text-xs text-purple-500 border border-purple-900/50 rounded-md px-3 py-1.5 hover:bg-purple-900/20 transition-colors"
+            className="text-[1rem] text-purple-500 border border-purple-900/50 rounded-md px-3 py-1.5 hover:bg-purple-900/20 transition-colors"
             onClick={() => setSearchTerm("")}
           >
             Clear search
