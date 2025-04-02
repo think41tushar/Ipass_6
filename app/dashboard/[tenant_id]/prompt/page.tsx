@@ -270,10 +270,10 @@ const PromptScheduler: React.FC = () => {
         <CardContent className="p-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="">
             <TabsList className="mx-6">
-              <TabsTrigger value="prompt" className="">
+              <TabsTrigger value="prompt" className="w-[11rem]">
                 Prompt
               </TabsTrigger>
-              <TabsTrigger value="scheduled" className="">
+              <TabsTrigger value="scheduled" className="w-[11rem]">
                 Scheduled Tasks
               </TabsTrigger>
             </TabsList>
