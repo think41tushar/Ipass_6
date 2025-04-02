@@ -93,7 +93,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
         },
         body: JSON.stringify({
           userid: user_id,
-          tenant_d: tenant_id,
+          tenantid: tenant_id,
           query: prompt,
         }),
       });
