@@ -1,3 +1,4 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/[tenant_id]/prompt/page": "app/dashboard/[tenant_id]/prompt/page.js"
 }

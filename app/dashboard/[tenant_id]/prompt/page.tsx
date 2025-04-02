@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
-import { ScheduledTasksSection } from "@/components/scheduledTasksSection";
+import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
 import Loading from "@/components/ui/loading";
 import { ScheduledTask } from "@/lib/types";
 
@@ -332,7 +332,7 @@ const PromptScheduler: React.FC = () => {
               value="scheduled"
               className="p-6 bg-[#0f1219] text-white"
             >
-              <ScheduledTasksSection tasks={tasks} deleteTask={deleteTask} />
+              <ScheduledPromptsSection />
             </TabsContent>
           </Tabs>
         </CardContent>
