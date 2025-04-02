@@ -35,7 +35,7 @@ const CallbackContent: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Backend Response:", data);
-        router.push(`/dashboard/${tenant_id}/integrations`);
+        router.push(`/dashboard/${tenant_id}/integrations?google=true`);
       })
       .catch((error) => {
         console.error("Error sending data to backend:", error);
