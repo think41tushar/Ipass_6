@@ -64,7 +64,14 @@ export const ScheduledPromptsSection: React.FC = () => {
       }
       
       const data = await response.json()
-      setPrompts(data)
+      console.log("API Response:", data); // Debug log
+
+      if (Array.isArray(data.scheduled_prompt)) {
+        setPrompts(data.scheduled_prompt); // ✅ Correctly extracting the array
+      } else {
+        console.error("Expected an array, received:", data);
+        setPrompts([]); // Prevents crashes
+      }
     } catch (err) {
       console.error("Error fetching scheduled prompts:", err)
       setError(err instanceof Error ? err.message : 'An unknown error occurred')
@@ -110,23 +117,37 @@ export const ScheduledPromptsSection: React.FC = () => {
     fetchScheduledPrompts()
   }, [])
 
-  // Filter prompts based on recurrence type
   useEffect(() => {
-    if (!prompts || prompts.length === 0) return
-
-    setDailyPrompts(prompts.filter(prompt => prompt.recurrence_type === "daily"))
-    setWeeklyPrompts(prompts.filter(prompt => prompt.recurrence_type === "weekly"))
-    setMonthlyPrompts(prompts.filter(prompt => prompt.recurrence_type === "monthly"))
-    setIntervalPrompts(prompts.filter(prompt => prompt.recurrence_type === "interval"))
-    setCustomPrompts(prompts.filter(prompt => !["daily", "weekly", "monthly", "interval"].includes(prompt.recurrence_type)))
-    
-    // Set active tab based on available data
-    if (intervalPrompts.length > 0) setActiveTab("interval")
-    else if (dailyPrompts.length > 0) setActiveTab("daily")
-    else if (weeklyPrompts.length > 0) setActiveTab("weekly")
-    else if (monthlyPrompts.length > 0) setActiveTab("monthly")
-    else if (customPrompts.length > 0) setActiveTab("custom")
-  }, [prompts])
+    if (!prompts || prompts.length === 0) {
+      setDailyPrompts([]);
+      setWeeklyPrompts([]);
+      setMonthlyPrompts([]);
+      setIntervalPrompts([]);
+      setCustomPrompts([]);
+      setActiveTab(""); // Reset the active tab if no prompts exist
+      return;
+    }
+  
+    const daily = prompts.filter(prompt => prompt.recurrence_type === "daily");
+    const weekly = prompts.filter(prompt => prompt.recurrence_type === "weekly");
+    const monthly = prompts.filter(prompt => prompt.recurrence_type === "monthly");
+    const interval = prompts.filter(prompt => prompt.recurrence_type === "interval");
+    const custom = prompts.filter(prompt => !["daily", "weekly", "monthly", "interval"].includes(prompt.recurrence_type));
+  
+    setDailyPrompts(daily);
+    setWeeklyPrompts(weekly);
+    setMonthlyPrompts(monthly);
+    setIntervalPrompts(interval);
+    setCustomPrompts(custom);
+  
+    // Update active tab based on available prompts
+    if (interval.length > 0) setActiveTab("interval");
+    else if (daily.length > 0) setActiveTab("daily");
+    else if (weekly.length > 0) setActiveTab("weekly");
+    else if (monthly.length > 0) setActiveTab("monthly");
+    else if (custom.length > 0) setActiveTab("custom");
+    else setActiveTab(""); // Reset tab if no prompts remain
+  }, [prompts]);
 
   // Helper to derive status if not provided
   const getPromptStatus = (prompt: DBScheduledPrompt): 'pending' | 'completed' | 'failed' | 'running' => {
@@ -203,6 +224,30 @@ export const ScheduledPromptsSection: React.FC = () => {
         return 'Custom'
     }
   }
+
+  // Default empty state card
+  const EmptyStateCard = () => (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="text-center py-12 border border-dashed border-gray-800 rounded-lg bg-gray-900/30"
+    >
+      <div className="bg-purple-600 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+        <LucideCalendar className="h-8 w-8 text-white" />
+      </div>
+      <h3 className="text-xl font-medium text-gray-300 mb-2">No scheduled tasks</h3>
+      <p className="text-gray-500 max-w-md mx-auto">Create your first scheduled prompt to automate your workflow</p>
+      <Button 
+        variant="outline" 
+        size="sm"
+        className="mt-4 text-purple-400 border-purple-800 hover:bg-purple-900/30 hover:text-purple-300 hover:border-purple-600"
+      >
+        <CalendarIcon className="h-4 w-4 mr-2" />
+        Schedule a prompt
+      </Button>
+    </motion.div>
+  )
 
   // Render prompt list function to avoid duplicating code
   const renderPromptList = (promptList: DBScheduledPrompt[]) => {
@@ -308,86 +353,94 @@ export const ScheduledPromptsSection: React.FC = () => {
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-          <TabsTrigger 
-            value="daily" 
-            className={cn(
-              "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
-              "text-gray-400 hover:text-gray-200"
+      {/* Display default card if no prompts and not loading */}
+      {!isLoading && prompts.length === 0 && !error && (
+        <EmptyStateCard />
+      )}
+
+      {/* Only show tabs if there are prompts or we're loading */}
+      {(prompts.length > 0 || isLoading) && (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-5 bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
+            <TabsTrigger 
+              value="daily" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              Daily
+            </TabsTrigger>
+            <TabsTrigger 
+              value="weekly" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              Weekly
+            </TabsTrigger>
+            <TabsTrigger 
+              value="monthly" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              Monthly
+            </TabsTrigger>
+            <TabsTrigger 
+              value="interval" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              Interval
+            </TabsTrigger>
+            <TabsTrigger 
+              value="custom" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              Custom
+            </TabsTrigger>
+          </TabsList>
+          
+          <div className="mt-4">
+            {isLoading ? (
+              <div className="text-center py-12">
+                <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-500" />
+                <p className="text-gray-400">Loading scheduled prompts...</p>
+              </div>
+            ) : (
+              <>
+                <TabsContent value="daily">
+                  {renderPromptList(dailyPrompts)}
+                </TabsContent>
+                
+                <TabsContent value="weekly">
+                  {renderPromptList(weeklyPrompts)}
+                </TabsContent>
+                
+                <TabsContent value="monthly">
+                  {renderPromptList(monthlyPrompts)}
+                </TabsContent>
+                
+                <TabsContent value="interval">
+                  {renderPromptList(intervalPrompts)}
+                </TabsContent>
+                
+                <TabsContent value="custom">
+                  {renderPromptList(customPrompts)}
+                </TabsContent>
+              </>
             )}
-          >
-            Daily
-          </TabsTrigger>
-          <TabsTrigger 
-            value="weekly" 
-            className={cn(
-              "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
-              "text-gray-400 hover:text-gray-200"
-            )}
-          >
-            Weekly
-          </TabsTrigger>
-          <TabsTrigger 
-            value="monthly" 
-            className={cn(
-              "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
-              "text-gray-400 hover:text-gray-200"
-            )}
-          >
-            Monthly
-          </TabsTrigger>
-          <TabsTrigger 
-            value="interval" 
-            className={cn(
-              "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
-              "text-gray-400 hover:text-gray-200"
-            )}
-          >
-            Interval
-          </TabsTrigger>
-          <TabsTrigger 
-            value="custom" 
-            className={cn(
-              "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
-              "text-gray-400 hover:text-gray-200"
-            )}
-          >
-            Custom
-          </TabsTrigger>
-        </TabsList>
-        
-        <div className="mt-4">
-          {isLoading ? (
-            <div className="text-center py-12">
-              <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-500" />
-              <p className="text-gray-400">Loading scheduled prompts...</p>
-            </div>
-          ) : (
-            <>
-              <TabsContent value="daily">
-                {renderPromptList(dailyPrompts)}
-              </TabsContent>
-              
-              <TabsContent value="weekly">
-                {renderPromptList(weeklyPrompts)}
-              </TabsContent>
-              
-              <TabsContent value="monthly">
-                {renderPromptList(monthlyPrompts)}
-              </TabsContent>
-              
-              <TabsContent value="interval">
-                {renderPromptList(intervalPrompts)}
-              </TabsContent>
-              
-              <TabsContent value="custom">
-                {renderPromptList(customPrompts)}
-              </TabsContent>
-            </>
-          )}
-        </div>
-      </Tabs>
+          </div>
+        </Tabs>
+      )}
     </div>
   )
 }

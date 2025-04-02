@@ -1,4 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/dashboard/[tenant_id]/prompt/page": "app/dashboard/[tenant_id]/prompt/page.js"
+  "/dashboard/[tenant_id]/page": "app/dashboard/[tenant_id]/page.js",
+  "/dashboard/[tenant_id]/prompt/page": "app/dashboard/[tenant_id]/prompt/page.js",
+  "/tenant-admin-portal/[tenant_id]/page": "app/tenant-admin-portal/[tenant_id]/page.js"
 }
