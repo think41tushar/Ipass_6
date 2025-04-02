@@ -47,15 +47,19 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]) // Initialize empty to avoid UI/state mismatch
   const [months, setMonths] = useState<number[]>([]) // Initialize empty to avoid UI/state mismatch
 
-  // Use useCallback to memoize the calendar change handler
   const handleCalendarChange = useCallback(
     (newISO: string) => {
-      const selectedDate = new Date(newISO)
-      setDate({ from: selectedDate, to: selectedDate })
-      setExecutionTime(newISO)
+      const selectedDate = new Date(newISO);
+      setDate({ from: selectedDate, to: selectedDate });
+  
+      // Use selected time from the state instead of defaulting to 12:00
+      const formattedTime = time ? time : "12:00"; // Fallback in case time isn't set
+      const executionDateTime = `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`;
+      
+      setExecutionTime(executionDateTime);
     },
-    [setDate],
-  )
+    [setDate, time] // Ensure it reacts to time changes
+  );
 
   // Memoize reset function to prevent unnecessary re-renders
   const handleReset = useCallback(() => {

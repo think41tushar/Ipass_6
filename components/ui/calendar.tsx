@@ -19,16 +19,10 @@ const Calendar: React.FC<CalendarProps> = ({ value, onChange }) => {
   const [dateValue, setDateValue] = useState(initialDate);
   const [timeValue, setTimeValue] = useState(initialTime);
 
-  // Whenever date or time changes, update the combined ISO value.
   useEffect(() => {
-    if (dateValue && timeValue) {
-      // If time doesn't include seconds, append ":00"
-      const timeWithSeconds = timeValue.length === 5 ? `${timeValue}:00` : timeValue;
-      const combinedISO = `${dateValue}T${timeWithSeconds}`;
-      const combinedDate = new Date(combinedISO);
-      // Format the date with timezone offset
-      const formatted = format(combinedDate, "yyyy-MM-dd'T'HH:mm:ssXXX");
-      onChange(formatted);
+    if (dateValue) {
+      const combinedISO = `${dateValue}T${timeValue}:00`; // Keep time in sync
+      onChange(combinedISO);
     }
   }, [dateValue, timeValue, onChange]);
 
