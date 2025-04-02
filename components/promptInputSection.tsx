@@ -54,7 +54,18 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   
       // Use selected time from the state instead of defaulting to 12:00
       const formattedTime = time ? time : "12:00"; // Fallback in case time isn't set
-      const executionDateTime = `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`;
+      
+      // Create a new date object with the selected date and time
+      const dateTimeObj = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`);
+      
+      // Format with timezone offset included
+      const tzOffset = dateTimeObj.getTimezoneOffset();
+      const hours = Math.abs(Math.floor(tzOffset / 60));
+      const minutes = Math.abs(tzOffset % 60);
+      const sign = tzOffset <= 0 ? '+' : '-';
+      const tzString = `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      
+      const executionDateTime = `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00${tzString}`;
       
       setExecutionTime(executionDateTime);
     },
