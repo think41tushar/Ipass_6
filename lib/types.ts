@@ -1,16 +1,27 @@
 // src/components/PromptScheduler/types.ts
 import type { DateRange } from "react-day-picker";
 
-export type RecurrenceType = "none" | "daily" | "weekly" | "monthly";
+export type RecurrenceType = "none" | "daily" | "weekly" | "monthly" | "interval" | "custom";
 
 export interface ScheduledTask {
   id: string;
-  prompt: string;
-  dateTime: Date;
-  recurrence: RecurrenceType;
+  // prompt: string;
+  // dateTime: Date;
+  // recurrence: RecurrenceType;
   status: "pending" | "completed" | "failed";
   result?: string;
+  intervalValue?: number;
+  intervalDuration?: string;
   logs?: string[];
+  date: Date | undefined;
+  time: string;
+  recurrence: boolean;
+  recurrenceType: RecurrenceType;
+  daysOfMonth?: number[];
+  prompt: string;
+  executionTime?: string;
+  daysOfWeek?: number[];
+  months?: number[];
 }
 
 export interface PromptInputSectionProps {
@@ -23,6 +34,7 @@ export interface PromptInputSectionProps {
   setSessionid: (sessionid: string) => void;
   setIsSSEconnected: (isSSE: boolean) => void;
   session_id: string;
+  ScheduledTask: ScheduledTask;
   setDate: (date: DateRange | undefined) => void;
   setTime: (time: string) => void;
   setRecurrence: (recurrence: RecurrenceType) => void;
@@ -33,6 +45,6 @@ export interface PromptInputSectionProps {
   isSSEconnected: boolean;
   setError: (error: string) => void;
   handleExecute: () => void;
-  handleSchedule: () => void;
+  handleSchedule: (taskData: ScheduledTask) => void;
   handleRunTask: (isRerun: boolean) => void;
 }

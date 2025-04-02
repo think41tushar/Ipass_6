@@ -70,7 +70,7 @@ export const usePromptScheduler = () => {
     }, 500);
   };
 
-  const handleSchedule = async () => {
+  const handleSchedule = async (scheduledTaskData: ScheduledTask) => {
     if (!prompt.trim()) {
       addLog("Error: Prompt cannot be empty");
       return;
@@ -79,42 +79,30 @@ export const usePromptScheduler = () => {
       addLog("Error: Date must be selected");
       return;
     }
-    const [hours, minutes] = time.split(":").map(Number);
-    const scheduledDateTime = new Date(date.from);
-    scheduledDateTime.setHours(hours, minutes);
-    
-    if (scheduledDateTime < new Date()) {
-      addLog("Error: Cannot schedule for a past date/time");
-      return;
-    }
-  
-    // Function to generate random string
-    const getRandomString = (length: number) => {
-      return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
-    };
+
+    const sessid = "123";
     const djangoUrl = "https://syncdjango.site";
-    const tenant_id=localStorage.getItem("tenant_id");
-    const user_id=localStorage.getItem("user_id"); // Assuming you're using useParams from earlier
-    const sessid = getRandomString(10);
+    const tenant_id = localStorage.getItem("tenant_id");
+    const user_id = localStorage.getItem("user_id");
   
     try {
       const schedulePayload = {
-        "execution_time": scheduledDateTime.toISOString(),
-        "is_recurring": recurrence !== "none", // Convert to boolean
-        "user_id": user_id,
-        "input": prompt,
-        "session_id": sessid,
-        "rerun": false,
-        "history": [],
-        "changed": false,
-        // Only include these if is_recurring is true
-        ...(recurrence !== "none" && {
-          recurrence_type: recurrence,
-          // Add additional recurrence details as needed
-          ...(recurrence === "weekly" && { days_of_week: [scheduledDateTime.getDay()] }),
-          ...(recurrence === "monthly" && { days_of_month: [scheduledDateTime.getDate()] }),
-          // ...(recurrence === "yearly" && { months: [scheduledDateTime.getMonth() + 1] })
-        })
+        execution_time: scheduledTaskData.executionTime, // ✅ Correctly mapped
+        is_recurring: scheduledTaskData.recurrence, // ✅ Correctly mapped
+        user_id,
+        input: prompt,
+        session_id: sessid,
+        rerun: false,
+        history: [],
+        changed: false,
+        ...(scheduledTaskData.recurrence && {
+          recurrence_type: scheduledTaskData.recurrenceType,
+          interval_every: scheduledTaskData.intervalValue,
+          interval_period: scheduledTaskData.intervalDuration,
+          days_of_week: scheduledTaskData.daysOfWeek?.length ? scheduledTaskData.daysOfWeek : undefined,
+          days_of_month: scheduledTaskData.daysOfMonth?.length ? scheduledTaskData.daysOfMonth : undefined,
+          months: scheduledTaskData.months?.length ? scheduledTaskData.months : undefined,
+        }),
       };
   
       const response = await fetch(`${djangoUrl}/schedule/prompt/`, {
@@ -122,7 +110,7 @@ export const usePromptScheduler = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(schedulePayload)
+        body: JSON.stringify(schedulePayload),
       });
   
       if (!response.ok) {
@@ -135,20 +123,23 @@ export const usePromptScheduler = () => {
       const newTask: ScheduledTask = {
         id: sessid,
         prompt,
-        dateTime: scheduledDateTime,
-        recurrence,
+        date: scheduledTaskData.date, // ✅ Correctly mapped
+        time: scheduledTaskData.time,
+        recurrence: scheduledTaskData.recurrence, // ✅ Correctly mapped
+        recurrenceType: scheduledTaskData.recurrenceType,
         status: "pending",
       };
   
       setTasks([...tasks, newTask]);
-      addLog(`Task scheduled for ${format(scheduledDateTime, "PPpp")}`);
+      addLog(`Task scheduled for ${format(scheduledTaskData.date || new Date(), "PPpp")}`);
       setPrompt("");
       setActiveTab("scheduled");
     } catch (error) {
       console.error("Scheduling error:", error);
-      addLog(`Error scheduling task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      addLog(`Error scheduling task: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
+  
 
   const deleteTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));

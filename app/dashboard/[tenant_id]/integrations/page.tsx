@@ -34,6 +34,8 @@ const handleGoogleAuth = async () => {
   if (!USER_ID || USER_ID === "") {
     USER_ID = "fdb214f4-cb91-4893-b55c-82238648be9b"
   }
+
+  // https://ipass-6-tusharbisht-think41coms-projects.vercel.app/callback
   const CLIENT_ID = "934128942917-lel7crgqajr5dffnhh054sgosffke9fl.apps.googleusercontent.com"
   const REDIRECT_URI = "https://ipass-6-tusharbisht-think41coms-projects.vercel.app/callback"
   const SCOPES = [
@@ -275,14 +277,42 @@ const IntegrationComponent: React.FC = () => {
     }
   }
 
+
   // Check for Google and HubSpot authentication on component mount and when the component rerenders
   useEffect(() => {
     // Ensure we're running in the browser
     if (typeof window !== "undefined") {
-      const tenant_id = localStorage.getItem("tenant_id")
+      // Check if the current URL contains the Google callback parameters
+    const urlParams = new URLSearchParams(window.location.search)
+    // const code = urlParams.get("code")
+    // const state = urlParams.get("state")
+    
+    // if (code && state) {
+      try {
+        // Parse the state parameter
+        const googleTrue = urlParams.get("google")
+        // const tenant_id = urlParams.get("tenant_id")
+        // Update Google integration in localStorage
+        if (googleTrue) {
+          setIntegrations((prev) => ({
+            ...prev,
+            google: true,
+          }))
+          // localStorage.setItem(`tenant_${tenant_id}_google_integration`, "true")
+        }
+        // Update component state to reflect the connection
+      
+        // Optional: Clear the URL parameters to prevent repeated processing
+        window.history.replaceState({}, document.title, window.location.pathname)
+      } catch (error) {
+        console.error("Error processing Google callback:", error)
+      }
+    }
+
+    const tenant_id = localStorage.getItem("tenant_id")
 
       // Check Google integration status from localStorage
-      const googleIntegration = localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true"
+      // const googleIntegration = localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true"
 
       // Check HubSpot integration status
       const hubspotIntegration = localStorage.getItem(`tenant_${tenant_id}_hubspot_integration`) === "true"
@@ -290,44 +320,40 @@ const IntegrationComponent: React.FC = () => {
       // Update integration states if changed
       setIntegrations((prev) => ({
         ...prev,
-        google: googleIntegration,
+        // google: googleIntegration,
         hubspot: hubspotIntegration,
       }))
 
       // Check for Google OAuth callback
-      checkGoogleCallback()
-    }
+      // checkGoogleCallback()
   }, []) // Empty dependency array ensures this runs only once on mount
 
   // Check for Google OAuth callback and update integration status
-  const checkGoogleCallback = () => {
-    // Check if the current URL contains the Google callback parameters
-    const urlParams = new URLSearchParams(window.location.search)
-    const code = urlParams.get("code")
-    const state = urlParams.get("state")
-
-    if (code && state) {
-      try {
-        // Parse the state parameter
-        const stateData = JSON.parse(decodeURIComponent(state))
-        const tenant_id = stateData.tenant_id
-
-        // Update Google integration in localStorage
-        localStorage.setItem(`tenant_${tenant_id}_google_integration`, "true")
-
-        // Update component state
-        setIntegrations((prev) => ({
-          ...prev,
-          google: true,
-        }))
-
-        // Optional: Clear the URL parameters to prevent repeated processing
-        window.history.replaceState({}, document.title, window.location.pathname)
-      } catch (error) {
-        console.error("Error processing Google callback:", error)
-      }
-    }
-  }
+  // const checkGoogleCallback = () => {
+  //   // Check if the current URL contains the Google callback parameters
+  //   const urlParams = new URLSearchParams(window.location.search)
+  //   const code = urlParams.get("code")
+  //   const state = urlParams.get("state")
+    
+  //   if (code && state) {
+  //     try {
+  //       // Parse the state parameter
+  //       const stateData = JSON.parse(decodeURIComponent(state))
+  //       const tenant_id = stateData.tenant_id
+  //       // Update Google integration in localStorage
+  //       localStorage.setItem(`tenant_${tenant_id}_google_integration`, "true")
+  //       // Update component state to reflect the connection
+  //       setIntegrations((prev) => ({
+  //         ...prev,
+  //         google: true,
+  //       }))
+  //       // Optional: Clear the URL parameters to prevent repeated processing
+  //       window.history.replaceState({}, document.title, window.location.pathname)
+  //     } catch (error) {
+  //       console.error("Error processing Google callback:", error)
+  //     }
+  //   }
+  // }
 
   // Integration data with additional details
   const integrationData = [
