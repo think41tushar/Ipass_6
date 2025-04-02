@@ -63,12 +63,51 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]); // Initialize empty to avoid UI/state mismatch
   const [months, setMonths] = useState<number[]>([]); // Initialize empty to avoid UI/state mismatch
   const [isTodoCalled, setIsTodoCalled] = useState(false);
+  const [isBackendSendCalled, setIsBackendSendCalled] = useState(false);
 
   function showToastTodo(success: boolean) {
     if (success) {
       toast.success("Todo fetched successfully!");
     } else {
       toast.error("Failed to fetch todo!");
+    }
+  }
+
+  function showBackendToast(success: boolean) {
+    if (success) {
+      toast.success("Summary sent to backend");
+    } else {
+      toast.error("Failed to send summary to backend");
+    }
+  }
+
+  async function sendToBackend() {
+    try {
+      setIsBackendSendCalled(true);
+      const tenant_id = localStorage.getItem("tenant_id");
+      const user_id = localStorage.getItem("user_id");
+      const response = await fetch("https://rishit41.online/sendToBackend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userid: user_id,
+          tenant_d: tenant_id,
+          query: prompt,
+        }),
+      });
+      if (response.ok) {
+        setIsBackendSendCalled(false);
+        showBackendToast(true);
+      } else {
+        setIsBackendSendCalled(false);
+        showBackendToast(false);
+      }
+    } catch (error: any) {
+      setIsBackendSendCalled(false);
+      showBackendToast(false);
+      throw new Error("Failed to send to backend: ", error.message);
     }
   }
 
@@ -349,6 +388,21 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
         >
           <RotateCcw className="mr-2 h-4 w-4" />
           Reset
+        </Button>
+        <Button
+          variant="default"
+          className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
+          onClick={sendToBackend}
+          disabled={isBackendSendCalled || !prompt.trim}
+        >
+          {isBackendSendCalled ? (
+            <div className="flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : (
+            <Play className="mr-2 h-4 w-4" />
+          )}
+          Send Backend
         </Button>
         <Button
           variant="default"
