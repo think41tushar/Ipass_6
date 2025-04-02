@@ -77,12 +77,13 @@ const PromptScheduler: React.FC = () => {
     recurrenceType: "none",
     prompt: "Sample task",
   };
+  
 
   // Prompt request function
   async function callPrompt(
     input: string,
     session_id: string,
-    isRerun: boolean,
+    isRerun: boolean
   ) {
     let updated = "";
     updatedLogs.forEach((log) => {

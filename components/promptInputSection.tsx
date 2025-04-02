@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useState, useCallback } from "react";
 import { format } from "date-fns";
@@ -10,30 +10,21 @@ import {
   ListTodo,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import Calendar from "@/components/ui/calendar";
-import Loading from "@/components/ui/loading";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import Calendar from "@/components/ui/calendar"
+import Loading from "@/components/ui/loading"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import type { ScheduledTask } from "@/lib/types";
-import { ToastContainer, toast } from "react-toastify";
-import type { PromptInputSectionProps } from "@/lib/types";
+
+
+import type { PromptInputSectionProps } from "@/lib/types"
 
 // Memoize Calendar to prevent unnecessary re-renders
-const MemoizedCalendar = React.memo(Calendar);
+const MemoizedCalendar = React.memo(Calendar)
 
 export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   date,
@@ -56,54 +47,32 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   handleSchedule,
   handleRunTask,
 }) => {
-  const [executionTime, setExecutionTime] = useState("");
-  const [intervalValue, setIntervalValue] = useState(""); // New state for interval value
-  const [intervalDuration, setIntervalDuration] = useState("minutes"); // Default duration unit
-  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]); // Initialize empty to avoid UI/state mismatch
-  const [months, setMonths] = useState<number[]>([]); // Initialize empty to avoid UI/state mismatch
-  const [isTodoCalled, setIsTodoCalled] = useState(false);
-
-  function showToastTodo(success: boolean) {
-    if (success) {
-      toast.success("Todo fetched successfully!");
-    } else {
-      toast.error("Failed to fetch todo!");
-    }
-  }
-
-  async function handleGetTodo() {
-    try {
-      setIsTodoCalled(true);
-      const response = await fetch("https://rishit41.online/todolist", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        showToastTodo(true);
-        setIsTodoCalled(false);
-      } else {
-        setIsTodoCalled(false);
-        showToastTodo(false);
-      }
-    } catch (error: any) {
-      setIsTodoCalled(false);
-      throw new Error("Failed to send todos: ", error.message);
-    }
-  }
+  const [executionTime, setExecutionTime] = useState("")
+  const [intervalValue, setIntervalValue] = useState("") // New state for interval value
+  const [intervalDuration, setIntervalDuration] = useState("minutes") // Default duration unit
+  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]) // Initialize empty to avoid UI/state mismatch
+  const [months, setMonths] = useState<number[]>([]) // Initialize empty to avoid UI/state mismatch
 
   const handleCalendarChange = useCallback(
     (newISO: string) => {
       const selectedDate = new Date(newISO);
       setDate({ from: selectedDate, to: selectedDate });
-
+  
       // Use selected time from the state instead of defaulting to 12:00
       const formattedTime = time ? time : "12:00"; // Fallback in case time isn't set
-      const executionDateTime = `${format(
-        selectedDate,
-        "yyyy-MM-dd"
-      )}T${formattedTime}:00`;
-
+      
+      // Create a new date object with the selected date and time
+      const dateTimeObj = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`);
+      
+      // Format with timezone offset included
+      const tzOffset = dateTimeObj.getTimezoneOffset();
+      const hours = Math.abs(Math.floor(tzOffset / 60));
+      const minutes = Math.abs(tzOffset % 60);
+      const sign = tzOffset <= 0 ? '+' : '-';
+      const tzString = `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      
+      const executionDateTime = `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00${tzString}`;
+      
       setExecutionTime(executionDateTime);
     },
     [setDate, time] // Ensure it reacts to time changes
@@ -111,28 +80,29 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
   // Memoize reset function to prevent unnecessary re-renders
   const handleReset = useCallback(() => {
-    setPrompt("");
-    setDate({ from: new Date(), to: new Date() });
-    setTime("12:00");
-    setRecurrence("none");
-    setExecutionTime("");
-    setIntervalValue(""); // Reset interval value
-    setIntervalDuration("minutes");
-    setDaysOfWeek([]);
-    setMonths([]);
-  }, [setPrompt, setDate, setTime, setRecurrence]);
+    setPrompt("")
+    setDate({ from: new Date(), to: new Date() })
+    setTime("12:00")
+    setRecurrence("none")
+    setExecutionTime("")
+    setIntervalValue("") // Reset interval value
+    setIntervalDuration("minutes") 
+    setDaysOfWeek([])
+    setMonths([])
+  }, [setPrompt, setDate, setTime, setRecurrence])
 
   const toggleDayOfWeek = (day: number) => {
     setDaysOfWeek((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
-  };
 
   const toggleMonth = (month: number) => {
     setMonths((prev) =>
       prev.includes(month) ? prev.filter((m) => m !== month) : [...prev, month]
+
     );
   };
+    )
+  }
 
   const getTaskData = (): ScheduledTask => {
     const taskData: ScheduledTask = {
@@ -145,25 +115,23 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
       executionTime: executionTime,
       status: "pending",
       logs: [],
-    };
-
+    }
+  
     // Only add interval values if recurrence type is "interval"
     if (recurrence === "interval") {
-      taskData.intervalValue = intervalValue
-        ? Number(intervalValue)
-        : undefined;
+      taskData.intervalValue = intervalValue ? Number(intervalValue) : undefined;
       taskData.intervalDuration = intervalDuration;
     }
-
+  
     // Only add custom recurrence values if recurrence type is "custom"
     if (recurrence === "custom") {
       taskData.daysOfWeek = daysOfWeek.length > 0 ? daysOfWeek : undefined;
       taskData.months = months.length > 0 ? months : undefined;
     }
-
+  
     return taskData;
-  };
-
+  }
+  
   return (
     <div className="space-y-6 bg-gray-900/30 border border-gray-800 rounded-lg p-6 shadow-lg">
       <h3 className="text-lg font-medium text-white mb-4">Create Task</h3>
@@ -181,11 +149,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
                 className="justify-start text-left font-normal border-gray-700 bg-[#111827] hover:bg-gray-800 text-gray-300 w-full"
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
-                {date && date.from ? (
-                  format(date.from, "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}{" "}
+                {date && date.from ? format(date.from, "PPP") : <span>Pick a date</span>}{" "}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 border-gray-700 bg-[#111827]">
@@ -210,10 +174,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
               className="border-gray-700 bg-[#111827] text-white"
             />
 
-            <Select
-              value={recurrence}
-              onValueChange={(value: any) => setRecurrence(value)}
-            >
+            <Select value={recurrence} onValueChange={(value: any) => setRecurrence(value)}>
               <SelectTrigger className="w-[180px] border-gray-700 bg-[#111827] text-white">
                 <SelectValue placeholder="Recurrence" />
               </SelectTrigger>
@@ -234,9 +195,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
       {recurrence === "interval" && (
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="intervalValue" className="text-gray-300">
-              Interval Value
-            </Label>
+            <Label htmlFor="intervalValue" className="text-gray-300">Interval Value</Label>
             <Input
               id="intervalValue"
               type="number"
@@ -248,13 +207,8 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="intervalDuration" className="text-gray-300">
-              Interval Duration
-            </Label>
-            <Select
-              value={intervalDuration}
-              onValueChange={setIntervalDuration}
-            >
+            <Label htmlFor="intervalDuration" className="text-gray-300">Interval Duration</Label>
+            <Select value={intervalDuration} onValueChange={setIntervalDuration}>
               <SelectTrigger className="w-full border-gray-700 bg-[#111827] text-white">
                 <SelectValue placeholder="Duration" />
               </SelectTrigger>
@@ -338,7 +292,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           variant="default"
           className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
           onClick={() => {
-            handleRunTask(false);
+            handleRunTask(false)
           }}
           disabled={isExecuting || !prompt.trim()}
         >
@@ -367,6 +321,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           )}
           Schedule
         </Button>
+        
         <Button
           variant="default"
           className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
@@ -387,3 +342,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
     </div>
   );
 };
+      </div>
+    </div>
+  )
+}
