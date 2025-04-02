@@ -57,6 +57,22 @@ function SignupDetailsForm({ onSubmit, error }: SignupDetailsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+      <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="space-y-1">
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input className="h-9 min-w-[350px]" placeholder="admin" {...field} />
+              </FormControl>
+              <FormDescription>This is your public display name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -71,20 +87,7 @@ function SignupDetailsForm({ onSubmit, error }: SignupDetailsFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="space-y-1">
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input className="h-9 min-w-[350px]" placeholder="admin" {...field} />
-              </FormControl>
-              <FormDescription>This is your public display name.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+       
         
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button type="submit" className="w-full h-9 rounded-md min-w-[300px]">
