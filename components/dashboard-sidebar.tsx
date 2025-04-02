@@ -1,102 +1,97 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { LayoutDashboard, User, Settings, Search, Rocket } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useParams, usePathname } from "next/navigation";
-import Loading from "@/components/ui/loading";
+import Link from "next/link"
+import { LayoutDashboard, User, Settings, Search, Rocket } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useParams, usePathname } from "next/navigation"
 
 export default function DashboardSidebar() {
-  const [selected, setSelected] = useState("dashboard");
-  const { tenant_id } = useParams();
-  const pathname = usePathname(); // ADDED: Hook to detect route changes
-  const [loading, setLoading] = useState(false); // loading state for route change
+  const [selected, setSelected] = useState("dashboard")
+  const { tenant_id } = useParams()
+  const pathname = usePathname() // ADDED: Hook to detect route changes
+  const [loading, setLoading] = useState(false) // loading state for route change
 
   // Reset loading state when the route changes
   useEffect(() => {
-    setLoading(false);
-  }, [pathname]);
+    setLoading(false)
+  }, [pathname])
 
   // Handler to update selection and trigger loading overlay.
   const handleLinkClick = (section: string) => {
-    setSelected(section);
-    setLoading(true); // Set loading true on click.
-  };
+    setSelected(section)
+    setLoading(true) // Set loading true on click.
+  }
 
   return (
     <div>
-      <div className="flex flex-col border-r border-muted p-4 gap-4 px-4 h-[100vh]">
+      <div className="flex flex-col border-r border-gray-800 p-4 gap-4 px-4 h-[100vh] bg-[#0f1219]">
+        <div className="mb-6 mt-2">
+          <div className="text-gray-400 text-xs font-medium uppercase tracking-wider px-4 mb-2">Main Menu</div>
+        </div>
+
         <Link
           href={`/dashboard/${tenant_id}`}
-          className={`flex items-center gap-4 p-2 px-4 rounded-md ${
-            selected === "dashboard"
-              ? "bg-white text-black"
-              : "text-muted-foreground"
-          } hover:bg-muted hover:text-white`}
+          className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
+            selected === "dashboard" ? "bg-[#1a1f2c] text-white border-l-4 border-purple-600" : "text-gray-400"
+          } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("dashboard")}
         >
-          <LayoutDashboard className="h-6 w-6" />
-          <span className="text-lg">Dashboard</span>
+          <LayoutDashboard className={`h-5 w-5 ${selected === "dashboard" ? "text-purple-500" : ""}`} />
+          <span className="text-sm font-medium">Dashboard</span>
         </Link>
 
         <Link
           href={`/dashboard/${tenant_id}/users`}
-          className={`flex items-center gap-4 p-2 px-4 rounded-md ${
-            selected === "users"
-              ? "bg-white text-black"
-              : "text-muted-foreground"
-          } hover:bg-muted hover:text-white`}
+          className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
+            selected === "users" ? "bg-[#1a1f2c] text-white border-l-4 border-purple-600" : "text-gray-400"
+          } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("users")}
         >
-          <User className="h-6 w-6" />
-          <span className="text-lg">Users</span>
+          <User className={`h-5 w-5 ${selected === "users" ? "text-purple-500" : ""}`} />
+          <span className="text-sm font-medium">Users</span>
         </Link>
 
         <Link
           href={`/dashboard/${tenant_id}/integrations`}
-          className={`flex items-center gap-4 p-2 px-4 rounded-md ${
-            selected === "integrations"
-              ? "bg-white text-black"
-              : "text-muted-foreground"
-          } hover:bg-muted hover:text-white`}
+          className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
+            selected === "integrations" ? "bg-[#1a1f2c] text-white border-l-4 border-purple-600" : "text-gray-400"
+          } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("integrations")}
         >
-          <Settings className="h-6 w-6" />
-          <span className="text-lg">Integrations</span>
+          <Settings className={`h-5 w-5 ${selected === "integrations" ? "text-purple-500" : ""}`} />
+          <span className="text-sm font-medium">Integrations</span>
         </Link>
 
         <Link
           href={`/dashboard/${tenant_id}/global-search`}
-          className={`flex items-center gap-4 p-2 px-4 rounded-md ${
-            selected === "global-search"
-              ? "bg-white text-black"
-              : "text-muted-foreground"
-          } hover:bg-muted hover:text-white`}
+          className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
+            selected === "global-search" ? "bg-[#1a1f2c] text-white border-l-4 border-purple-600" : "text-gray-400"
+          } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("global-search")}
         >
-          <Search className="h-6 w-6" />
-          <span className="text-lg">Search</span>
+          <Search className={`h-5 w-5 ${selected === "global-search" ? "text-purple-500" : ""}`} />
+          <span className="text-sm font-medium">Search</span>
         </Link>
+
         <Link
           href={`/dashboard/${tenant_id}/prompt`}
-          className={`flex items-center gap-4 p-2 px-4 rounded-md ${
-            selected === "prompt"
-              ? "bg-white text-black"
-              : "text-muted-foreground"
-          } hover:bg-muted hover:text-white`}
+          className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
+            selected === "prompt" ? "bg-[#1a1f2c] text-white border-l-4 border-purple-600" : "text-gray-400"
+          } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("prompt")}
         >
-          <Rocket className="h-6 w-6" />
-          <span className="text-lg">Prompt</span>
+          <Rocket className={`h-5 w-5 ${selected === "prompt" ? "text-purple-500" : ""}`} />
+          <span className="text-sm font-medium">Prompt</span>
         </Link>
       </div>
 
       {/* Loading overlay using your existing class */}
       {loading && (
-        <div className="container mx-auto h-[100vh] flex items-center justify-center">
-          <Loading />
+        <div className="fixed inset-0 bg-[#0a0c13]/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="h-10 w-10 rounded-full border-4 border-gray-700 border-t-purple-500 animate-spin"></div>
         </div>
       )}
     </div>
-  );
+  )
 }
+

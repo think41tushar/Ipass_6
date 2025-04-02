@@ -1,7 +1,7 @@
-// src/components/PromptScheduler/index.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 
 import {
@@ -19,8 +19,7 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledTasksSection } from "@/components/scheduledTasksSection";
-import Loading from "@/components/ui/loading"
-import { any } from "zod";
+import Loading from "@/components/ui/loading";
 
 const PromptScheduler: React.FC = () => {
   const {
@@ -85,19 +84,19 @@ const PromptScheduler: React.FC = () => {
     let requestBody = {};
     if (isRerun) {
       requestBody = {
-        "input": input,
-        "session_id": session_id,
-        "rerun": true,
-        "history": history,
-        "changed": updated,
+        input: input,
+        session_id: session_id,
+        rerun: true,
+        history: history,
+        changed: updated,
       };
     } else {
       requestBody = {
-        "input": input,
-        "session_id": session_id,
-        "rerun": false,
-        "history": [],
-        "changed": false,
+        input: input,
+        session_id: session_id,
+        rerun: false,
+        history: [],
+        changed: false,
       };
     }
     try {
@@ -207,12 +206,12 @@ const PromptScheduler: React.FC = () => {
     }
   };
 
-    // NEW: Wrapper for Connect to handle loading indicator
-    const handleConnectWithLoading = async () => {
-      setConnectLoading(true);
-      await handleConnect();
-      setConnectLoading(false);
-    };
+  // NEW: Wrapper for Connect to handle loading indicator
+  const handleConnectWithLoading = async () => {
+    setConnectLoading(true);
+    await handleConnect();
+    setConnectLoading(false);
+  };
 
   if (loading) {
     return (
@@ -223,49 +222,63 @@ const PromptScheduler: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-8 bg-background">
-      <Card className="border-background bg-background shadow-xl overflow-hidden">
-        <CardHeader className="pb-2 border-b border-background">
+    <div className="container mx-auto p-8 bg-[#0a0c13]">
+      <Card className="border border-gray-800 bg-[#0f1219] shadow-xl overflow-hidden rounded-lg">
+        <CardHeader className="pb-2 border-b border-gray-800">
           <CardTitle className="flex gap-8 items-center justify-between">
-            <div className="text-4xl font-bold text-white">
+            <div className="text-4xl font-bold text-white flex items-center">
+              <div className="bg-purple-600 h-10 w-10 rounded-full flex items-center justify-center mr-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
               Prompt Scheduler
             </div>
-            <Button onClick={handleConnectWithLoading}>
-            {connectLoading ? (
-              <div className="container mx-auto h-[100vh] flex items-center justify-center">
-                <Loading/>
-              </div>
+            <Button
+              onClick={handleConnectWithLoading}
+              className={`${
+                isConnected
+                  ? "bg-purple-600 hover:bg-purple-700"
+                  : "bg-gray-700 hover:bg-gray-600"
+              } text-white transition-colors duration-200`}
+            >
+              {connectLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin"></div>
+                </div>
+              ) : isConnected ? (
+                "Connected"
               ) : (
-                isConnected ? "Connected" : "Connect"
+                "Connect"
               )}
             </Button>
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-gray-400 mt-2">
             Schedule and execute prompts with recurrence options
           </CardDescription>
         </CardHeader>
 
         <CardContent className="p-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="">
-            <TabsList className="bg-background rounded-none grid grid-cols-3">
-              <TabsTrigger
-                value="prompt"
-                className="data-[state=active]:bg-slate-900 data-[state=active]:text-white"
-              >
+            <TabsList className="mx-6">
+              <TabsTrigger value="prompt" className="w-[11rem]">
                 Prompt
               </TabsTrigger>
-              <TabsTrigger
-                value="scheduled"
-                className="data-[state=active]:bg-slate-900 data-[state=active]:text-white"
-              >
+              <TabsTrigger value="scheduled" className="w-[11rem]">
                 Scheduled Tasks
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent
-              value="prompt"
-              className="p-6 bg-background text-white"
-            >
+            <TabsContent value="prompt" className="p-6 bg-[#0f1219] text-white">
               <PromptInputSection
                 date={date}
                 time={time}
@@ -290,33 +303,36 @@ const PromptScheduler: React.FC = () => {
                 handleRunTask={handleRunTask}
               />
 
-              <LogsAndResultSection
-                logs={logs}
-                result={promptResponse}
-                isExecuting={isExecuting}
-                updatedLogs={updatedLogs}
-                setUpdatedLogs={setUpdatedLogs}
-                handleRunTask={handleRunTask}
-              />
+              <div className="my-4">
+                <LogsAndResultSection
+                  logs={logs}
+                  result={promptResponse}
+                  isExecuting={isExecuting}
+                  updatedLogs={updatedLogs}
+                  setUpdatedLogs={setUpdatedLogs}
+                  handleRunTask={handleRunTask}
+                />
+              </div>
             </TabsContent>
 
             <TabsContent
               value="scheduled"
-              className="p-6 bg-background text-white"
+              className="p-6 bg-[#0f1219] text-white"
             >
               <ScheduledTasksSection tasks={tasks} deleteTask={deleteTask} />
             </TabsContent>
           </Tabs>
         </CardContent>
-        <CardFooter className="p-4 border-t border-background bg-background">
-          <div className="flex items-center text-xs text-slate-500 justify-between">
+        <CardFooter className="p-4 border-t border-gray-800 bg-[#0f1219]">
+          <div className="flex items-center text-xs text-gray-500 justify-between w-full">
             <div className="flex items-center">
-              <AlertCircle className="h-3 w-3 mr-1" />
+              <AlertCircle className="h-3 w-3 mr-1 text-purple-400" />
               <span>
                 Tasks are stored locally and will persist between sessions
               </span>
             </div>
-            <div>
+            <div className="flex items-center">
+              <div className="h-2 w-2 rounded-full bg-purple-600 mr-2"></div>
               {tasks.length} task{tasks.length !== 1 ? "s" : ""} scheduled
             </div>
           </div>

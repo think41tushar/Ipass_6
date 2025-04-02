@@ -1,5 +1,6 @@
-// src/components/PromptScheduler/LogsAndResultSection.tsx
-import React from "react";
+"use client";
+
+import type React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,12 +28,14 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
     <div className="space-y-6">
       {/* Logs Section */}
       <div className="space-y-2">
-        <h3 className="text-lg font-medium text-slate-300">Execution Logs</h3>
-        <Card className="border-background bg-background/30">
+        <Card className="border border-gray-800 bg-gray-900/30 rounded-lg shadow-lg">
+          <h3 className="text-lg font-medium text-white px-6">
+            Execution Logs
+          </h3>
           <CardContent className="p-4">
-            <ScrollArea className="h-[300px] p-4 border rounded">
+            <ScrollArea className="h-[300px] p-4 border border-gray-800 rounded bg-[#111827]">
               {logs.length > 0 ? (
-                <div className="space-y-1 font-mono pt-2 text-sm text-slate-300">
+                <div className="space-y-1 font-mono pt-2 text-sm text-gray-300">
                   {logs.map((log, index) => {
                     const isToolExecution = log.startsWith("Executing tool:");
                     let formattedLog = log;
@@ -62,7 +65,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                             ? updatedLogs[index]
                             : formattedLog
                         }
-                        className="w-full bg-background text-yellow-300 font-mono text-sm p-2 my-2 border border-yellow-500 rounded resize-y outline-none"
+                        className="w-full bg-[#111827] text-purple-300 font-mono text-sm p-2 my-2 border border-gray-700 rounded resize-y outline-none"
                         rows={Math.max(formattedLog.split("\n").length, 3)}
                         onChange={(e) => {
                           const newLogs = [...updatedLogs];
@@ -73,7 +76,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                     ) : (
                       <div
                         key={index}
-                        className="border-l-2 border-slate-700 pl-3 py-1 my-2"
+                        className="border-l-2 border-gray-700 pl-3 py-1 my-2"
                       >
                         {log}
                       </div>
@@ -81,7 +84,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   })}
                 </div>
               ) : (
-                <div className="text-slate-500 italic text-center py-4">
+                <div className="text-gray-500 italic text-center py-4">
                   No logs available. Execute a prompt to see logs.
                 </div>
               )}
@@ -93,9 +96,9 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                 onClick={() => {
                   handleRunTask(true);
                 }}
-                className="mt-4"
+                className="mt-4 bg-purple-600 hover:bg-purple-700 text-white"
               >
-                Run Again ?
+                Run Again
               </Button>
             </div>
           </CardContent>
@@ -104,8 +107,8 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
 
       {/* Result Section */}
       <div className="space-y-2">
-        <h3 className="text-lg font-medium text-slate-300">Result</h3>
-        <Card className="border-background bg-background/30">
+        <h3 className="text-lg font-medium text-white">Result</h3>
+        <Card className="border border-gray-800 bg-gray-900/30 rounded-lg shadow-lg">
           <CardContent className="p-4">
             <AnimatePresence mode="wait">
               {isExecuting ? (
@@ -117,8 +120,8 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   className="flex items-center justify-center py-8"
                 >
                   <div className="flex flex-col items-center">
-                    <div className="h-8 w-8 rounded-full border-2 border-slate-600 border-t-blue-500 animate-spin mb-2"></div>
-                    <p className="text-slate-400">Processing prompt...</p>
+                    <div className="h-8 w-8 rounded-full border-2 border-gray-700 border-t-purple-500 animate-spin mb-2"></div>
+                    <p className="text-gray-400">Processing prompt...</p>
                   </div>
                 </motion.div>
               ) : result ? (
@@ -127,9 +130,9 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="p-4 bg-background rounded-md border border-slate-700"
+                  className="p-4 bg-[#111827] rounded-md border border-gray-800"
                 >
-                  <pre className="whitespace-pre-wrap text-slate-300">
+                  <pre className="whitespace-pre-wrap text-gray-300">
                     {result}
                   </pre>
                 </motion.div>
@@ -138,7 +141,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   key="empty"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-slate-500 italic text-center py-8"
+                  className="text-gray-500 italic text-center py-8"
                 >
                   No result available. Execute a prompt to see results.
                 </motion.div>

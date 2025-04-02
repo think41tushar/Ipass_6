@@ -20,10 +20,10 @@ export default function Loading() {
         <div className="w-20 h-20 rounded-full border-4 border-black/20"></div>
 
         {/* Inner spinner (animated) */}
-        <div className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-transparent border-t-[#3ECF8E] animate-spin"></div>
+        <div className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-transparent border-t-[#4f1250] animate-spin"></div>
       </div>
 
-      <div className="mt-6 text-[#3ECF8E] font-medium tracking-wide">
+      <div className="mt-6 text-[#f0f5f0] font-medium tracking-wide">
         <span className="inline-block min-w-[7rem] text-center">Loading{dots}</span>
       </div>
 
