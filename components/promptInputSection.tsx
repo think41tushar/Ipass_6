@@ -146,14 +146,8 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
         `${format(selectedDate, "yyyy-MM-dd")}T${formattedTime}:00`
       );
 
-      // Format with timezone offset included
-      const tzOffset = dateTimeObj.getTimezoneOffset();
-      const hours = Math.abs(Math.floor(tzOffset / 60));
-      const minutes = Math.abs(tzOffset % 60);
-      const sign = tzOffset <= 0 ? "+" : "-";
-      const tzString = `${sign}${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}`;
+      // Use fixed +05:30 for IST timezone
+      const tzString = "+05:30";
 
       const executionDateTime = `${format(
         selectedDate,

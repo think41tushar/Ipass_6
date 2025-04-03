@@ -227,7 +227,7 @@ const PromptScheduler: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto flex justify-center items-center h-64">
+      <div className="max-w-md mx-auto flex justify-center items-center h-64 z-index-50">
         <Loading />
       </div>
     );
