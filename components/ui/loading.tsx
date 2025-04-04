@@ -14,7 +14,7 @@ export default function Loading() {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/30 backdrop-blur-md">
+    <div className="fixed inset-0 z-500 flex flex-col items-center justify-center bg-black/30 backdrop-blur-md">
       <div className="relative">
         {/* Outer ring (static) */}
         <div className="w-20 h-20 rounded-full border-4 border-black/20"></div>

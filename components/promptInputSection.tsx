@@ -8,6 +8,17 @@ import {
   Play,
   LucideCalendar,
   ListTodo,
+  Clock,
+  Repeat,
+  CalendarDays,
+  Calendar as CalendarIcon2,
+  Clock3,
+  TimerReset,
+  Zap,
+  Info,
+  CheckCircle2,
+  Settings,
+  AlertCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -76,9 +87,9 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
   function showBackendToast(success: boolean) {
     if (success) {
-      toast.success("Summary sent to backend");
+      toast.success("Summary sent to Hubspot successfully!");
     } else {
-      toast.error("Failed to send summary to backend");
+      toast.error("Failed to send summary to Hubspot");
     }
   }
 
@@ -215,154 +226,23 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   };
 
   return (
-    <div className="space-y-6 bg-gray-900/30 border border-gray-800 rounded-lg p-6 shadow-lg">
-      <h3 className="text-lg font-medium text-white mb-4">Create Task</h3>
-
-      {/* Date and Time Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="date" className="text-gray-300">
-            Date
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="justify-start text-left font-normal border-gray-700 bg-[#111827] hover:bg-gray-800 text-gray-300 w-full"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
-                {date && date.from ? (
-                  format(date.from, "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}{" "}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 border-gray-700 bg-[#111827]">
-              <MemoizedCalendar
-                value={executionTime}
-                onChange={handleCalendarChange}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="time" className="text-gray-300">
-            Time
-          </Label>
-          <div className="flex space-x-2">
-            <Input
-              id="time"
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="border-gray-700 bg-[#111827] text-white"
-            />
-
-            <Select
-              value={recurrence}
-              onValueChange={(value: any) => setRecurrence(value)}
-            >
-              <SelectTrigger className="w-[180px] border-gray-700 bg-[#111827] text-white">
-                <SelectValue placeholder="Recurrence" />
-              </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-[#111827] text-white">
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="interval">Interval</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
-              </SelectContent>
-            </Select>
+    <div className="space-y-6 bg-gradient-to-b from-gray-900/60 to-gray-900/40 border border-gray-800 rounded-lg p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-purple-900/10">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b border-gray-800/70 pb-4">
+        <h3 className="text-xl font-semibold text-white mb-4 sm:mb-0 flex items-center">
+          <div className="bg-purple-600/20 p-2 rounded-full mr-3">
+            <Settings className="h-5 w-5 text-purple-400" />
           </div>
-        </div>
+          Task Configuration
+        </h3>
       </div>
 
-      {/* Interval Options - Shown Only If "Interval" is Selected */}
-      {recurrence === "interval" && (
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="intervalValue" className="text-gray-300">
-              Interval Value
-            </Label>
-            <Input
-              id="intervalValue"
-              type="number"
-              value={intervalValue}
-              onChange={(e) => setIntervalValue(e.target.value)}
-              className="border-gray-700 bg-[#111827] text-white"
-              placeholder="Enter interval value"
-              min="1"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="intervalDuration" className="text-gray-300">
-              Interval Duration
-            </Label>
-            <Select
-              value={intervalDuration}
-              onValueChange={setIntervalDuration}
-            >
-              <SelectTrigger className="w-full border-gray-700 bg-[#111827] text-white">
-                <SelectValue placeholder="Duration" />
-              </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-[#111827] text-white">
-                <SelectItem value="minutes">Minutes</SelectItem>
-                <SelectItem value="hours">Hours</SelectItem>
-                <SelectItem value="days">Days</SelectItem>
-                <SelectItem value="weeks">Weeks</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      )}
-
-      {/* Custom Options */}
-      {recurrence === "custom" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-gray-300">Days of the Week</Label>
-            <div className="grid grid-cols-7 gap-2">
-              {["S", "M", "T", "W", "T", "F", "S"].map((label, index) => (
-                <button
-                  key={index}
-                  className={`p-2.5 rounded text-sm font-medium w-full text-white cursor-pointer transition-colors ${
-                    daysOfWeek.includes(index) ? "bg-purple-600" : "bg-gray-800"
-                  }`}
-                  onClick={() => toggleDayOfWeek(index)}
-                  type="button"
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-gray-300">Months</Label>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-              {[...Array(12)].map((_, i) => (
-                <button
-                  key={i}
-                  className={`p-2 rounded text-sm font-medium w-full text-white cursor-pointer transition-colors ${
-                    months.includes(i + 1) ? "bg-purple-600" : "bg-gray-800"
-                  }`}
-                  onClick={() => toggleMonth(i + 1)}
-                  type="button"
-                >
-                  {new Date(0, i).toLocaleString("default", { month: "short" })}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Prompt Input */}
-      <div className="space-y-2">
-        <Label htmlFor="prompt" className="text-gray-300">
+      <div className="space-y-3">
+        <Label htmlFor="prompt" className="text-gray-300 flex items-center text-sm font-medium">
+          <div className="bg-purple-600/10 p-1.5 rounded-md mr-2">
+            <Play className="h-4 w-4 text-purple-400" />
+          </div>
           Prompt
         </Label>
         <Textarea
@@ -370,113 +250,88 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           placeholder="Enter your prompt here..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] border-gray-700 bg-[#111827] text-white"
+          className="min-h-[120px] border-gray-700 bg-[#111827]/80 text-white focus:border-purple-500 focus:ring-purple-500/20 rounded-md transition-all duration-300 placeholder:text-gray-500"
         />
+        <p className="text-xs text-gray-400 italic">
+          Enter the task you want to schedule or execute. Be specific with dates, times, and recurrence patterns if needed.
+        </p>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-3">
-        <Button
-          variant="outline"
-          className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300"
-          onClick={handleReset}
-        >
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Reset
-        </Button>
-        <Button
-          variant="default"
-          className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
-          onClick={sendToBackend}
-          disabled={isBackendSendCalled || !prompt.trim}
-        >
-          {isBackendSendCalled ? (
-            <div className="flex items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <Play className="mr-2 h-4 w-4" />
-          )}
-          Send Backend
-        </Button>
-        {/* Smart Run Button */}
-        <Button
-          variant="default"
-          className="bg-green-600 hover:bg-green-700 text-white transition-all duration-300"
-          onClick={handleSmartRun}
-          disabled={isExecuting || isScheduled || !prompt.trim()}
-        >
-          {isExecuting || isScheduled ? (
-            <div className="flex items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="mr-2 h-4 w-4" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-              <path d="M12 17h.01"></path>
-            </svg>
-          )}
-          Smart Run
-        </Button>
-        <Button
-          variant="default"
-          className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
-          onClick={() => {
-            handleRunTask(false);
-          }}
-          disabled={isExecuting || !prompt.trim()}
-        >
-          {isExecuting ? (
-            <div className="flex items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <Play className="mr-2 h-4 w-4" />
-          )}
-          Execute Now
-        </Button>
-
-        <Button
-          variant="default"
-          className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
-          onClick={() => handleSchedule(getTaskData())}
-          disabled={isScheduled || !prompt.trim() || !date || !time}
-        >
-          {isScheduled ? (
-            <div className="flex items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <LucideCalendar className="mr-2 h-4 w-4" />
-          )}
-          Schedule
-        </Button>
-
-        <Button
-          variant="default"
-          className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300"
-          onClick={handleGetTodo}
-          disabled={isTodoCalled}
-        >
-          {isTodoCalled ? (
-            <div className="flex items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <ListTodo className="mr-2 h-4 w-4" />
-          )}
-          Todo
-        </Button>
+      <div className="flex flex-wrap justify-between items-center pt-3 border-t border-gray-800/50 mt-4">
+        {/* Left side buttons - Backend and Todo */}
+        <div className="flex flex-wrap gap-3">
+          <Button
+            variant="default"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-300 rounded-md"
+            onClick={sendToBackend}
+            disabled={isBackendSendCalled || !prompt.trim}
+          >
+            {isBackendSendCalled ? (
+              <div className="flex items-center justify-center">
+                <Loading />
+              </div>
+            ) : (
+              <Play className="mr-2 h-4 w-4" />
+            )}
+            Generate Summary In GChat
+          </Button>
+          <Button
+            variant="default"
+            className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white transition-all duration-300 rounded-md shadow-md"
+            onClick={handleGetTodo}
+            disabled={isTodoCalled}
+          >
+            {isTodoCalled ? (
+              <div className="flex items-center justify-center">
+                <Loading />
+              </div>
+            ) : (
+              <ListTodo className="mr-2 h-4 w-4" />
+            )}
+            Generate Todo In GChat
+          </Button>
+        </div>
+        
+        {/* Right side buttons - Reset and Smart Run */}
+        <div className="flex flex-wrap gap-3 ml-auto">
+          <Button
+            variant="outline"
+            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
+            onClick={handleReset}
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Reset
+          </Button>
+          <Button
+            variant="default"
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 rounded-md shadow-md"
+            onClick={handleSmartRun}
+            disabled={isExecuting || isScheduled || !prompt.trim()}
+          >
+            {isExecuting || isScheduled ? (
+              <div className="flex items-center justify-center">
+                <Loading />
+              </div>
+            ) : (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="mr-2 h-4 w-4" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+            )}
+            Smart Run
+          </Button>
+        </div>
         <ToastContainer />
       </div>
     </div>

@@ -59,8 +59,8 @@ export default function DashboardNavbar() {
             <Building2 className="h-5 w-5 text-white" />
           </div>
           <div>
-            <div className="text-xs text-gray-400">Tenant</div>
-            <div className="text-white font-medium">
+            <div className="text-lg text-gray-400">Tenant</div>
+            <div className="text-white font-medium text-lg">
               {tenantName?.tenant_name || "Loading..."}
             </div>
           </div>

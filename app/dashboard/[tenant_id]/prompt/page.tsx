@@ -2,7 +2,13 @@
 
 import type React from "react";
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { 
+  AlertCircle, 
+  Settings, 
+  Repeat, 
+  Clock3, 
+  Calendar as CalendarIcon2 
+} from "lucide-react";
 
 import {
   Card,
@@ -293,6 +299,9 @@ const PromptScheduler: React.FC = () => {
               <TabsTrigger value="scheduled" className="w-[11rem]">
                 Scheduled Tasks
               </TabsTrigger>
+              <TabsTrigger value="information" className="w-[11rem]">
+                Information
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="prompt" className="p-6 bg-[#0f1219] text-white">
@@ -339,6 +348,198 @@ const PromptScheduler: React.FC = () => {
               className="p-6 bg-[#0f1219] text-white"
             >
               <ScheduledPromptsSection />
+            </TabsContent>
+
+            <TabsContent
+              value="information"
+              className="p-6 bg-[#0f1219] text-white"
+            >
+              {activeTab === "information" && (
+                <div className="space-y-8 p-4">
+                  {/* Main Scheduling Types */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* One-Time Schedule Card */}
+                    <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-purple-500/50 hover:shadow-purple-900/20 hover:shadow-lg h-full">
+                      <div className="flex flex-col items-center text-center h-full">
+                        <div className="bg-purple-500/20 p-4 rounded-full mb-4">
+                          <CalendarIcon2 className="h-10 w-10 text-purple-400" />
+                        </div>
+                        <h4 className="text-lg font-medium text-white mb-3">One-Time Scheduling</h4>
+                        <p className="text-base text-gray-300 mb-4">
+                          Schedule tasks to run once at a specific date and time. Perfect for one-off reminders, 
+                          future notifications, or delayed actions.
+                        </p>
+                        <div className="mt-auto bg-gray-900/50 p-4 rounded-md w-full text-left">
+                          <h5 className="text-sm font-medium text-purple-400 mb-2">Example:</h5>
+                          <p className="text-sm text-gray-400">
+                            <code className="bg-gray-800 px-2 py-1 rounded">
+                              "Send an email with a trivia fact at 2025-04-05T10:45:00+05:30"
+                            </code>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interval Schedule Card */}
+                    <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-blue-500/50 hover:shadow-blue-900/20 hover:shadow-lg h-full">
+                      <div className="flex flex-col items-center text-center h-full">
+                        <div className="bg-blue-500/20 p-4 rounded-full mb-4">
+                          <Clock3 className="h-10 w-10 text-blue-400" />
+                        </div>
+                        <h4 className="text-lg font-medium text-white mb-3">Interval-Based</h4>
+                        <p className="text-base text-gray-300 mb-4">
+                          Run tasks repeatedly at specific time intervals, such as every few minutes, 
+                          hours, days, or weeks. Ideal for regular check-ins or periodic updates.
+                        </p>
+                        <div className="mt-auto bg-gray-900/50 p-4 rounded-md w-full text-left">
+                          <h5 className="text-sm font-medium text-blue-400 mb-2">Example:</h5>
+                          <p className="text-sm text-gray-400">
+                            <code className="bg-gray-800 px-2 py-1 rounded">
+                              "Send a trivia fact every 2 minutes starting at 2025-04-04T23:18:00+05:30"
+                            </code>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recurring Schedule Card */}
+                    <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-green-500/50 hover:shadow-green-900/20 hover:shadow-lg h-full">
+                      <div className="flex flex-col items-center text-center h-full">
+                        <div className="bg-green-500/20 p-4 rounded-full mb-4">
+                          <Repeat className="h-10 w-10 text-green-400" />
+                        </div>
+                        <h4 className="text-lg font-medium text-white mb-3">Recurring Patterns</h4>
+                        <p className="text-base text-gray-300 mb-4">
+                          Configure complex recurring schedules including daily, weekly, monthly, 
+                          or custom patterns with specific days and months selection.
+                        </p>
+                        <div className="mt-auto bg-gray-900/50 p-4 rounded-md w-full text-left">
+                          <h5 className="text-sm font-medium text-green-400 mb-2">Example:</h5>
+                          <p className="text-sm text-gray-400">
+                            <code className="bg-gray-800 px-2 py-1 rounded">
+                              "Send a trivia fact daily at 2025-04-04T22:45:00+05:30"
+                            </code>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Scheduling Features */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {/* Weekly & Monthly Scheduling Card */}
+                    <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-amber-500/50 hover:shadow-amber-900/20 hover:shadow-lg">
+                      <div className="flex items-start">
+                        <div className="bg-amber-500/20 p-4 rounded-full mr-5 flex-shrink-0">
+                          <Settings className="h-8 w-8 text-amber-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-medium text-white mb-3">Weekly & Monthly Scheduling</h4>
+                          <p className="text-base text-gray-300 mb-4">
+                            Create schedules that run on specific days of the week or month.
+                          </p>
+                          <div className="space-y-3">
+                            <div className="bg-gray-900/50 p-4 rounded-md">
+                              <h5 className="text-sm font-medium text-amber-400 mb-2">Weekly Example:</h5>
+                              <p className="text-sm text-gray-400">
+                                <code className="bg-gray-800 px-2 py-1 rounded">
+                                  "Send a trivia fact every Monday and Wednesday"
+                                </code>
+                              </p>
+                            </div>
+                            <div className="bg-gray-900/50 p-4 rounded-md">
+                              <h5 className="text-sm font-medium text-amber-400 mb-2">Monthly Example:</h5>
+                              <p className="text-sm text-gray-400">
+                                <code className="bg-gray-800 px-2 py-1 rounded">
+                                  "Send a trivia fact on the 1st and 15th day of each month"
+                                </code>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Custom Advanced Scheduling Card */}
+                    <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-purple-500/50 hover:shadow-purple-900/20 hover:shadow-lg">
+                      <div className="flex items-start">
+                        <div className="bg-purple-500/20 p-4 rounded-full mr-5 flex-shrink-0">
+                          <Settings className="h-8 w-8 text-purple-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-medium text-white mb-3">Custom Advanced Scheduling</h4>
+                          <p className="text-base text-gray-300 mb-4">
+                            Combine multiple patterns for maximum flexibility in task execution.
+                          </p>
+                          <div className="bg-gray-900/50 p-4 rounded-md">
+                            <h5 className="text-sm font-medium text-purple-400 mb-2">Complex Example:</h5>
+                            <p className="text-sm text-gray-400">
+                              <code className="bg-gray-800 px-2 py-1 rounded">
+                                "Send a trivia fact every Monday in February and April only"
+                              </code>
+                            </p>
+                            <p className="text-sm text-gray-400 mt-3">
+                              This combines day selection (Mondays) with specific months (Feb & Apr)
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Scheduling Benefits */}
+                  <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden mb-8 transition-all duration-300 hover:border-blue-500/50 hover:shadow-blue-900/20 hover:shadow-lg">
+                    <h4 className="text-lg font-medium text-white mb-5 text-center flex items-center justify-center">
+                      <AlertCircle className="h-6 w-6 mr-3 text-blue-400" />
+                      Why Use Scheduling?
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
+                        <h5 className="text-base font-medium text-blue-400 mb-3">Automation</h5>
+                        <p className="text-sm text-gray-300">
+                          Set up tasks once and let them run automatically according to your schedule.
+                          No need to manually trigger actions each time.
+                        </p>
+                      </div>
+                      <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
+                        <h5 className="text-base font-medium text-green-400 mb-3">Consistency</h5>
+                        <p className="text-sm text-gray-300">
+                          Ensure regular communication and updates happen exactly when needed,
+                          maintaining consistent intervals between tasks.
+                        </p>
+                      </div>
+                      <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
+                        <h5 className="text-base font-medium text-purple-400 mb-3">Time Management</h5>
+                        <p className="text-sm text-gray-300">
+                          Plan your communications in advance and distribute them optimally
+                          throughout your schedule for maximum efficiency.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Getting Started Guide */}
+                  <div className="rounded-lg border border-gray-700 bg-gradient-to-r from-gray-900/60 to-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-green-500/50 hover:shadow-green-900/20 hover:shadow-lg">
+                    <div className="flex items-start">
+                      <div className="bg-green-500/20 p-4 rounded-full mr-5 flex-shrink-0">
+                        <AlertCircle className="h-8 w-8 text-green-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-medium text-white mb-3">Getting Started</h4>
+                        <p className="text-base text-gray-300 mb-4">
+                          To create a new scheduled task, click the "Prompt" tab and follow these steps:
+                        </p>
+                        <ol className="list-decimal list-inside text-base text-gray-300 space-y-3 ml-2">
+                          <li className="pb-3 border-b border-gray-800/30">Enter your prompt in the text area</li>
+                          <li className="pb-3 border-b border-gray-800/30">Use natural language to specify scheduling details (date, time, recurrence)</li>
+                          <li className="pb-3 border-b border-gray-800/30">Click "Smart Run" to execute immediately or "Todo" to add to your task list</li>
+                          <li>View your scheduled tasks in the "Scheduled Tasks" tab</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>

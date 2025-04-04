@@ -44,9 +44,9 @@ export default function DashboardSidebar() {
 
   return (
     <div>
-      <div className="flex flex-col border-r border-gray-800 p-4 gap-4 px-4 h-[100vh] bg-[#0f1219]">
+      <div className="flex flex-col border-r border-gray-800 p-4 gap-4 px-4 h-[100vh] w-[20rem] bg-[#0f1219] sticky top-0 left-0">
         <div className="mb-6 mt-2">
-          <div className="text-gray-400 text-xs font-medium uppercase tracking-wider px-4 mb-2">Main Menu</div>
+          <div className="text-gray-400 text-lg font-medium uppercase tracking-wider px-4 mb-2">Main Menu</div>
         </div>
 
         <Link
@@ -57,7 +57,7 @@ export default function DashboardSidebar() {
           onClick={() => handleLinkClick("dashboard")}
         >
           <LayoutDashboard className={`h-5 w-5 ${selected === "dashboard" ? "text-purple-500" : ""}`} />
-          <span className="text-sm font-medium">Dashboard</span>
+          <span className="text-lg font-medium">Dashboard</span>
         </Link>
 
         <Link
@@ -68,7 +68,7 @@ export default function DashboardSidebar() {
           onClick={() => handleLinkClick("users")}
         >
           <User className={`h-5 w-5 ${selected === "users" ? "text-purple-500" : ""}`} />
-          <span className="text-sm font-medium">Users</span>
+          <span className="text-lg font-medium">Users</span>
         </Link>
 
         <Link
@@ -79,7 +79,7 @@ export default function DashboardSidebar() {
           onClick={() => handleLinkClick("integrations")}
         >
           <Settings className={`h-5 w-5 ${selected === "integrations" ? "text-purple-500" : ""}`} />
-          <span className="text-sm font-medium">Integrations</span>
+          <span className="text-lg font-medium">Integrations</span>
         </Link>
 
         <Link
@@ -90,7 +90,7 @@ export default function DashboardSidebar() {
           onClick={() => handleLinkClick("global-search")}
         >
           <Search className={`h-5 w-5 ${selected === "global-search" ? "text-purple-500" : ""}`} />
-          <span className="text-sm font-medium">Search</span>
+          <span className="text-lg font-medium">Search</span>
         </Link>
 
         <Link
@@ -101,7 +101,7 @@ export default function DashboardSidebar() {
           onClick={() => handleLinkClick("prompt")}
         >
           <Rocket className={`h-5 w-5 ${selected === "prompt" ? "text-purple-500" : ""}`} />
-          <span className="text-sm font-medium">Prompt</span>
+          <span className="text-lg font-medium">Prompt</span>
         </Link>
       </div>
 

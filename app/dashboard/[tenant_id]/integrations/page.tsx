@@ -512,7 +512,7 @@ const IntegrationComponent: React.FC = () => {
         {/* Header with purple glow */}
         <div className="relative mb-8">
           <div className="absolute -top-20 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl opacity-20"></div>
-          <div className="relative z-10">
+          <div className="relative z-10 ml-[8rem]">
             <div className="flex items-center mb-2">
               <div className="bg-purple-600 p-3 rounded-full mr-4">
                 <Layers className="h-6 w-6 text-white" />

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Check, X, ArrowUpDown, ArrowRight } from "lucide-react"
-import ReactMarkdown from "react-markdown" // Added for markdown formatting
+import ReactMarkdown from "react-markdown"
 import Loading from "@/components/ui/loading"
 
 // Type definition for summary card
@@ -18,19 +18,16 @@ export default function ShipToHubspot() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  // State to track which cards are expanded
-  const [expandedCards, setExpandedCards] = useState<number[]>([])
+  // Instead of tracking expanded cards, we track the currently selected card for modal view
+  const [selectedCard, setSelectedCard] = useState<SummaryCard | null>(null)
 
   // Function to send approval data to the backend
   const sendApproval = async (content: string) => {
     console.log(content)
     console.log(JSON.stringify(content))
-    setIsLoading(true);
+    setIsLoading(true)
 
-    // Get tenant_id from URL params instead of localStorage
-    const urlParts = window.location.pathname.split('/')
-    const tenant_id = urlParts[urlParts.length - 1] // Extract tenant_id from URL
-    
+    const tenant_id = localStorage.getItem("tenant_id")
     if (!tenant_id) {
       alert("Tenant ID not found")
       return
@@ -40,11 +37,11 @@ export default function ShipToHubspot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          "input": content,
-          "rerun":false,
-          "changed":false,
-          "history":[],
-          "session_id":"1223" 
+          input: content,
+          rerun: false,
+          changed: false,
+          history: [],
+          session_id: "1223" 
         })
       })
       if (response.ok) {
@@ -58,54 +55,52 @@ export default function ShipToHubspot() {
       console.error(error)
       alert("An error occurred while sending data.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
   // Fetch summaries from the endpoint
   useEffect(() => {
     const fetchSummaries = async () => {
-      // Get tenant_id from URL params instead of localStorage
-      const urlParts = window.location.pathname.split('/')
-      const tenant_id = urlParts[urlParts.length - 1] // Extract tenant_id from URL
+      const tenant_id = localStorage.getItem("tenant_id")
       try {
-        setIsLoading(true);
-        const user_id = 'bff85ddd-d98f-44bf-b5c2-004693ed295b'; // Replace with your actual user ID or variable
+        setIsLoading(true)
+        const user_id = localStorage.getItem("user_id")
         const response = await fetch(
-          `https://syncdjango.site/hubspot/send/c7708025-2553-448e-8380-ea7bee605e0b/`,
+          `https://syncdjango.site/hubspot/send/${tenant_id}/`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "user_id": user_id })
+            body: JSON.stringify({ "user_id":user_id })
           }
-        );
-  
+        )
+
         if (!response.ok) {
-          throw new Error('Failed to fetch summaries');
+          throw new Error('Failed to fetch summaries')
         }
-  
-        const data = await response.json();
-  
+
+        const data = await response.json()
+
         // Transform summaries into SummaryCard format with incrementing ids
         const fetchedCards = data.summaries.map((summary: string, index: number) => ({
           id: index + 1,
           summary
-        }));
-  
-        setCards(fetchedCards);
-        setError(null);
+        }))
+
+        setCards(fetchedCards)
+        setError(null)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        setCards([]);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred')
+        setCards([])
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-  
-    fetchSummaries();
-  }, []);
+    }
+
+    fetchSummaries()
+  }, [])
 
   // Filter cards based on search term
   const filteredCards = cards.filter((card) => 
@@ -114,11 +109,7 @@ export default function ShipToHubspot() {
 
   // Sort cards
   const sortedCards = [...filteredCards].sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a.id - b.id
-    } else {
-      return b.id - a.id
-    }
+    return sortOrder === "asc" ? a.id - b.id : b.id - a.id
   })
 
   // Remove card
@@ -131,13 +122,6 @@ export default function ShipToHubspot() {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc")
   }
 
-  // Toggle expand/collapse for a given card
-  const toggleExpand = (id: number) => {
-    setExpandedCards(prev =>
-      prev.includes(id) ? prev.filter(cardId => cardId !== id) : [...prev, id]
-    )
-  }
-
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-[#0c0e14]/80 flex items-center justify-center z-50">
@@ -146,10 +130,9 @@ export default function ShipToHubspot() {
           <p className="text-center text-sm text-gray-400 mt-4">Loading entries...</p>
         </div>
       </div>
-    );
+    )
   }
 
-  // Render error state
   if (error) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -175,7 +158,7 @@ export default function ShipToHubspot() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-medium">Ship to Hubspot</h1>
+          <h1 className="text-3xl font-medium">Send Summary To Hubspot</h1>
         </div>
         <p className="text-gray-500 text-sm mb-8">Sync your data with Hubspot CRM</p>
 
@@ -205,10 +188,10 @@ export default function ShipToHubspot() {
       </header>
 
       {/* Cards Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className={`max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${selectedCard ? 'filter blur-sm' : ''}`}>
         <AnimatePresence>
           {sortedCards.map((card) => {
-            const isExpanded = expandedCards.includes(card.id)
+            // Show a preview of the summary
             const preview =
               card.summary.length > 200 ? card.summary.slice(0, 200) + "..." : card.summary
             return (
@@ -229,10 +212,9 @@ export default function ShipToHubspot() {
                     <span className="text-xs text-gray-500">#{card.id}</span>
                   </div>
 
-                  {/* Render summary with extra spacing */}
-                  <motion.div layout className="prose prose-invert prose-p:text-gray-400 prose-headings:text-white mt-4 mb-4 max-w-none">
+                  <motion.div className="prose prose-invert prose-p:text-gray-400 prose-headings:text-white mt-4 mb-4 max-w-none">
                     <ReactMarkdown>
-                      {isExpanded ? card.summary : preview}
+                      {preview}
                     </ReactMarkdown>
                   </motion.div>
 
@@ -240,9 +222,9 @@ export default function ShipToHubspot() {
                     <motion.button
                       className="text-xs text-gray-500 hover:text-purple-500 flex items-center gap-1 transition-colors"
                       whileHover={{ x: 2 }}
-                      onClick={() => toggleExpand(card.id)}
+                      onClick={() => setSelectedCard(card)}
                     >
-                      {isExpanded ? "Collapse" : "View details"} <ArrowRight className="h-3 w-3" />
+                      View details <ArrowRight className="h-3 w-3" />
                     </motion.button>
 
                     <div className="flex gap-2">
@@ -292,7 +274,37 @@ export default function ShipToHubspot() {
         </motion.div>
       )}
 
-      {/* Loading state */}
+      {/* Modal for detail view */}
+      <AnimatePresence>
+        {selectedCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            // Updated glassmorphic overlay with a semi-transparent background and stronger blur
+            className="fixed inset-0 flex items-center justify-center z-50 bg-[#0c0e14]/60 backdrop-blur-lg"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-[#151823] p-6 rounded-md border border-[#2a2d3a] shadow-lg max-w-2xl w-full mx-4"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Detail View #{selectedCard.id}</h2>
+                <button onClick={() => setSelectedCard(null)} className="text-red-500">
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="prose prose-invert">
+                <ReactMarkdown>{selectedCard.summary}</ReactMarkdown>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Global Loading state */}
       {isLoading && (
         <div className="fixed inset-0 bg-[#0c0e14]/80 flex items-center justify-center z-50">
           <div className="bg-[#151823] p-6 rounded-lg border border-[#2a2d3a] shadow-xl">
@@ -302,4 +314,5 @@ export default function ShipToHubspot() {
         </div>
       )}
     </div>
-  )}
+  )
+}

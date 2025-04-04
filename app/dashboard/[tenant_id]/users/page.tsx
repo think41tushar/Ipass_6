@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type React from "react";
+import { useParams } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
   Settings,
@@ -15,14 +15,19 @@ import {
   MoreHorizontal,
   ChevronRight,
   Activity,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 
 const UserComponent: React.FC = () => {
-  // Use the useParams hook to get the dynamic tenant_id from the URL if needed.
-  const tenant_id = localStorage.getItem("tenant_id");
+  const [tenantId, setTenantId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setTenantId(localStorage.getItem("tenant_id"));
+    }
+  }, []);
   // Default users with more sample data
   const displayUsers = [
     {
@@ -52,18 +57,46 @@ const UserComponent: React.FC = () => {
       status: "Inactive",
       avatar: "RJ",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0a0d14] to-[#111827] text-white p-4 md:p-8">
       {/* Header with purple glow */}
       <div className="relative mb-8">
         <div className="absolute -top-20 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl opacity-20"></div>
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-300 mb-2">
-            User Management
-          </h1>
-          <p className="text-gray-400">Manage user accounts and permissions for tenant ID: {tenant_id}</p>
+        <div className="relative z-10 ml-[8rem] flex items-center gap-4">
+          <div className="bg-purple-600/20 p-3 rounded-lg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-purple-400"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+
+              <circle cx="9" cy="7" r="4"></circle>
+
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+
+          <div>
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-300 mb-2">
+              User Management
+            </h1>
+
+            <p className="text-gray-400">
+              Manage user accounts and permissions for tenant ID: {tenantId}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -143,7 +176,9 @@ const UserComponent: React.FC = () => {
         <Card className="bg-[#131825] border-0 shadow-xl overflow-hidden">
           <CardHeader className="border-b border-gray-800 bg-[#0f131e] p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle className="text-xl font-semibold">User Accounts</CardTitle>
+              <CardTitle className="text-xl font-semibold">
+                User Accounts
+              </CardTitle>
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -172,11 +207,15 @@ const UserComponent: React.FC = () => {
                 >
                   <div className="p-4 sm:p-5 flex items-center flex-1">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-700 to-purple-900 flex items-center justify-center mr-4 shadow-lg">
-                      <span className="text-white font-bold">{user.avatar}</span>
+                      <span className="text-white font-bold">
+                        {user.avatar}
+                      </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-lg font-semibold text-white truncate">{user.name}</p>
+                        <p className="text-lg font-semibold text-white truncate">
+                          {user.name}
+                        </p>
                         <span
                           className={`mt-2 sm:mt-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             user.status === "Active"
@@ -185,7 +224,11 @@ const UserComponent: React.FC = () => {
                           }`}
                         >
                           <span
-                            className={`mr-1.5 h-1.5 w-1.5 rounded-full ${user.status === "Active" ? "bg-green-400" : "bg-yellow-400"}`}
+                            className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
+                              user.status === "Active"
+                                ? "bg-green-400"
+                                : "bg-yellow-400"
+                            }`}
                           ></span>
                           {user.status}
                         </span>
@@ -254,7 +297,9 @@ const UserComponent: React.FC = () => {
             </div>
             <div className="text-left">
               <p className="font-medium">Bulk Import</p>
-              <p className="text-xs text-gray-400 mt-1">Import users from CSV</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Import users from CSV
+              </p>
             </div>
           </Button>
 
@@ -264,7 +309,9 @@ const UserComponent: React.FC = () => {
             </div>
             <div className="text-left">
               <p className="font-medium">Role Management</p>
-              <p className="text-xs text-gray-400 mt-1">Configure user permissions</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Configure user permissions
+              </p>
             </div>
           </Button>
 
@@ -274,15 +321,15 @@ const UserComponent: React.FC = () => {
             </div>
             <div className="text-left">
               <p className="font-medium">User Settings</p>
-              <p className="text-xs text-gray-400 mt-1">Configure default settings</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Configure default settings
+              </p>
             </div>
           </Button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserComponent
-
-
+export default UserComponent;
