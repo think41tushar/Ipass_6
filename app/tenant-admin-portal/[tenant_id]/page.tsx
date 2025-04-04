@@ -11,8 +11,16 @@ import Loading from "@/components/ui/loading"
 export default function TenantAdminPortal() {
   const [tenantName, setTenantName] = useState("")
   const [loading, setLoading] = useState(true)
-  const { tenant_id } = useParams()
+  const params = useParams<{ tenant_id: string }>()
+  const tenant_id = params?.tenant_id || ''
   const [error, setError] = useState("")
+  
+  // Store tenant_id in localStorage (client-side only)
+  useEffect(() => {
+    if (tenant_id) {
+      localStorage.setItem("tenant_id", tenant_id)
+    }
+  }, [tenant_id])
 
   useEffect(() => {
     async function fetchTenantInfo() {

@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input"
 
 const UserComponent: React.FC = () => {
   // Use the useParams hook to get the dynamic tenant_id from the URL if needed.
-  const { tenant_id } = useParams()
+  const tenant_id = localStorage.getItem("tenant_id");
 
   // Default users with more sample data
   const displayUsers = [

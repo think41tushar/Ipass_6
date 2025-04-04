@@ -121,7 +121,7 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
 
 export default function AdminPortalLogin() {
   const router = useRouter();
-  const { tenant_id } = useParams();
+  const tenant_id = localStorage.getItem("tenant_id");
 
   const [step, setStep] = useState<"email" | "otp">("email");
   const [error, setError] = useState("");

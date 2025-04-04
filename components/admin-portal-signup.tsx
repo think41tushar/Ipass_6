@@ -144,7 +144,7 @@ function OtpForm({ onSubmit, error, otpId, onBack }: OtpFormProps) {
 
 export default function AdminPortalSignup() {
   const router = useRouter();
-  const { tenant_id } = useParams();
+  const tenant_id = localStorage.getItem("tenant_id");
   
   const [step, setStep] = useState<"details" | "otp">("details");
   const [error, setError] = useState("");

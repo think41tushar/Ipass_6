@@ -56,6 +56,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   handleExecute,
   handleSchedule,
   handleRunTask,
+  handleSmartRun
 }) => {
   const [executionTime, setExecutionTime] = useState("");
   const [intervalValue, setIntervalValue] = useState(""); // New state for interval value
@@ -397,6 +398,35 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
             <Play className="mr-2 h-4 w-4" />
           )}
           Send Backend
+        </Button>
+        {/* Smart Run Button */}
+        <Button
+          variant="default"
+          className="bg-green-600 hover:bg-green-700 text-white transition-all duration-300"
+          onClick={handleSmartRun}
+          disabled={isExecuting || isScheduled || !prompt.trim()}
+        >
+          {isExecuting || isScheduled ? (
+            <div className="flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : (
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="mr-2 h-4 w-4" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+          )}
+          Smart Run
         </Button>
         <Button
           variant="default"

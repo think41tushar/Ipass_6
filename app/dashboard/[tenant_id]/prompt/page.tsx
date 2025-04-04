@@ -20,7 +20,7 @@ import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
 import Loading from "@/components/ui/loading";
-import { ScheduledTask } from "@/lib/types";
+import { ScheduledTask, RecurrenceType } from "@/lib/types";
 
 const PromptScheduler: React.FC = () => {
   const {
@@ -53,12 +53,14 @@ const PromptScheduler: React.FC = () => {
     handleSchedule,
     deleteTask,
     handleConnect,
+    handleSmartRun,
+    planScheduling,
   } = usePromptScheduler();
 
-  const [updatedLogs, setUpdatedLogs] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [connectLoading, setConnectLoading] = useState(false);
+  const [updatedLogs, setUpdatedLogs] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [connectLoading, setConnectLoading] = useState<boolean>(false);
 
   const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
@@ -149,8 +151,11 @@ const PromptScheduler: React.FC = () => {
 
     const sessid = getRandomString(10);
     setSession_id(sessid);
+    // Store session id in localStorage for other components to use
+    localStorage.setItem("current_session_id", sessid);
     // Log session id
     console.log(`Session id set as ${sessid}`);
+    console.log(`Session id set as ${sessid} and stored in localStorage`);
     // Start event stream for logs
     const waitForSSE = new Promise((resolve, reject) => {
       const eventSource = new EventSource(`${backendUrl}/logevents/${sessid}`);
@@ -314,6 +319,7 @@ const PromptScheduler: React.FC = () => {
                 handleExecute={handleExecute}
                 handleSchedule={handleSchedule}
                 handleRunTask={handleRunTask}
+                handleSmartRun={handleSmartRun}
               />
 
               <div className="my-4">

@@ -27,7 +27,10 @@ export default function ShipToHubspot() {
     console.log(JSON.stringify(content))
     setIsLoading(true);
 
-    const tenant_id = localStorage.getItem("tenant_id")
+    // Get tenant_id from URL params instead of localStorage
+    const urlParts = window.location.pathname.split('/')
+    const tenant_id = urlParts[urlParts.length - 1] // Extract tenant_id from URL
+    
     if (!tenant_id) {
       alert("Tenant ID not found")
       return
@@ -62,7 +65,9 @@ export default function ShipToHubspot() {
   // Fetch summaries from the endpoint
   useEffect(() => {
     const fetchSummaries = async () => {
-      const tenant_id = localStorage.getItem("tenant_id");
+      // Get tenant_id from URL params instead of localStorage
+      const urlParts = window.location.pathname.split('/')
+      const tenant_id = urlParts[urlParts.length - 1] // Extract tenant_id from URL
       try {
         setIsLoading(true);
         const user_id = 'bff85ddd-d98f-44bf-b5c2-004693ed295b'; // Replace with your actual user ID or variable

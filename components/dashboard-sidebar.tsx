@@ -7,9 +7,29 @@ import { useParams, usePathname } from "next/navigation"
 
 export default function DashboardSidebar() {
   const [selected, setSelected] = useState("dashboard")
-  const { tenant_id } = useParams()
+  const [tenant_id, setTenantId] = useState('')
   const pathname = usePathname() // ADDED: Hook to detect route changes
   const [loading, setLoading] = useState(false) // loading state for route change
+
+  // Get tenant_id from URL path
+  useEffect(() => {
+    // Extract tenant_id from URL path
+    const pathParts = pathname?.split('/') || []
+    const urlTenantId = pathParts.length > 2 ? pathParts[2] : ''
+    
+    // Set tenant_id from URL or localStorage
+    if (urlTenantId) {
+      setTenantId(urlTenantId)
+      // Also store in localStorage for other components
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tenant_id', urlTenantId)
+      }
+    } else if (typeof window !== 'undefined') {
+      // Fallback to localStorage if URL doesn't have tenant_id
+      const storedTenantId = localStorage.getItem('tenant_id')
+      if (storedTenantId) setTenantId(storedTenantId)
+    }
+  }, [pathname])
 
   // Reset loading state when the route changes
   useEffect(() => {

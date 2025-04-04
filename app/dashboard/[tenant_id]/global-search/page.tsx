@@ -26,7 +26,7 @@ interface SearchResult {
 }
 
 export default function GlobalSearchPage() {
-  const { tenant_id } = useParams()
+  const tenant_id = localStorage.getItem("tenant_id");
   const [loading, setLoading] = useState(false)
   const [filename, setFilename] = useState("")
   const [error, setError] = useState("")

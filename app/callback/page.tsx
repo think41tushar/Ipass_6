@@ -8,6 +8,12 @@ const CallbackContent: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // Add null check for searchParams
+    if (!searchParams) {
+      console.error("Search parameters not available");
+      return;
+    }
+    
     const googleCode = searchParams.get("code");
     const stateParam = searchParams.get("state");
 

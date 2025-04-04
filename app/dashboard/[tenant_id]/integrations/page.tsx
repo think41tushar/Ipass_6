@@ -27,11 +27,20 @@ interface IntegrationComponentProps {
 }
 
 const handleGoogleAuth = async () => {
-  const tenant_id = localStorage.getItem("tenant_id")
+  // Get tenant_id from URL path instead of localStorage
+  const urlParts = window.location.pathname.split('/')
+  const tenant_id = urlParts.length > 2 ? urlParts[2] : ''
   const TENANT_ID = tenant_id
-  let USER_ID = localStorage.getItem("user_id")
+  
+  // Get user_id safely
+  let USER_ID = ''
+  if (typeof window !== 'undefined') {
+    USER_ID = localStorage.getItem("user_id") || ''
+  }
+  
   console.log("This is the user_id: ", USER_ID)
   if (!USER_ID || USER_ID === "") {
+    console.log("User ID not found, using fallback ID")
     USER_ID = "fdb214f4-cb91-4893-b55c-82238648be9b"
   }
 
@@ -66,8 +75,16 @@ const handleGoogleAuth = async () => {
 }
 
 const handleHubspotAuth = async () => {
-  const tenant_id = localStorage.getItem("tenant_id")
-  const user_id = localStorage.getItem("user_id")
+  // Get tenant_id from URL path instead of localStorage
+  const urlParts = window.location.pathname.split('/')
+  const tenant_id = urlParts.length > 2 ? urlParts[2] : ''
+  
+  // Get user_id safely
+  let user_id = ''
+  if (typeof window !== 'undefined') {
+    user_id = localStorage.getItem("user_id") || ''
+  }
+  
   console.log("This is the user_id: ", user_id)
   console.log("This is the tenant_id: ", tenant_id)
   if (!tenant_id) {
@@ -165,7 +182,9 @@ const handleHubspotAuth = async () => {
                     body: JSON.stringify({ hubToken: token, user_id: user_id }),
                   })
                   if (response.ok) {
-                    localStorage.setItem(`tenant_${tenant_id}_hubspot_integration`, "true")
+                    if (typeof window !== 'undefined') {
+                      localStorage.setItem(`tenant_${tenant_id}_hubspot_integration`, "true")
+                    }
                     toast.success("HubSpot connected successfully!", {
                       style: {
                         background: 'rgba(28, 35, 51, 0.4)',
@@ -228,8 +247,27 @@ const handleHubspotAuth = async () => {
 }
 
 const IntegrationComponent: React.FC = () => {
-  // Use the tenant_id from params as your tenantId
-  const tenantId = useParams().tenant_id
+  // Use the tenant_id from URL path
+  const [tenantId, setTenantId] = useState('')
+  
+  // Get tenant_id from URL path
+  useEffect(() => {
+    // Extract tenant_id from URL path
+    const urlParts = window.location.pathname.split('/')
+    const urlTenantId = urlParts.length > 2 ? urlParts[2] : ''
+    
+    if (urlTenantId) {
+      setTenantId(urlTenantId)
+      // Store in localStorage for other components
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tenant_id', urlTenantId)
+      }
+    } else if (typeof window !== 'undefined') {
+      // Fallback to localStorage
+      const storedTenantId = localStorage.getItem('tenant_id')
+      if (storedTenantId) setTenantId(storedTenantId)
+    }
+  }, [])
 
   // For simplicity, we assume no initial integrations are provided from the page props.
   const initialIntegrations: IntegrationComponentProps = {}
@@ -408,12 +446,20 @@ const IntegrationComponent: React.FC = () => {
 
     // Simulate API call delay
     setTimeout(() => {
-      const tenant_id = localStorage.getItem("tenant_id")
-      // NEW: Directly check localStorage for integration statuses
-      const googleIntegration = localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true"
-      const githubIntegration = localStorage.getItem(`tenant_${tenant_id}_github_integration`) === "true"
-      const slackIntegration = localStorage.getItem(`tenant_${tenant_id}_slack_integration`) === "true"
-      const hubspotIntegration = localStorage.getItem(`tenant_${tenant_id}_hubspot_integration`) === "true"
+      // Use the tenant_id from state
+      const tenant_id = tenantId
+      // NEW: Safely check localStorage for integration statuses
+      let googleIntegration = false
+      let githubIntegration = false
+      let slackIntegration = false
+      let hubspotIntegration = false
+      
+      if (typeof window !== 'undefined') {
+        googleIntegration = localStorage.getItem(`tenant_${tenant_id}_google_integration`) === "true"
+        githubIntegration = localStorage.getItem(`tenant_${tenant_id}_github_integration`) === "true"
+        slackIntegration = localStorage.getItem(`tenant_${tenant_id}_slack_integration`) === "true"
+        hubspotIntegration = localStorage.getItem(`tenant_${tenant_id}_hubspot_integration`) === "true"
+      }
 
       setIntegrations({
         google: googleIntegration,
@@ -439,7 +485,9 @@ const IntegrationComponent: React.FC = () => {
     const key = integrationId as IntegrationId
     const newState = { ...integrations }
     newState[key] = !newState[key]
-    localStorage.setItem(`tenant_${tenantId}_${integrationId}_integration`, newState[key].toString())
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`tenant_${tenantId}_${integrationId}_integration`, newState[key].toString())
+    }
     setIntegrations(newState)
   }
 

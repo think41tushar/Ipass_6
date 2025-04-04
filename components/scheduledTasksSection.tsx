@@ -16,7 +16,7 @@ interface DBScheduledPrompt {
   query: string
   execution_time: string  // ISO string
   is_recurring: boolean
-  recurrence_type: 'daily' | 'weekly' | 'monthly' | 'interval' | 'custom'
+  recurrence_type: 'daily' | 'weekly' | 'monthly' | 'interval' | 'custom' | 'none' | null
   days_of_week: string | null  // JSON string array like ["Mon", "Wed", "Fri"] or null
   days_of_month: string | null  // JSON string array like ["1", "15", "30"] or null
   months: string | null  // JSON string array like ["Jan", "Jun", "Dec"] or null
@@ -33,6 +33,7 @@ export const ScheduledPromptsSection: React.FC = () => {
   const [monthlyPrompts, setMonthlyPrompts] = useState<DBScheduledPrompt[]>([])
   const [intervalPrompts, setIntervalPrompts] = useState<DBScheduledPrompt[]>([])
   const [customPrompts, setCustomPrompts] = useState<DBScheduledPrompt[]>([])
+  const [oneOffPrompts, setOneOffPrompts] = useState<DBScheduledPrompt[]>([])
   const [activeTab, setActiveTab] = useState("interval")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -124,16 +125,32 @@ export const ScheduledPromptsSection: React.FC = () => {
       setMonthlyPrompts([]);
       setIntervalPrompts([]);
       setCustomPrompts([]);
+      setOneOffPrompts([]);
       setActiveTab(""); // Reset the active tab if no prompts exist
       return;
     }
   
-    const daily = prompts.filter(prompt => prompt.recurrence_type === "daily");
-    const weekly = prompts.filter(prompt => prompt.recurrence_type === "weekly");
-    const monthly = prompts.filter(prompt => prompt.recurrence_type === "monthly");
-    const interval = prompts.filter(prompt => prompt.recurrence_type === "interval");
-    const custom = prompts.filter(prompt => !["daily", "weekly", "monthly", "interval"].includes(prompt.recurrence_type));
+    // Filter one-off (non-recurring) prompts
+    const oneOff = prompts.filter(prompt => !prompt.is_recurring);
+    
+    // Filter recurring prompts by type
+    const daily = prompts.filter(prompt => prompt.is_recurring && prompt.recurrence_type === "daily");
+    const weekly = prompts.filter(prompt => prompt.is_recurring && prompt.recurrence_type === "weekly");
+    const monthly = prompts.filter(prompt => prompt.is_recurring && prompt.recurrence_type === "monthly");
+    const interval = prompts.filter(prompt => prompt.is_recurring && prompt.recurrence_type === "interval");
+    
+    // Any other recurring type goes to custom
+    const custom = prompts.filter(prompt => {
+      return prompt.is_recurring && 
+        prompt.recurrence_type !== "daily" && 
+        prompt.recurrence_type !== "weekly" && 
+        prompt.recurrence_type !== "monthly" && 
+        prompt.recurrence_type !== "interval" && 
+        prompt.recurrence_type !== "none" && 
+        prompt.recurrence_type !== null;
+    });
   
+    setOneOffPrompts(oneOff);
     setDailyPrompts(daily);
     setWeeklyPrompts(weekly);
     setMonthlyPrompts(monthly);
@@ -141,7 +158,8 @@ export const ScheduledPromptsSection: React.FC = () => {
     setCustomPrompts(custom);
   
     // Update active tab based on available prompts
-    if (interval.length > 0) setActiveTab("interval");
+    if (oneOff.length > 0) setActiveTab("one-off");
+    else if (interval.length > 0) setActiveTab("interval");
     else if (daily.length > 0) setActiveTab("daily");
     else if (weekly.length > 0) setActiveTab("weekly");
     else if (monthly.length > 0) setActiveTab("monthly");
@@ -195,6 +213,11 @@ export const ScheduledPromptsSection: React.FC = () => {
 
   // Helper to get recurrence label
   const getRecurrenceLabel = (prompt: DBScheduledPrompt) => {
+    // Check if it's a one-off (non-recurring) prompt first
+    if (!prompt.is_recurring) {
+      return 'One-off'
+    }
+    
     switch (prompt.recurrence_type) {
       case 'daily':
         return 'Daily'
@@ -220,6 +243,8 @@ export const ScheduledPromptsSection: React.FC = () => {
         return 'Monthly'
       case 'interval':
         return 'Interval'
+      case 'none':
+        return 'One-off'
       default:
         return 'Custom'
     }
@@ -361,7 +386,7 @@ export const ScheduledPromptsSection: React.FC = () => {
       {/* Only show tabs if there are prompts or we're loading */}
       {(prompts.length > 0 || isLoading) && (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-5 bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
+          <TabsList className="grid grid-cols-6 bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
             <TabsTrigger 
               value="daily" 
               className={cn(
@@ -399,6 +424,15 @@ export const ScheduledPromptsSection: React.FC = () => {
               Interval
             </TabsTrigger>
             <TabsTrigger 
+              value="one-off" 
+              className={cn(
+                "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
+                "text-gray-400 hover:text-gray-200"
+              )}
+            >
+              One-off
+            </TabsTrigger>
+            <TabsTrigger 
               value="custom" 
               className={cn(
                 "data-[state=active]:bg-purple-600 data-[state=active]:text-white", 
@@ -431,6 +465,10 @@ export const ScheduledPromptsSection: React.FC = () => {
                 
                 <TabsContent value="interval">
                   {renderPromptList(intervalPrompts)}
+                </TabsContent>
+                
+                <TabsContent value="one-off">
+                  {renderPromptList(oneOffPrompts)}
                 </TabsContent>
                 
                 <TabsContent value="custom">

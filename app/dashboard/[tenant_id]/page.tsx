@@ -8,7 +8,7 @@ import Loading from "@/components/ui/loading"
 import { Building2, Users, Layers, ChevronRight, Activity, BarChart3 } from "lucide-react"
 
 export default function Dashboard() {
-  const { tenant_id } = useParams()
+  const tenant_id = localStorage.getItem("tenant_id");
   const [tenantName, setTenantName] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
