@@ -2,15 +2,13 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { useParams } from "next/navigation";
-import {
-  ScheduledTask,
-  RecurrenceType
-} from "@/lib/types";
+import { ScheduledTask, RecurrenceType } from "@/lib/types";
 import {
   loadTasksFromLocalStorage,
-  saveTasksToLocalStorage
+  saveTasksToLocalStorage,
 } from "@/lib/taskUtil";
 import { GoogleGenAI } from "@google/genai";
+import { Console } from "console";
 
 export const usePromptScheduler = () => {
   const params = useParams<{ tenant_id: string }>();
@@ -63,13 +61,13 @@ export const usePromptScheduler = () => {
         sessid = getRandomString(10);
         localStorage.setItem("current_session_id", sessid);
       }
-      
+
       // Get user_id from localStorage
       const user_id = localStorage.getItem("user_id");
       if (!user_id) {
         throw new Error("User ID not found");
       }
-      
+
       // Prepare payload for immediate execution
       const immediatePayload = {
         session_id: sessid,
@@ -77,16 +75,22 @@ export const usePromptScheduler = () => {
         input: prompt,
         rerun: false,
         history: [],
-        changed: false
+        changed: false,
       };
-      
-      console.log("📤 Sending immediate execution payload to backend:", JSON.stringify(immediatePayload, null, 2));
-      
+
+      console.log(
+        "📤 Sending immediate execution payload to backend:",
+        JSON.stringify(immediatePayload, null, 2)
+      );
+
       // Use prompt-once endpoint for immediate execution
       const endpoint = "prompt-once";
       const djangoUrl = "https://syncdjango.site";
-      console.log("🌐 Sending request to:", `${djangoUrl}/schedule/${endpoint}/`);
-      
+      console.log(
+        "🌐 Sending request to:",
+        `${djangoUrl}/schedule/${endpoint}/`
+      );
+
       const response = await fetch(`${djangoUrl}/schedule/${endpoint}/`, {
         method: "POST",
         headers: {
@@ -94,23 +98,31 @@ export const usePromptScheduler = () => {
         },
         body: JSON.stringify(immediatePayload),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log("📥 Response from server:", data);
-      
+
       setIsExecuting(false);
-      setResult(data.response || "Execution completed, but no response was returned");
+      setResult(
+        data.response || "Execution completed, but no response was returned"
+      );
       addLog("Execution completed successfully");
       setActiveTab("result");
     } catch (error) {
       console.error("❌ Error executing prompt:", error);
       setIsExecuting(false);
-      setError(error instanceof Error ? error.message : "Failed to execute prompt");
-      addLog(`Error: ${error instanceof Error ? error.message : "Failed to execute prompt"}`);
+      setError(
+        error instanceof Error ? error.message : "Failed to execute prompt"
+      );
+      addLog(
+        `Error: ${
+          error instanceof Error ? error.message : "Failed to execute prompt"
+        }`
+      );
     }
   };
 
@@ -119,7 +131,7 @@ export const usePromptScheduler = () => {
       addLog("Error: Prompt cannot be empty");
       return;
     }
-    
+
     // Skip date validation if we have executionTime (for Smart Run)
     if (!scheduledTaskData.executionTime && (!date || !date.from)) {
       addLog("Error: Date must be selected");
@@ -136,34 +148,40 @@ export const usePromptScheduler = () => {
     const djangoUrl = "https://syncdjango.site";
     const tenant_id = localStorage.getItem("tenant_id");
     const user_id = localStorage.getItem("user_id");
-    
-    console.log("🔄 Starting schedule process with data:", JSON.stringify(scheduledTaskData, null, 2));
+
+    console.log(
+      "🔄 Starting schedule process with data:",
+      JSON.stringify(scheduledTaskData, null, 2)
+    );
     console.log("👤 User ID:", user_id);
     console.log("🏢 Tenant ID:", tenant_id);
-  
+
     try {
       // Use the executionTime directly if available, otherwise construct it from date and time
       // Always ensure the timezone is +05:30 as required by the backend
-      const execution_time = scheduledTaskData.executionTime || 
-        (scheduledTaskData.date && scheduledTaskData.time ? 
-          `${format(scheduledTaskData.date, 'yyyy-MM-dd')}T${scheduledTaskData.time}:00+05:30` : 
-          null);
-          
+      const execution_time =
+        scheduledTaskData.executionTime ||
+        (scheduledTaskData.date && scheduledTaskData.time
+          ? `${format(scheduledTaskData.date, "yyyy-MM-dd")}T${
+              scheduledTaskData.time
+            }:00+05:30`
+          : null);
+
       // Validate that the execution_time is properly formatted with timezone
       let finalExecutionTime = execution_time;
-      if (execution_time && !execution_time.includes('+05:30')) {
+      if (execution_time && !execution_time.includes("+05:30")) {
         console.warn("⚠️ Execution time missing timezone, adding +05:30");
         // If timezone is missing, add it
-        finalExecutionTime = execution_time.endsWith('Z') 
-          ? execution_time.replace('Z', '+05:30')
-          : execution_time.includes('+') || execution_time.includes('-')
-            ? execution_time.replace(/[+-]\d\d:\d\d$/, '+05:30')
-            : execution_time + '+05:30';
+        finalExecutionTime = execution_time.endsWith("Z")
+          ? execution_time.replace("Z", "+05:30")
+          : execution_time.includes("+") || execution_time.includes("-")
+          ? execution_time.replace(/[+-]\d\d:\d\d$/, "+05:30")
+          : execution_time + "+05:30";
         console.log("🔧 Fixed execution time:", finalExecutionTime);
       }
-      
+
       console.log("⏰ Execution time for API:", finalExecutionTime);
-      
+
       // Create the payload exactly matching the format in payload.txt examples
       const schedulePayload: any = {
         // Required fields for all payloads
@@ -172,42 +190,43 @@ export const usePromptScheduler = () => {
         input: prompt,
         rerun: false,
         history: [],
-        changed: false
+        changed: false,
       };
-      
+
       // Only add execution_time if it's available (for immediate execution it might be omitted)
       if (finalExecutionTime) {
         schedulePayload.execution_time = finalExecutionTime;
         // Explicitly set is_recurring to false for one-time scheduled tasks
         schedulePayload.is_recurring = scheduledTaskData.recurrence || false;
       }
-      
+
       // Add recurrence fields only if this is a recurring task
       if (scheduledTaskData.recurrence) {
         schedulePayload.is_recurring = true;
         schedulePayload.recurrence_type = scheduledTaskData.recurrenceType;
-        
+
         // Add type-specific recurrence parameters
         switch (scheduledTaskData.recurrenceType) {
-          case 'interval':
+          case "interval":
             if (scheduledTaskData.intervalValue) {
               schedulePayload.interval_every = scheduledTaskData.intervalValue;
             }
             if (scheduledTaskData.intervalDuration) {
-              schedulePayload.interval_period = scheduledTaskData.intervalDuration;
+              schedulePayload.interval_period =
+                scheduledTaskData.intervalDuration;
             }
             break;
-          case 'weekly':
+          case "weekly":
             if (scheduledTaskData.daysOfWeek?.length) {
               schedulePayload.days_of_week = scheduledTaskData.daysOfWeek;
             }
             break;
-          case 'monthly':
+          case "monthly":
             if (scheduledTaskData.daysOfMonth?.length) {
               schedulePayload.days_of_month = scheduledTaskData.daysOfMonth;
             }
             break;
-          case 'custom':
+          case "custom":
             if (scheduledTaskData.daysOfWeek?.length) {
               schedulePayload.days_of_week = scheduledTaskData.daysOfWeek;
             }
@@ -220,14 +239,20 @@ export const usePromptScheduler = () => {
       } else {
         schedulePayload.is_recurring = false;
       }
-      
-      console.log("📤 Sending payload to backend:", JSON.stringify(schedulePayload, null, 2));
-  
+
+      console.log(
+        "📤 Sending payload to backend:",
+        JSON.stringify(schedulePayload, null, 2)
+      );
+
       // Determine the endpoint based on whether this is a scheduled task (both recurring and one-time)
       // Only use prompt-once for immediate execution, use prompt for all scheduled tasks
-      const endpoint = "prompt";  // Always use the /prompt endpoint for scheduled tasks
-      console.log("🌐 Sending request to:", `${djangoUrl}/schedule/${endpoint}/`);
-      
+      const endpoint = "prompt"; // Always use the /prompt endpoint for scheduled tasks
+      console.log(
+        "🌐 Sending request to:",
+        `${djangoUrl}/schedule/${endpoint}/`
+      );
+
       const response = await fetch(`${djangoUrl}/schedule/${endpoint}/`, {
         method: "POST",
         headers: {
@@ -235,18 +260,20 @@ export const usePromptScheduler = () => {
         },
         body: JSON.stringify(schedulePayload),
       });
-      
+
       console.log("📥 Response status:", response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("❌ Server error response:", errorText);
-        throw new Error(`Failed to schedule task: ${response.status} ${errorText}`);
+        throw new Error(
+          `Failed to schedule task: ${response.status} ${errorText}`
+        );
       }
-  
+
       const result = await response.json();
       console.log("✅ Task scheduled successfully:", result);
-  
+
       // Create a new task object for the UI with all necessary details
       const newTask: ScheduledTask = {
         id: sessid,
@@ -259,25 +286,41 @@ export const usePromptScheduler = () => {
         // Use the properly formatted execution time with timezone
         executionTime: finalExecutionTime as string | undefined,
         // Copy over any recurrence-specific properties
-        ...(scheduledTaskData.intervalValue && { intervalValue: scheduledTaskData.intervalValue }),
-        ...(scheduledTaskData.intervalDuration && { intervalDuration: scheduledTaskData.intervalDuration }),
-        ...(scheduledTaskData.daysOfWeek && { daysOfWeek: scheduledTaskData.daysOfWeek }),
-        ...(scheduledTaskData.daysOfMonth && { daysOfMonth: scheduledTaskData.daysOfMonth }),
+        ...(scheduledTaskData.intervalValue && {
+          intervalValue: scheduledTaskData.intervalValue,
+        }),
+        ...(scheduledTaskData.intervalDuration && {
+          intervalDuration: scheduledTaskData.intervalDuration,
+        }),
+        ...(scheduledTaskData.daysOfWeek && {
+          daysOfWeek: scheduledTaskData.daysOfWeek,
+        }),
+        ...(scheduledTaskData.daysOfMonth && {
+          daysOfMonth: scheduledTaskData.daysOfMonth,
+        }),
         ...(scheduledTaskData.months && { months: scheduledTaskData.months }),
       };
-      
+
       console.log("📋 Adding task to UI:", JSON.stringify(newTask, null, 2));
-      
+
       setTasks([...tasks, newTask]);
-      addLog(`Task scheduled for ${format(scheduledTaskData.date || new Date(), "PPpp")}`);
+      addLog(
+        `Task scheduled for ${format(
+          scheduledTaskData.date || new Date(),
+          "PPpp"
+        )}`
+      );
       setPrompt("");
       setActiveTab("scheduled");
     } catch (error) {
       console.error("❌ Scheduling error:", error);
-      addLog(`Error scheduling task: ${error instanceof Error ? error.message : "Unknown error"}`);
+      addLog(
+        `Error scheduling task: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
-  
 
   const deleteTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
@@ -296,15 +339,18 @@ export const usePromptScheduler = () => {
         throw new Error("Tenant ID not found");
       }
       // Use params here
-      const response = await fetch(`https://syncdjango.site/schedule/${tenant_id}/send-refresh-token/`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          "user_id": user_id
-        })
-      });
+      const response = await fetch(
+        `https://syncdjango.site/schedule/${tenant_id}/send-refresh-token/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: user_id,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to connect");
       }
@@ -326,22 +372,28 @@ export const usePromptScheduler = () => {
   const planScheduling = async (promptText: string) => {
     try {
       console.log("🔍 Starting AI analysis for prompt:", promptText);
-      
+
       // Get current date and time for context
       const now = new Date();
-      const currentDateTime = now.toISOString().replace('Z', '+05:30');
-      const formattedDateTime = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
+      const currentDateTime = now.toISOString().replace("Z", "+05:30");
+      const formattedDateTime = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
         hour12: true,
-        timeZone: 'Asia/Kolkata'
+        timeZone: "Asia/Kolkata",
       }).format(now);
-      
-      console.log("📅 Current date/time:", formattedDateTime, "(", currentDateTime, ")");
-      
+
+      console.log(
+        "📅 Current date/time:",
+        formattedDateTime,
+        "(",
+        currentDateTime,
+        ")"
+      );
+
       // **Enhanced System Prompt for AI Analysis**
       const systemPrompt = [
         `**CURRENT DATE AND TIME: ${formattedDateTime} (${currentDateTime})**`,
@@ -351,12 +403,12 @@ export const usePromptScheduler = () => {
         "### **Decision Criteria**",
         "- **IMMEDIATE Execution**:",
         "  - If no future time, date, or recurrence is mentioned.",
-        "  - If it demands instant action (e.g., \"Send an email now\", \"Run this query immediately\").",
+        '  - If it demands instant action (e.g., "Send an email now", "Run this query immediately").',
         "  - If the task is a simple question or request with no timing specified.",
         "- **SCHEDULED Execution**:",
-        "  - If the task specifies a future date/time (e.g., \"Send an email tomorrow at 9 AM\").",
-        "  - If it includes a recurrence pattern (e.g., \"Send this email every Monday at 10 AM\").",
-        "  - If it mentions specific days, dates, or times (e.g., \"on Friday\", \"next week\", \"at 3 PM\").",
+        '  - If the task specifies a future date/time (e.g., "Send an email tomorrow at 9 AM").',
+        '  - If it includes a recurrence pattern (e.g., "Send this email every Monday at 10 AM").',
+        '  - If it mentions specific days, dates, or times (e.g., "on Friday", "next week", "at 3 PM").',
         "",
         "### **IMPORTANT: Timezone Requirements**",
         "- ALL dates and times MUST be returned with the +05:30 timezone offset",
@@ -364,16 +416,16 @@ export const usePromptScheduler = () => {
         "- Do NOT use 'Z' or any other timezone format",
         "",
         "### **Time Expression Recognition**",
-        "- Recognize relative times: \"tomorrow\", \"next week\", \"in 2 hours\", \"this evening\"",
-        "- Recognize specific dates: \"April 10th\", \"on the 15th\", \"2025-04-10\"",
-        "- Recognize specific times: \"at 3 PM\", \"at 15:30\", \"at noon\"",
-        "- Recognize recurring patterns: \"every day\", \"each Monday\", \"weekly\", \"monthly\", \"every 2 hours\"",
+        '- Recognize relative times: "tomorrow", "next week", "in 2 hours", "this evening"',
+        '- Recognize specific dates: "April 10th", "on the 15th", "2025-04-10"',
+        '- Recognize specific times: "at 3 PM", "at 15:30", "at noon"',
+        '- Recognize recurring patterns: "every day", "each Monday", "weekly", "monthly", "every 2 hours"',
         "",
         "### **Extracted Scheduling Details**",
         "- **For all executions**: Provide execution_time in ISO 8601 format with +05:30 timezone offset (e.g., '2025-04-04T15:30:00+05:30').",
         "- **For recurring execution**: Identify:",
-        "  - recurrence_type: \"interval\", \"daily\", \"weekly\", \"monthly\", \"custom\"",
-        "  - For 'interval' type: include interval_every (number) & interval_period (\"minutes\", \"hours\", or \"days\"). Note: For tasks like 'in 2 minutes', use interval type with appropriate values.",
+        '  - recurrence_type: "interval", "daily", "weekly", "monthly", "custom"',
+        '  - For \'interval\' type: include interval_every (number) & interval_period ("minutes", "hours", or "days"). Note: For tasks like \'in 2 minutes\', use interval type with appropriate values.',
         "  - For 'weekly' type: include days_of_week array (0 = Sunday, 6 = Saturday)",
         "  - For 'monthly' type: include days_of_month array (1-31)",
         "  - For 'custom' type: include both days_of_week and months arrays",
@@ -381,17 +433,17 @@ export const usePromptScheduler = () => {
         "### **Expected JSON Response Format (MUST MATCH EXACTLY)**",
         "```json",
         "{",
-        "  \"execution_type\": \"IMMEDIATE\" | \"SCHEDULED\",",
-        "  \"reasoning\": \"Brief AI explanation of the decision\",",
-        "  \"schedule_details\": {",
-        "    \"execution_time\": \"2025-04-04T15:30:00+05:30\" | null,",
-        "    \"is_recurring\": true | false,",
-        "    \"recurrence_type\": \"interval\" | \"daily\" | \"weekly\" | \"monthly\" | \"custom\" | null,",
-        "    \"interval_every\": <integer> | null,",
-        "    \"interval_period\": \"minutes\" | \"hours\" | \"days\" | null,",
-        "    \"days_of_week\": [0-6] | null,",
-        "    \"days_of_month\": [1-31] | null,",
-        "    \"months\": [1-12] | null",
+        '  "execution_type": "IMMEDIATE" | "SCHEDULED",',
+        '  "reasoning": "Brief AI explanation of the decision",',
+        '  "schedule_details": {',
+        '    "execution_time": "2025-04-04T15:30:00+05:30" | null,',
+        '    "is_recurring": true | false,',
+        '    "recurrence_type": "interval" | "daily" | "weekly" | "monthly" | "custom" | null,',
+        '    "interval_every": <integer> | null,',
+        '    "interval_period": "minutes" | "hours" | "days" | null,',
+        '    "days_of_week": [0-6] | null,',
+        '    "days_of_month": [1-31] | null,',
+        '    "months": [1-12] | null',
         "  }",
         "}",
         "```",
@@ -405,87 +457,103 @@ export const usePromptScheduler = () => {
         "5. All values are of the correct type (strings, integers, arrays, booleans)",
         "",
         "### **Examples (Based on Exact Backend Format Requirements)**",
-        "1. \"Send a report to the team\" → IMMEDIATE (no timing specified)",
-        "2. \"Send a report to the team tomorrow at 9 AM\" → SCHEDULED, one-time with execution_time: \"2025-04-05T09:00:00+05:30\", is_recurring: false",
-        "3. \"Send a trivia fact after two minutes from now\" → SCHEDULED, one-time with execution_time: \"2025-04-04T15:36:00+05:30\", is_recurring: false",
-        "4. \"Send a report every day at 10 AM\" → SCHEDULED, daily recurrence with execution_time: \"2025-04-04T10:00:00+05:30\", is_recurring: true, recurrence_type: \"daily\"",
-        "5. \"Send a report every Monday at 9 AM\" → SCHEDULED, weekly recurrence with execution_time: \"2025-04-08T09:00:00+05:30\", is_recurring: true, recurrence_type: \"weekly\", days_of_week: [1]",
-        "6. \"Check server status every 30 minutes\" → SCHEDULED, interval recurrence with execution_time: \"2025-04-04T12:30:00+05:30\", is_recurring: true, recurrence_type: \"interval\", interval_every: 30, interval_period: \"minutes\"",
-        "7. \"Run database backup on the 1st of every month\" → SCHEDULED, monthly recurrence with execution_time: \"2025-05-01T00:00:00+05:30\", is_recurring: true, recurrence_type: \"monthly\", days_of_month: [1]",
+        '1. "Send a report to the team" → IMMEDIATE (no timing specified)',
+        '2. "Send a report to the team tomorrow at 9 AM" → SCHEDULED, one-time with execution_time: "2025-04-05T09:00:00+05:30", is_recurring: false',
+        '3. "Send a trivia fact after two minutes from now" → SCHEDULED, one-time with execution_time: "2025-04-04T15:36:00+05:30", is_recurring: false',
+        '4. "Send a report every day at 10 AM" → SCHEDULED, daily recurrence with execution_time: "2025-04-04T10:00:00+05:30", is_recurring: true, recurrence_type: "daily"',
+        '5. "Send a report every Monday at 9 AM" → SCHEDULED, weekly recurrence with execution_time: "2025-04-08T09:00:00+05:30", is_recurring: true, recurrence_type: "weekly", days_of_week: [1]',
+        '6. "Check server status every 30 minutes" → SCHEDULED, interval recurrence with execution_time: "2025-04-04T12:30:00+05:30", is_recurring: true, recurrence_type: "interval", interval_every: 30, interval_period: "minutes"',
+        '7. "Run database backup on the 1st of every month" → SCHEDULED, monthly recurrence with execution_time: "2025-05-01T00:00:00+05:30", is_recurring: true, recurrence_type: "monthly", days_of_month: [1]',
         "",
-        `**User Prompt:** "${promptText}"`
-      ].join('\n');
-      
+        `**User Prompt:** "${promptText}"`,
+      ].join("\n");
+
       console.log("💬 Sending request to server-side proxy");
-      
+
       // Call our server-side proxy endpoint instead of Gemini API directly
-      const response = await fetch('/api/gemini-proxy', {
-        method: 'POST',
+      const response = await fetch("/api/gemini-proxy", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt: systemPrompt }),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("❌ Proxy API error:", errorText);
         throw new Error(`Proxy API error: ${response.status} ${errorText}`);
       }
-      
+
       // Parse the JSON response from our proxy
       const data = await response.json();
       console.log("💬 Received response from proxy");
-      
+
       // Extract text from the response
       let text = "";
       if (data.candidates && data.candidates[0] && data.candidates[0].content) {
         text = data.candidates[0].content.parts[0].text || "";
       } else if (data.error) {
-        throw new Error(`API Error: ${data.error.message || JSON.stringify(data.error)}`);
+        throw new Error(
+          `API Error: ${data.error.message || JSON.stringify(data.error)}`
+        );
       } else {
-        console.warn("⚠️ Unexpected response format:", JSON.stringify(data, null, 2));
+        console.warn(
+          "⚠️ Unexpected response format:",
+          JSON.stringify(data, null, 2)
+        );
         throw new Error("Unexpected response format from Gemini API");
       }
-      
+
       console.log("💬 Gemini AI Response text received, length:", text.length);
-  
+
       // **Extract and Parse JSON Response Safely**
       try {
         // Look for JSON in the text response
         const jsonMatch = text.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
-          console.error("❌ No JSON found in response:", text.substring(0, 200) + "...");
+          console.error(
+            "❌ No JSON found in response:",
+            text.substring(0, 200) + "..."
+          );
           throw new Error("No JSON found in AI response");
         }
-        
+
         const jsonString = jsonMatch[0];
         console.log("📄 Extracted JSON string, length:", jsonString.length);
         const analysisResult = JSON.parse(jsonString);
-  
+
         // **Ensure Fallback Defaults for Missing Fields**
         // Use execution_time directly from the AI response
-        const execution_time = analysisResult.schedule_details?.execution_time || null;
-        
+        const execution_time =
+          analysisResult.schedule_details?.execution_time || null;
+
         return {
           execution_type: analysisResult.execution_type || "IMMEDIATE",
-          reasoning: analysisResult.reasoning || "No clear scheduling indicators found.",
+          reasoning:
+            analysisResult.reasoning || "No clear scheduling indicators found.",
           schedule_details: {
             execution_time: execution_time,
-            is_recurring: analysisResult.schedule_details?.is_recurring ?? false,
-            recurrence_type: analysisResult.schedule_details?.recurrence_type || null,
-            interval_every: analysisResult.schedule_details?.interval_every || null,
-            interval_period: analysisResult.schedule_details?.interval_period || null,
+            is_recurring:
+              analysisResult.schedule_details?.is_recurring ?? false,
+            recurrence_type:
+              analysisResult.schedule_details?.recurrence_type || null,
+            interval_every:
+              analysisResult.schedule_details?.interval_every || null,
+            interval_period:
+              analysisResult.schedule_details?.interval_period || null,
             days_of_week: analysisResult.schedule_details?.days_of_week || null,
-            days_of_month: analysisResult.schedule_details?.days_of_month || null,
-            months: analysisResult.schedule_details?.months || null
-          }
+            days_of_month:
+              analysisResult.schedule_details?.days_of_month || null,
+            months: analysisResult.schedule_details?.months || null,
+          },
         };
       } catch (parseError) {
         console.error("Failed to parse AI response:", parseError);
         return {
           execution_type: "IMMEDIATE",
-          reasoning: "Error parsing AI response. Defaulting to immediate execution.",
+          reasoning:
+            "Error parsing AI response. Defaulting to immediate execution.",
           schedule_details: {
             execution_time: null,
             is_recurring: false,
@@ -494,8 +562,8 @@ export const usePromptScheduler = () => {
             interval_period: null,
             days_of_week: null,
             days_of_month: null,
-            months: null
-          }
+            months: null,
+          },
         };
       }
     } catch (error) {
@@ -511,18 +579,21 @@ export const usePromptScheduler = () => {
           interval_period: null,
           days_of_week: null,
           days_of_month: null,
-          months: null
-        }
+          months: null,
+        },
       };
     }
   };
 
   // Function to generate a random string for task IDs
   const getRandomString = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
     return result;
   };
@@ -533,20 +604,40 @@ export const usePromptScheduler = () => {
       setError("Command is required");
       return;
     }
-    
+
     try {
       setIsExecuting(true);
       setLogs(["Analyzing prompt with AI..."]);
+      console.log("Starting prompt validity analysis");
+      const response = await fetch("/api/validate-query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: prompt,
+      });
+      const data = await response.json();
+      if (data.accepted === "no") {
+        setLogs((logs) => [
+          ...logs,
+          "----Prompt Rejected-----",
+          ...data.reasons.map((r: any, i: any) => `❌ ${i + 1}. ${r}`),
+        ]);
+        return;
+      }
       console.log("🔍 Starting Smart Run analysis for prompt:", prompt);
-      
+
       // First, analyze the prompt with Gemini
       const analysisResult = await planScheduling(prompt);
-      console.log("🤖 AI Analysis complete:", JSON.stringify(analysisResult, null, 2));
-      
+      console.log(
+        "🤖 AI Analysis complete:",
+        JSON.stringify(analysisResult, null, 2)
+      );
+
       // Add the analysis to logs so user can see the reasoning
       addLog(`AI Decision: ${analysisResult.execution_type}`);
       addLog(`Reasoning: ${analysisResult.reasoning}`);
-      
+
       // Based on the analysis, either execute immediately or schedule
       if (analysisResult.execution_type === "IMMEDIATE") {
         // Execute immediately
@@ -566,22 +657,31 @@ export const usePromptScheduler = () => {
           days_of_month: number[] | null;
           months: number[] | null;
         };
-        
-        console.log("📋 Schedule details:", JSON.stringify(scheduleDetails, null, 2));
-        
+
+        console.log(
+          "📋 Schedule details:",
+          JSON.stringify(scheduleDetails, null, 2)
+        );
+
         // Parse execution_time into date and time for UI display
         if (scheduleDetails.execution_time) {
           const executionDateTime = new Date(scheduleDetails.execution_time);
           console.log("📅 Execution date/time parsed:", executionDateTime);
-          
+
           // Set date for UI and for validation in handleSchedule
           const dateRange = { from: executionDateTime, to: executionDateTime };
           console.log("📅 Setting date state to:", dateRange);
           setDate(dateRange);
-          
+
           // Format time as HH:MM for UI
-          const hours = executionDateTime.getHours().toString().padStart(2, '0');
-          const minutes = executionDateTime.getMinutes().toString().padStart(2, '0');
+          const hours = executionDateTime
+            .getHours()
+            .toString()
+            .padStart(2, "0");
+          const minutes = executionDateTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0");
           const formattedTime = `${hours}:${minutes}`;
           console.log("🕒 Formatted time for UI:", formattedTime);
           setTime(formattedTime);
@@ -592,126 +692,170 @@ export const usePromptScheduler = () => {
           const defaultDate = new Date();
           setDate({ from: defaultDate, to: defaultDate });
         }
-        
+
         // Handle recurrence settings
         if (scheduleDetails.is_recurring && scheduleDetails.recurrence_type) {
           // Ensure recurrence_type is a valid RecurrenceType
-          const recurrenceType = scheduleDetails.recurrence_type as RecurrenceType;
+          const recurrenceType =
+            scheduleDetails.recurrence_type as RecurrenceType;
           console.log("🔄 Setting recurrence type:", recurrenceType);
           setRecurrence(recurrenceType);
-        } else if (prompt.toLowerCase().includes("after") && 
-                  (prompt.toLowerCase().includes("minute") || 
-                   prompt.toLowerCase().includes("hour") || 
-                   prompt.toLowerCase().includes("day"))) {
+        } else if (
+          prompt.toLowerCase().includes("after") &&
+          (prompt.toLowerCase().includes("minute") ||
+            prompt.toLowerCase().includes("hour") ||
+            prompt.toLowerCase().includes("day"))
+        ) {
           // Special handling for "after X minutes/hours/days" which should be interval-based
           console.log("🔄 Detected interval-based task from 'after' phrase");
           setRecurrence("interval");
           // Force is_recurring to true for interval-based tasks
           scheduleDetails.is_recurring = true;
           scheduleDetails.recurrence_type = "interval";
-          
+
           // Try to extract the interval information
-          const afterMatch = prompt.match(/after\s+(\d+)\s+(minute|hour|day)s?/i);
+          const afterMatch = prompt.match(
+            /after\s+(\d+)\s+(minute|hour|day)s?/i
+          );
           if (afterMatch) {
             const intervalValue = parseInt(afterMatch[1]);
             let intervalPeriod = afterMatch[2].toLowerCase();
-            if (intervalPeriod === "minute" || intervalPeriod === "hour" || intervalPeriod === "day") {
+            if (
+              intervalPeriod === "minute" ||
+              intervalPeriod === "hour" ||
+              intervalPeriod === "day"
+            ) {
               intervalPeriod += "s"; // Add 's' to match expected format (minutes, hours, days)
             }
-            
-            console.log("🔄 Extracted interval:", intervalValue, intervalPeriod);
+
+            console.log(
+              "🔄 Extracted interval:",
+              intervalValue,
+              intervalPeriod
+            );
             scheduleDetails.interval_every = intervalValue;
             scheduleDetails.interval_period = intervalPeriod;
           }
         }
-        
+
         // Create a task data object with all the necessary details
         // Format the execution time with the correct timezone (+05:30)
-        let formattedExecutionTime = scheduleDetails.execution_time || undefined;
-        
+        let formattedExecutionTime =
+          scheduleDetails.execution_time || undefined;
+
         // Ensure the execution time has the correct timezone format
         if (formattedExecutionTime) {
-          if (!formattedExecutionTime.includes('+05:30')) {
+          if (!formattedExecutionTime.includes("+05:30")) {
             // If timezone is missing or different, replace with +05:30
-            formattedExecutionTime = formattedExecutionTime.endsWith('Z') 
-              ? formattedExecutionTime.replace('Z', '+05:30')
-              : formattedExecutionTime.includes('+') || formattedExecutionTime.includes('-')
-                ? formattedExecutionTime.replace(/[+-]\d\d:\d\d$/, '+05:30')
-                : formattedExecutionTime + '+05:30';
+            formattedExecutionTime = formattedExecutionTime.endsWith("Z")
+              ? formattedExecutionTime.replace("Z", "+05:30")
+              : formattedExecutionTime.includes("+") ||
+                formattedExecutionTime.includes("-")
+              ? formattedExecutionTime.replace(/[+-]\d\d:\d\d$/, "+05:30")
+              : formattedExecutionTime + "+05:30";
           }
-          console.log("🕒 Formatted execution time with timezone:", formattedExecutionTime);
+          console.log(
+            "🕒 Formatted execution time with timezone:",
+            formattedExecutionTime
+          );
         }
-        
+
         // Validate recurrence settings - ensure we don't set is_recurring: true without proper recurrence parameters
         let isValidRecurring = false;
         if (scheduleDetails.is_recurring && scheduleDetails.recurrence_type) {
-          if (scheduleDetails.recurrence_type === "interval" && 
-              scheduleDetails.interval_every && 
-              scheduleDetails.interval_period) {
+          if (
+            scheduleDetails.recurrence_type === "interval" &&
+            scheduleDetails.interval_every &&
+            scheduleDetails.interval_period
+          ) {
             isValidRecurring = true;
           } else if (scheduleDetails.recurrence_type === "daily") {
             isValidRecurring = true;
-          } else if (scheduleDetails.recurrence_type === "weekly" && 
-                    scheduleDetails.days_of_week && 
-                    scheduleDetails.days_of_week.length > 0) {
+          } else if (
+            scheduleDetails.recurrence_type === "weekly" &&
+            scheduleDetails.days_of_week &&
+            scheduleDetails.days_of_week.length > 0
+          ) {
             isValidRecurring = true;
-          } else if (scheduleDetails.recurrence_type === "monthly" && 
-                    scheduleDetails.days_of_month && 
-                    scheduleDetails.days_of_month.length > 0) {
+          } else if (
+            scheduleDetails.recurrence_type === "monthly" &&
+            scheduleDetails.days_of_month &&
+            scheduleDetails.days_of_month.length > 0
+          ) {
             isValidRecurring = true;
-          } else if (scheduleDetails.recurrence_type === "custom" && 
-                    ((scheduleDetails.days_of_week && scheduleDetails.days_of_week.length > 0) || 
-                     (scheduleDetails.months && scheduleDetails.months.length > 0))) {
+          } else if (
+            scheduleDetails.recurrence_type === "custom" &&
+            ((scheduleDetails.days_of_week &&
+              scheduleDetails.days_of_week.length > 0) ||
+              (scheduleDetails.months && scheduleDetails.months.length > 0))
+          ) {
             isValidRecurring = true;
           }
         }
 
         // If recurrence is not valid, force it to be a one-time task
         if (!isValidRecurring && scheduleDetails.is_recurring) {
-          console.log("⚠️ Invalid recurrence settings detected, converting to one-time task");
+          console.log(
+            "⚠️ Invalid recurrence settings detected, converting to one-time task"
+          );
           scheduleDetails.is_recurring = false;
           scheduleDetails.recurrence_type = null;
         }
-        
+
         const taskData: ScheduledTask = {
           id: getRandomString(10),
           prompt: prompt,
           // Store the execution time as the primary scheduling field
           executionTime: formattedExecutionTime,
           // Keep date and time for UI display purposes
-          date: scheduleDetails.execution_time ? new Date(scheduleDetails.execution_time) : new Date(),
-          time: scheduleDetails.execution_time ? 
-            new Date(scheduleDetails.execution_time).toTimeString().substring(0, 5) : 
-            "12:00",
+          date: scheduleDetails.execution_time
+            ? new Date(scheduleDetails.execution_time)
+            : new Date(),
+          time: scheduleDetails.execution_time
+            ? new Date(scheduleDetails.execution_time)
+                .toTimeString()
+                .substring(0, 5)
+            : "12:00",
           recurrence: scheduleDetails.is_recurring || false,
-          recurrenceType: (scheduleDetails.recurrence_type as RecurrenceType) ?? "none",
+          recurrenceType:
+            (scheduleDetails.recurrence_type as RecurrenceType) ?? "none",
           status: "pending",
           // Add specific recurrence details based on type
-          ...(scheduleDetails.is_recurring && scheduleDetails.recurrence_type === "interval" && {
-            intervalValue: scheduleDetails.interval_every ?? undefined,
-            intervalDuration: scheduleDetails.interval_period ?? undefined
-          }),
-          ...(scheduleDetails.is_recurring && scheduleDetails.recurrence_type === "daily" && {
-            // Daily recurrence doesn't need additional parameters
-            // but we explicitly handle it for completeness
-            dailyExecutionTime: scheduleDetails.execution_time ? 
-              new Date(scheduleDetails.execution_time).toTimeString().substring(0, 5) : 
-              "12:00"
-          }),
-          ...(scheduleDetails.is_recurring && scheduleDetails.recurrence_type === "weekly" && {
-            daysOfWeek: scheduleDetails.days_of_week ?? undefined
-          }),
-          ...(scheduleDetails.is_recurring && scheduleDetails.recurrence_type === "monthly" && {
-            daysOfMonth: scheduleDetails.days_of_month ?? undefined
-          }),
-          ...(scheduleDetails.is_recurring && scheduleDetails.recurrence_type === "custom" && {
-            daysOfWeek: scheduleDetails.days_of_week ?? undefined,
-            months: scheduleDetails.months ?? undefined
-          })
+          ...(scheduleDetails.is_recurring &&
+            scheduleDetails.recurrence_type === "interval" && {
+              intervalValue: scheduleDetails.interval_every ?? undefined,
+              intervalDuration: scheduleDetails.interval_period ?? undefined,
+            }),
+          ...(scheduleDetails.is_recurring &&
+            scheduleDetails.recurrence_type === "daily" && {
+              // Daily recurrence doesn't need additional parameters
+              // but we explicitly handle it for completeness
+              dailyExecutionTime: scheduleDetails.execution_time
+                ? new Date(scheduleDetails.execution_time)
+                    .toTimeString()
+                    .substring(0, 5)
+                : "12:00",
+            }),
+          ...(scheduleDetails.is_recurring &&
+            scheduleDetails.recurrence_type === "weekly" && {
+              daysOfWeek: scheduleDetails.days_of_week ?? undefined,
+            }),
+          ...(scheduleDetails.is_recurring &&
+            scheduleDetails.recurrence_type === "monthly" && {
+              daysOfMonth: scheduleDetails.days_of_month ?? undefined,
+            }),
+          ...(scheduleDetails.is_recurring &&
+            scheduleDetails.recurrence_type === "custom" && {
+              daysOfWeek: scheduleDetails.days_of_week ?? undefined,
+              months: scheduleDetails.months ?? undefined,
+            }),
         };
-        
-        console.log("📝 Task data prepared for scheduling:", JSON.stringify(taskData, null, 2));
-        
+
+        console.log(
+          "📝 Task data prepared for scheduling:",
+          JSON.stringify(taskData, null, 2)
+        );
+
         // Make sure we have a valid date set before calling handleSchedule
         if (!date || !date.from) {
           console.log("📅 No date set, using execution time to set date");
@@ -723,13 +867,15 @@ export const usePromptScheduler = () => {
             setDate({ from: new Date(), to: new Date() });
           }
         }
-        
+
         // Call the schedule function with the task data
         addLog("Scheduling prompt based on AI analysis...");
         await handleSchedule(taskData);
-        
+
         // Add scheduling details to logs
-        const schedulingMessage = `Task ${scheduleDetails.is_recurring ? 'recurring' : 'scheduled'} for: ${scheduleDetails.execution_time || 'N/A'}`;
+        const schedulingMessage = `Task ${
+          scheduleDetails.is_recurring ? "recurring" : "scheduled"
+        } for: ${scheduleDetails.execution_time || "N/A"}`;
         console.log("✅ " + schedulingMessage);
         addLog(schedulingMessage);
       }
