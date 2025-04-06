@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY || "";
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_KEY || "";
 
 const genAI = new GoogleGenerativeAI(apiKey);
 

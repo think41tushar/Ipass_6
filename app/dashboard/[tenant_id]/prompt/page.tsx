@@ -1,13 +1,16 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   AlertCircle, 
-  Settings, 
+  Calendar as CalendarIcon, 
+  Check, 
+  Clock, 
   Repeat, 
-  Clock3, 
-  Calendar as CalendarIcon2 
+  Settings,
+  Trash2, 
+  X 
 } from "lucide-react";
 
 import {
@@ -61,10 +64,20 @@ const PromptScheduler: React.FC = () => {
     handleConnect,
     handleSmartRun,
     planScheduling,
+    handleRerun,
   } = usePromptScheduler();
 
   const [updatedLogs, setUpdatedLogs] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
+
+  // Synchronize updatedLogs with logs when logs change
+  useEffect(() => {
+    // Initialize updatedLogs with the actual log values
+    // This ensures we have the correct array length and values
+    setUpdatedLogs([...logs]);
+    console.log("Page component: Initialized updatedLogs with logs:", logs);
+  }, [logs.length]); // Only run when logs length changes
+
   const [loading, setLoading] = useState<boolean>(false);
   const [connectLoading, setConnectLoading] = useState<boolean>(false);
 
@@ -93,14 +106,23 @@ const PromptScheduler: React.FC = () => {
     session_id: string,
     isRerun: boolean
   ) {
+    // Find the first tool execution log that has been edited
     let updated = "";
-    updatedLogs.forEach((log) => {
-      if (log !== null) {
-        updated = log;
+    if (isRerun) {
+      for (let i = 0; i < updatedLogs.length; i++) {
+        // Check if this is a tool execution log (which can be edited)
+        const isToolExecution = typeof logs[i] === 'string' && logs[i].startsWith("Executing tool:");
+        
+        if (isToolExecution && updatedLogs[i] !== logs[i]) {
+          // This log has been edited
+          updated = updatedLogs[i];
+          console.log("Page component: Found edited log for callPrompt:", updated);
+          break;
+        }
       }
-    });
+      console.log("Page component: Using edited log for rerun:", updated);
+    }
 
-    console.log(updated);
     let requestBody = {};
     if (isRerun) {
       requestBody = {
@@ -108,7 +130,7 @@ const PromptScheduler: React.FC = () => {
         session_id: session_id,
         rerun: true,
         history: history,
-        changed: updated,
+        changed: updated || false,
       };
     } else {
       requestBody = {
@@ -122,7 +144,7 @@ const PromptScheduler: React.FC = () => {
     try {
       setLoading(true);
       setError("");
-      console.log(JSON.stringify(requestBody));
+      console.log("Request body:", JSON.stringify(requestBody, null, 2));
       const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
         method: "POST",
         headers: {
@@ -136,7 +158,7 @@ const PromptScheduler: React.FC = () => {
         return result;
       }
     } catch (error) {
-      console.error("Failed to send prompt request: ", console.error);
+      console.error("Failed to send prompt request: ", error);
     } finally {
       setLoading(false);
     }
@@ -162,68 +184,40 @@ const PromptScheduler: React.FC = () => {
     // Log session id
     console.log(`Session id set as ${sessid}`);
     console.log(`Session id set as ${sessid} and stored in localStorage`);
-    // Start event stream for logs
-    const waitForSSE = new Promise((resolve, reject) => {
-      const eventSource = new EventSource(`${backendUrl}/logevents/${sessid}`);
-
-      eventSource.onopen = () => {
-        console.log("SSE connection opened");
-        setIsSSEconnected(true);
-        resolve(eventSource); // Resolve the promise when connected
-      };
-
-      eventSource.onmessage = (event) => {
-        const parsedData = JSON.parse(event.data);
-        console.log("Message received: ", parsedData);
-        if (parsedData.step_type === "interaction_complete") {
-          setHistory(parsedData.final_messages_state);
-        }
-
-        if (
-          parsedData.step_type !== "interaction_complete" ||
-          "plan_final_response"
-        ) {
-          if (parsedData.response) {
-            setLogs((prevLogs) => [...prevLogs, parsedData.response]);
-          }
-          if (parsedData.step_type === "execute_action") {
-            setLogs((prevLogs) => [
-              ...prevLogs,
-              "Executing tool: " +
-                parsedData.executed_action_id +
-                "\n" +
-                "Params: " +
-                JSON.stringify(parsedData.action_parameters),
-            ]);
-          }
-        }
-      };
-
-      eventSource.onerror = (error) => {
-        console.error("SSE error: ", error);
-        setError(error.toString());
-        eventSource.close();
-        reject(error); // Reject the promise on error
-      };
-
-      eventSource.addEventListener("complete", (event) => {
-        console.log("Session completed:", event.data);
-        eventSource.close();
-        setIsSSEconnected(false);
-      });
-    });
+    
     // Send prompt to backend
     try {
       setLoading(true);
       console.log("STARTING");
-      const eventSource = await waitForSSE;
+      
+      // Connect with the session ID to establish SSE connection
+      setConnectLoading(true);
+      await handleConnect(sessid);
+      setConnectLoading(false);
+      
       console.log("ISRERUN: ", isRerun);
       const result = await callPrompt(prompt, sessid, isRerun);
       console.log(result.message.response);
       setPromptResponse(result.message.response);
       return;
     } catch (error) {
-      console.error("Failed to establish sse connection: ", console.error);
+      console.error("Failed to establish sse connection: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Custom handler for rerun with edited logs
+  const handleRerunWithEditedLogs = async () => {
+    console.log("Page component: Rerunning with edited logs:", updatedLogs);
+    setLoading(true);
+    
+    try {
+      // Don't clear logs to maintain UI state
+      await handleRerun(updatedLogs);
+    } catch (error) {
+      console.error("Failed to rerun with edited logs:", error);
+      setError("Failed to rerun with edited logs");
     } finally {
       setLoading(false);
     }
@@ -334,11 +328,11 @@ const PromptScheduler: React.FC = () => {
               <div className="my-4">
                 <LogsAndResultSection
                   logs={logs}
-                  result={promptResponse}
+                  result={result}
                   isExecuting={isExecuting}
                   updatedLogs={updatedLogs}
                   setUpdatedLogs={setUpdatedLogs}
-                  handleRunTask={handleRunTask}
+                  handleRerun={handleRerunWithEditedLogs}
                 />
               </div>
             </TabsContent>
@@ -385,7 +379,7 @@ const PromptScheduler: React.FC = () => {
                     <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-purple-500/50 hover:shadow-purple-900/20 hover:shadow-lg h-full">
                       <div className="flex flex-col items-center text-center h-full">
                         <div className="bg-purple-500/20 p-4 rounded-full mb-4">
-                          <CalendarIcon2 className="h-10 w-10 text-purple-400" />
+                          <CalendarIcon className="h-10 w-10 text-purple-400" />
                         </div>
                         <h4 className="text-lg font-medium text-white mb-3">One-Time Scheduling</h4>
                         <p className="text-base text-gray-300 mb-4">
@@ -407,7 +401,7 @@ const PromptScheduler: React.FC = () => {
                     <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-blue-500/50 hover:shadow-blue-900/20 hover:shadow-lg h-full">
                       <div className="flex flex-col items-center text-center h-full">
                         <div className="bg-blue-500/20 p-4 rounded-full mb-4">
-                          <Clock3 className="h-10 w-10 text-blue-400" />
+                          <Clock className="h-10 w-10 text-blue-400" />
                         </div>
                         <h4 className="text-lg font-medium text-white mb-3">Interval-Based</h4>
                         <p className="text-base text-gray-300 mb-4">
