@@ -355,7 +355,30 @@ const PromptScheduler: React.FC = () => {
               className="p-6 bg-[#0f1219] text-white"
             >
               {activeTab === "information" && (
+                
                 <div className="space-y-8 p-4">
+                  {/* Getting Started Guide */}
+                  <div className="flex items-center justify-center rounded-lg border h-[25rem] border-gray-700 bg-gradient-to-r from-gray-900/60 to-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-green-500/50 hover:shadow-green-900/20 hover:shadow-lg">
+                    <div className="flex flex-col justify-center items-center">
+                      <div className="flex flex-row items-center mb-5">
+                        <div className="bg-green-500/20 p-4 rounded-full mr-5 flex-shrink-0">
+                          <AlertCircle className="h-8 w-8 text-green-400" />
+                        </div>
+                        <h4 className="text-[2rem] font-medium text-white mb-3">Getting Started</h4>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[1.2rem] text-gray-300 mb-4">
+                          To create a new scheduled task, click the <b>"Prompt"</b> tab and follow these steps:
+                        </p>
+                        <ol className="list-decimal list-inside text-base text-gray-300 space-y-1 ml-2">
+                          <li className="pb-3 border-b border-gray-800/30">Enter your prompt in the text area</li>
+                          <li className="pb-3 border-b border-gray-800/30">Use natural language to specify scheduling details (date, time, recurrence)</li>
+                          <li className="pb-3 border-b border-gray-800/30">Click "Smart Run" to execute immediately or "Todo" to add to your task list</li>
+                          <li>View your scheduled tasks in the "Scheduled Tasks" tab</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
                   {/* Main Scheduling Types */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     {/* One-Time Schedule Card */}
@@ -488,29 +511,29 @@ const PromptScheduler: React.FC = () => {
                   </div>
 
                   {/* Scheduling Benefits */}
-                  <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden mb-8 transition-all duration-300 hover:border-blue-500/50 hover:shadow-blue-900/20 hover:shadow-lg">
-                    <h4 className="text-lg font-medium text-white mb-5 text-center flex items-center justify-center">
+                  <div className="rounded-lg h-[23rem] border border-gray-700 bg-gray-800/30 p-6 shadow-md overflow-hidden mb-8 transition-all duration-300 hover:border-blue-500/50 hover:shadow-blue-900/20 hover:shadow-lg">
+                    <h4 className="text-[2rem] font-medium text-white mb-10 mt-5 text-center flex items-center justify-center">
                       <AlertCircle className="h-6 w-6 mr-3 text-blue-400" />
                       Why Use Scheduling?
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
-                        <h5 className="text-base font-medium text-blue-400 mb-3">Automation</h5>
-                        <p className="text-sm text-gray-300">
+                        <h5 className="text-[1rem] font-medium text-blue-400 mb-3">Automation</h5>
+                        <p className="text-[1rem] text-gray-300">
                           Set up tasks once and let them run automatically according to your schedule.
                           No need to manually trigger actions each time.
                         </p>
                       </div>
                       <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
-                        <h5 className="text-base font-medium text-green-400 mb-3">Consistency</h5>
-                        <p className="text-sm text-gray-300">
+                        <h5 className="text-[1rem] font-medium text-green-400 mb-3">Consistency</h5>
+                        <p className="text-[1rem] text-gray-300">
                           Ensure regular communication and updates happen exactly when needed,
                           maintaining consistent intervals between tasks.
                         </p>
                       </div>
                       <div className="bg-gray-900/40 p-5 rounded-md hover:bg-gray-900/60 transition-all duration-300 border border-gray-800/50">
-                        <h5 className="text-base font-medium text-purple-400 mb-3">Time Management</h5>
-                        <p className="text-sm text-gray-300">
+                        <h5 className="text-[1rem] font-medium text-purple-400 mb-3">Time Management</h5>
+                        <p className="text-[1rem] text-gray-300">
                           Plan your communications in advance and distribute them optimally
                           throughout your schedule for maximum efficiency.
                         </p>
@@ -518,26 +541,7 @@ const PromptScheduler: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Getting Started Guide */}
-                  <div className="rounded-lg border border-gray-700 bg-gradient-to-r from-gray-900/60 to-gray-800/30 p-6 shadow-md overflow-hidden transition-all duration-300 hover:border-green-500/50 hover:shadow-green-900/20 hover:shadow-lg">
-                    <div className="flex items-start">
-                      <div className="bg-green-500/20 p-4 rounded-full mr-5 flex-shrink-0">
-                        <AlertCircle className="h-8 w-8 text-green-400" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-medium text-white mb-3">Getting Started</h4>
-                        <p className="text-base text-gray-300 mb-4">
-                          To create a new scheduled task, click the "Prompt" tab and follow these steps:
-                        </p>
-                        <ol className="list-decimal list-inside text-base text-gray-300 space-y-3 ml-2">
-                          <li className="pb-3 border-b border-gray-800/30">Enter your prompt in the text area</li>
-                          <li className="pb-3 border-b border-gray-800/30">Use natural language to specify scheduling details (date, time, recurrence)</li>
-                          <li className="pb-3 border-b border-gray-800/30">Click "Smart Run" to execute immediately or "Todo" to add to your task list</li>
-                          <li>View your scheduled tasks in the "Scheduled Tasks" tab</li>
-                        </ol>
-                      </div>
-                    </div>
-                  </div>
+                  
                 </div>
               )}
             </TabsContent>
