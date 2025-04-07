@@ -63,7 +63,7 @@ const UserComponent: React.FC = () => {
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0a0d14] to-[#111827] text-white p-4 md:p-8">
       {/* Header with purple glow */}
       <div className="relative mb-8">
-        <div className="absolute -top-20 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -top-20 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl opacity-20 z-0"></div>
         <div className="relative z-10 ml-[8rem] flex items-center gap-4">
           <div className="bg-purple-600/20 p-3 rounded-lg">
             <svg

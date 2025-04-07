@@ -17,13 +17,13 @@ export default function DashboardLayout({
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
 
-        <div className="sticky top-0 h-full">
+        <div className="sticky top-0 h-full z-40">
           <DashboardSidebar />
         </div>
 
         {/* Main Content */}
 
-        <div className="flex-1 overflow-y-auto">{children}</div>
+        <div className="flex-1 overflow-y-auto z-30">{children}</div>
       </div>
     </div>
   );
