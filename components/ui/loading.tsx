@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react"
 
-export default function Loading() {
+interface LoadingProps {
+  variant?: "inline" | "fullscreen";
+}
+
+export default function Loading({ variant = "fullscreen" }: LoadingProps) {
   const [dots, setDots] = useState(".")
 
   useEffect(() => {
@@ -13,8 +17,19 @@ export default function Loading() {
     return () => clearInterval(interval)
   }, [])
 
+  // Inline variant for use within buttons
+  if (variant === "inline") {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+        <span>Loading{dots}</span>
+      </div>
+    )
+  }
+
+  // Fullscreen overlay variant
   return (
-    <div className="fixed inset-0 z-500 flex flex-col items-center justify-center bg-black/30 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/30 backdrop-blur-md">
       <div className="relative">
         {/* Outer ring (static) */}
         <div className="w-20 h-20 rounded-full border-4 border-black/20"></div>

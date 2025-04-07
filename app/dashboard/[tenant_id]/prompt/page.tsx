@@ -29,6 +29,7 @@ import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
 import Loading from "@/components/ui/loading";
+import { LoadingProvider } from "@/lib/loadingContext";
 import { ScheduledTask, RecurrenceType } from "@/lib/types";
 
 const PromptScheduler: React.FC = () => {
@@ -560,4 +561,13 @@ const PromptScheduler: React.FC = () => {
   );
 };
 
-export default PromptScheduler;
+// Wrap the PromptScheduler with LoadingProvider
+const PromptSchedulerWithLoading: React.FC = () => {
+  return (
+    <LoadingProvider>
+      <PromptScheduler />
+    </LoadingProvider>
+  );
+};
+
+export default PromptSchedulerWithLoading;
