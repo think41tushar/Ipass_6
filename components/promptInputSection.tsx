@@ -77,6 +77,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const [months, setMonths] = useState<number[]>([]); // Initialize empty to avoid UI/state mismatch
   const [isTodoCalled, setIsTodoCalled] = useState(false);
   const [isBackendSendCalled, setIsBackendSendCalled] = useState(false);
+  const [isSmartRunCalled, setIsSmartRunCalled] = useState(false);
   const { isLoading, setLoading } = useLoading();
 
   function showToastTodo(success: boolean) {
@@ -235,6 +236,20 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
     return taskData;
   };
 
+  // Wrap the handleSmartRun function to handle loading state
+  const handleSmartRunWithLoading = async () => {
+    try {
+      setIsSmartRunCalled(true);
+      setLoading(true); // Set global loading state
+      if (handleSmartRun) {
+        await handleSmartRun();
+      }
+    } finally {
+      setIsSmartRunCalled(false);
+      setLoading(false); // Clear global loading state
+    }
+  };
+
   return (
     <div className="space-y-6 bg-gradient-to-b from-gray-900/60 to-gray-900/40 border border-gray-800 rounded-lg p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-purple-900/10">
       {/* Header */}
@@ -286,6 +301,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
             )}
             Generate Summary In GChat
           </Button>
+          
           <Button
             variant="default"
             className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white transition-all duration-300 rounded-md shadow-md"
@@ -316,10 +332,10 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           <Button
             variant="default"
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 rounded-md shadow-md"
-            onClick={handleSmartRun}
-            disabled={isExecuting || isScheduled || !prompt.trim()}
+            onClick={handleSmartRunWithLoading}
+            disabled={isExecuting || isScheduled || !prompt.trim() || isSmartRunCalled}
           >
-            {isExecuting || isScheduled ? (
+            {isSmartRunCalled ? (
               <div className="flex items-center justify-center">
                 <Loading variant="inline" />
               </div>
