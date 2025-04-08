@@ -584,6 +584,7 @@ export const usePromptScheduler = () => {
         '6. "Check server status every 30 minutes" → SCHEDULED, interval recurrence with execution_time: "2025-04-04T12:30:00+05:30", is_recurring: true, recurrence_type: "interval", interval_every: 30, interval_period: "minutes"',
         '7. "Run database backup on the 1st of every month" → SCHEDULED, monthly recurrence with execution_time: "2025-05-01T00:00:00+05:30", is_recurring: true, recurrence_type: "monthly", days_of_month: [1]',
         '8. "Create a meeting for Project Brainstorming in google calendar whenever I have free time tomorrow, make sure I don\'t have any other meeting. " → IMMEDIATE',
+        '9. "Create an event tomorrow when I am free for one hour to prepare for my meeting with linkedin. Please summarise my latest emails from linkedin and use that as the description of the event." → IMMEDIATE (no timing specified)',
         "",
         `**User Prompt:** "${promptText}"`,
       ].join("\n");
