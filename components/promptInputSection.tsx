@@ -337,7 +337,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isSmartRunCalled ? (
               <div className="flex items-center justify-center">
-                <Loading variant="inline" />
+                {/* <Loading variant="inline" /> */}
               </div>
             ) : (
               <svg 
