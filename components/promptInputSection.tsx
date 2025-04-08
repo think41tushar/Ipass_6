@@ -281,12 +281,15 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isBackendSendCalled ? (
               <div className="flex items-center justify-center">
-                <span>Processing...</span>
+                <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-indigo-300 animate-spin mr-2"></div>
+                Generate Summary In GChat
               </div>
             ) : (
-              <Play className="mr-2 h-4 w-4" />
+              <>
+                <Play className="mr-2 h-4 w-4" />
+                Generate Summary In GChat
+              </>
             )}
-            Generate Summary In GChat
           </Button>
           
           <Button
@@ -297,12 +300,15 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isTodoCalled ? (
               <div className="flex items-center justify-center">
-                <span>Processing...</span>
+                <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin mr-2"></div>
+                Generate Todo In GChat
               </div>
             ) : (
-              <ListTodo className="mr-2 h-4 w-4" />
+              <>
+                <ListTodo className="mr-2 h-4 w-4" />
+                Generate Todo In GChat
+              </>
             )}
-            Generate Todo In GChat
           </Button>
         </div>
         

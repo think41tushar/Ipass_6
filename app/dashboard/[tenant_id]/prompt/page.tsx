@@ -69,6 +69,7 @@ const PromptScheduler: React.FC = () => {
 
   const [updatedLogs, setUpdatedLogs] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
+  const [connectLoading, setConnectLoading] = useState<boolean>(false);
 
   // Synchronize updatedLogs with logs when logs change
   useEffect(() => {
@@ -211,7 +212,9 @@ const PromptScheduler: React.FC = () => {
 
   // NEW: Wrapper for Connect to handle loading indicator
   const handleConnectWithLoading = async () => {
+    setConnectLoading(true);
     await handleConnect();
+    setConnectLoading(false);
   };
 
   return (
@@ -244,7 +247,11 @@ const PromptScheduler: React.FC = () => {
                   : "bg-gray-700 hover:bg-gray-600"
               } text-white transition-colors duration-200`}
             >
-              {isConnected ? (
+              {connectLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin"></div>
+                </div>
+              ) : isConnected ? (
                 "Connected"
               ) : (
                 "Connect"
