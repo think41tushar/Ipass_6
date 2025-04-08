@@ -26,8 +26,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Calendar from "@/components/ui/calendar";
-import Loading from "@/components/ui/loading";
-import { useLoading } from "@/lib/loadingContext";
 import {
   Popover,
   PopoverContent,
@@ -78,7 +76,6 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const [isTodoCalled, setIsTodoCalled] = useState(false);
   const [isBackendSendCalled, setIsBackendSendCalled] = useState(false);
   const [isSmartRunCalled, setIsSmartRunCalled] = useState(false);
-  const { isLoading, setLoading } = useLoading();
 
   function showToastTodo(success: boolean) {
     if (success) {
@@ -99,7 +96,6 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   async function sendToBackend() {
     try {
       setIsBackendSendCalled(true);
-      setLoading(true); // Set global loading state
       const tenant_id = localStorage.getItem("tenant_id");
       const user_id = localStorage.getItem("user_id");
       const response = await fetch("https://rishit41.online/sendToBackend", {
@@ -115,16 +111,13 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
       });
       if (response.ok) {
         setIsBackendSendCalled(false);
-        setLoading(false); // Clear global loading state
         showBackendToast(true);
       } else {
         setIsBackendSendCalled(false);
-        setLoading(false); // Clear global loading state
         showBackendToast(false);
       }
     } catch (error: any) {
       setIsBackendSendCalled(false);
-      setLoading(false); // Clear global loading state
       showBackendToast(false);
       throw new Error("Failed to send to backend: ", error.message);
     }
@@ -133,7 +126,6 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   async function handleGetTodo() {
     try {
       setIsTodoCalled(true);
-      setLoading(true); // Set global loading state
       const response = await fetch("https://rishit41.online/todolist", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -142,15 +134,12 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
         const data = await response.json();
         showToastTodo(true);
         setIsTodoCalled(false);
-        setLoading(false); // Clear global loading state
       } else {
         setIsTodoCalled(false);
-        setLoading(false); // Clear global loading state
         showToastTodo(false);
       }
     } catch (error: any) {
       setIsTodoCalled(false);
-      setLoading(false); // Clear global loading state
       showToastTodo(false);
       throw new Error("Failed to send todos: ", error.message);
     }
@@ -240,13 +229,11 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const handleSmartRunWithLoading = async () => {
     try {
       setIsSmartRunCalled(true);
-      setLoading(true); // Set global loading state
       if (handleSmartRun) {
         await handleSmartRun();
       }
     } finally {
       setIsSmartRunCalled(false);
-      setLoading(false); // Clear global loading state
     }
   };
 
@@ -294,7 +281,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isBackendSendCalled ? (
               <div className="flex items-center justify-center">
-                <Loading variant="inline" />
+                <span>Processing...</span>
               </div>
             ) : (
               <Play className="mr-2 h-4 w-4" />
@@ -310,7 +297,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isTodoCalled ? (
               <div className="flex items-center justify-center">
-                <Loading variant="inline" />
+                <span>Processing...</span>
               </div>
             ) : (
               <ListTodo className="mr-2 h-4 w-4" />
@@ -337,7 +324,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           >
             {isSmartRunCalled ? (
               <div className="flex items-center justify-center">
-                {/* <Loading variant="inline" /> */}
+                <span>Processing...</span>
               </div>
             ) : (
               <svg 

@@ -28,8 +28,7 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
-import Loading from "@/components/ui/loading";
-import { LoadingProvider } from "@/lib/loadingContext";
+
 import { ScheduledTask, RecurrenceType } from "@/lib/types";
 
 const PromptScheduler: React.FC = () => {
@@ -78,9 +77,6 @@ const PromptScheduler: React.FC = () => {
     setUpdatedLogs([...logs]);
     console.log("Page component: Initialized updatedLogs with logs:", logs);
   }, [logs.length]); // Only run when logs length changes
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [connectLoading, setConnectLoading] = useState<boolean>(false);
 
   const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
@@ -143,7 +139,6 @@ const PromptScheduler: React.FC = () => {
       };
     }
     try {
-      setLoading(true);
       setError("");
       console.log("Request body:", JSON.stringify(requestBody, null, 2));
       const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
@@ -160,8 +155,6 @@ const PromptScheduler: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to send prompt request: ", error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -188,13 +181,10 @@ const PromptScheduler: React.FC = () => {
     
     // Send prompt to backend
     try {
-      setLoading(true);
       console.log("STARTING");
       
       // Connect with the session ID to establish SSE connection
-      setConnectLoading(true);
       await handleConnect(sessid);
-      setConnectLoading(false);
       
       console.log("ISRERUN: ", isRerun);
       const result = await callPrompt(prompt, sessid, isRerun);
@@ -203,15 +193,12 @@ const PromptScheduler: React.FC = () => {
       return;
     } catch (error) {
       console.error("Failed to establish sse connection: ", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   // Custom handler for rerun with edited logs
   const handleRerunWithEditedLogs = async () => {
     console.log("Page component: Rerunning with edited logs:", updatedLogs);
-    setLoading(true);
     
     try {
       // Don't clear logs to maintain UI state
@@ -219,25 +206,13 @@ const PromptScheduler: React.FC = () => {
     } catch (error) {
       console.error("Failed to rerun with edited logs:", error);
       setError("Failed to rerun with edited logs");
-    } finally {
-      setLoading(false);
     }
   };
 
   // NEW: Wrapper for Connect to handle loading indicator
   const handleConnectWithLoading = async () => {
-    setConnectLoading(true);
     await handleConnect();
-    setConnectLoading(false);
   };
-
-  if (loading) {
-    return (
-      <div className="max-w-md mx-auto flex justify-center items-center h-64 z-index-50">
-        <Loading />
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-8 bg-[#0a0c13]">
@@ -269,11 +244,7 @@ const PromptScheduler: React.FC = () => {
                   : "bg-gray-700 hover:bg-gray-600"
               } text-white transition-colors duration-200`}
             >
-              {connectLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin"></div>
-                </div>
-              ) : isConnected ? (
+              {isConnected ? (
                 "Connected"
               ) : (
                 "Connect"
@@ -561,13 +532,4 @@ const PromptScheduler: React.FC = () => {
   );
 };
 
-// Wrap the PromptScheduler with LoadingProvider
-const PromptSchedulerWithLoading: React.FC = () => {
-  return (
-    <LoadingProvider>
-      <PromptScheduler />
-    </LoadingProvider>
-  );
-};
-
-export default PromptSchedulerWithLoading;
+export default PromptScheduler;
