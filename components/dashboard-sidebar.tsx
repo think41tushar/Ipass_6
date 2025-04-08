@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { LayoutDashboard, User, Settings, Search, Rocket } from "lucide-react"
+import { LayoutDashboard, User, Settings, Search, Rocket, MessageSquare } from "lucide-react" // Import MessageSquare
 import { useState, useEffect } from "react"
 import { useParams, usePathname } from "next/navigation"
 
@@ -100,7 +100,7 @@ export default function DashboardSidebar() {
           } hover:bg-[#1a1f2c] hover:text-white`}
           onClick={() => handleLinkClick("prompt")}
         >
-          <Rocket className={`h-5 w-5 ${selected === "prompt" ? "text-purple-500" : ""}`} />
+          <MessageSquare className={`h-5 w-5 ${selected === "prompt" ? "text-purple-500" : ""}`} /> {/* Changed icon to MessageSquare */}
           <span className="text-lg font-medium">Prompt</span>
         </Link>
       </div>
@@ -114,4 +114,3 @@ export default function DashboardSidebar() {
     </div>
   )
 }
-
