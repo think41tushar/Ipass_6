@@ -38,6 +38,8 @@ async function validateQuery(prompt: string): Promise<any> {
     ❌ "Send a fun fact to Rishi" – Invalid, no valid email or identifier.  
     ✅ "Email John with the latest report" (and John's email is provided) – Valid.  
     ❌ "Send a message to my team" – Invalid unless a team/chat space is defined.
+    ✅ "Create a meeting for project brainstorming when i have free time tomorrow" – Valid, agent can see free times tomorrow and can create at anytime.
+    ❌ "Create a meeting tomorrow" – Invalid, no subject or context about the meeting is given.
     
     You are provided with:
     1. A user prompt.

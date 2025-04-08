@@ -9,7 +9,7 @@ import {
   loadTasksFromLocalStorage,
   saveTasksToLocalStorage,
 } from "@/lib/taskUtil";
-import { GoogleGenAI } from "@google/genai";
+// import { GoogleGenAI } from "@google/genai";
 import { Console } from "console";
 
 export const usePromptScheduler = () => {
@@ -221,7 +221,7 @@ export const usePromptScheduler = () => {
         data.response || "Execution completed"
       );
       addLog("Execution completed successfully");
-      setActiveTab("result");
+      // Removed setActiveTab("result") to prevent navigation
     } catch (error) {
       console.error("❌ Error executing prompt:", error);
       setIsExecuting(false);
@@ -822,7 +822,7 @@ export const usePromptScheduler = () => {
             data.response || "Execution completed"
           );
           addLog("Execution completed successfully");
-          setActiveTab("result");
+          // Removed setActiveTab("result") to prevent navigation
         } catch (error) {
           console.error("❌ Error executing prompt:", error);
           setIsExecuting(false);
