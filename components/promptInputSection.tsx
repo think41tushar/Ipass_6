@@ -63,7 +63,8 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   handleSchedule,
   handleRunTask,
   handleSmartRun,
-  onSearchClick
+  onSearchClick,
+  
 }) => {
   const [executionTime, setExecutionTime] = useState("");
   const [intervalValue, setIntervalValue] = useState(""); // New state for interval value

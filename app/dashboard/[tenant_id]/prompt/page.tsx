@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import {
   AlertCircle,
   Calendar as CalendarIcon,
-  Check,
   Clock,
   Repeat,
   Settings,
-  Trash2,
   X,
-  Info, // Import the Info icon
+  Info,
+  FileIcon,
+  MailIcon,
+  Search as LucideSearch,
 } from "lucide-react";
 import {
   Card,
@@ -26,14 +27,36 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
-import { ScheduledTask, RecurrenceType } from "@/lib/types";
+import { ScheduledTask } from "@/lib/types";
+import ReactMarkdown from "react-markdown";
+
+interface SearchResult {
+  results: {
+    message: string;
+    googleDrive?: {
+      fileName: string;
+      fileType: string;
+    };
+    emails?: {
+      subject: string;
+      from: string;
+      date: string;
+      body: string;
+    }[];
+    calendarEvents?: {
+      title?: string;
+      date: string;
+      time: string;
+    }[];
+  };
+}
 
 const PromptScheduler: React.FC = () => {
   const {
     date,
     setDate,
-    error,
-    setError,
+    error: promptError,
+    setError: setPromptError,
     time,
     setTime,
     recurrence,
@@ -69,22 +92,21 @@ const PromptScheduler: React.FC = () => {
   const [connectLoading, setConnectLoading] = useState<boolean>(false);
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
-  // Synchronize updatedLogs with logs when logs change
+  // Global Search State
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
   useEffect(() => {
-    // Initialize updatedLogs with the actual log values
-    // This ensures we have the correct array length and values
     setUpdatedLogs([...logs]);
-    console.log("Page component: Initialized updatedLogs with logs:", logs);
-  }, [logs.length]); // Only run when logs length changes
+  }, [logs.length]);
 
   const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
 
-  // Function to generate random string
   const getRandomString = (length: number) => {
-    return [...Array(length)]
-      .map(() => Math.random().toString(36)[2])
-      .join("");
+    return [...Array(length)].map(() => Math.random().toString(36)[2]).join("");
   };
 
   const scheduledTaskInstance: ScheduledTask = {
@@ -97,27 +119,21 @@ const PromptScheduler: React.FC = () => {
     prompt: "Sample task",
   };
 
-  // Prompt request function
   async function callPrompt(
     input: string,
     session_id: string,
     isRerun: boolean
   ) {
-    // Find the first tool execution log that has been edited
     let updated = "";
     if (isRerun) {
       for (let i = 0; i < updatedLogs.length; i++) {
-        // Check if this is a tool execution log (which can be edited)
         const isToolExecution =
           typeof logs[i] === "string" && logs[i].startsWith("Executing tool:");
         if (isToolExecution && updatedLogs[i] !== logs[i]) {
-          // This log has been edited
           updated = updatedLogs[i];
-          console.log("Page component: Found edited log for callPrompt:", updated);
           break;
         }
       }
-      console.log("Page component: Using edited log for rerun:", updated);
     }
     let requestBody = {};
     if (isRerun) {
@@ -138,8 +154,7 @@ const PromptScheduler: React.FC = () => {
       };
     }
     try {
-      setError("");
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+      setPromptError("");
       const response = await fetch(`${djangoUrl}/schedule/prompt-once/`, {
         method: "POST",
         headers: {
@@ -149,7 +164,6 @@ const PromptScheduler: React.FC = () => {
       });
       if (response.ok) {
         const result = await response.json();
-        console.log("Prompt function call response: ", result);
         return result;
       }
     } catch (error) {
@@ -157,57 +171,82 @@ const PromptScheduler: React.FC = () => {
     }
   }
 
-  // Handle run prompt now
   const handleRunTask = async (isRerun: boolean) => {
     if (!isRerun) {
       setHistory([]);
       setUpdatedLogs([]);
     }
-    console.log(`Handle run called with command : ${prompt}`);
     setLogs([]);
     if (prompt === "") {
-      setError("Command is required");
+      setPromptError("Command is required");
       return;
     }
     const sessid = getRandomString(10);
     setSession_id(sessid);
-    // Store session id in localStorage for other components to use
     localStorage.setItem("current_session_id", sessid);
-    // Log session id
-    console.log(`Session id set as ${sessid}`);
-    console.log(`Session id set as ${sessid} and stored in localStorage`);
-    // Send prompt to backend
     try {
-      console.log("STARTING");
-      // Connect with the session ID to establish SSE connection
       await handleConnect(sessid);
-      console.log("ISRERUN: ", isRerun);
       const result = await callPrompt(prompt, sessid, isRerun);
-      console.log(result.message.response);
       setPromptResponse(result.message.response);
+      setShowSearchResults(false);
       return;
     } catch (error) {
       console.error("Failed to establish sse connection: ", error);
     }
   };
 
-  // Custom handler for rerun with edited logs
   const handleRerunWithEditedLogs = async () => {
-    console.log("Page component: Rerunning with edited logs:", updatedLogs);
     try {
-      // Don't clear logs to maintain UI state
       await handleRerun(updatedLogs);
+      setShowSearchResults(false);
     } catch (error) {
       console.error("Failed to rerun with edited logs:", error);
-      setError("Failed to rerun with edited logs");
+      setPromptError("Failed to rerun with edited logs");
     }
   };
 
-  // NEW: Wrapper for Connect to handle loading indicator
   const handleConnectWithLoading = async () => {
     setConnectLoading(true);
     await handleConnect();
     setConnectLoading(false);
+  };
+
+  // Global Search Functionality using the 'prompt' state
+  const searchFile = async () => {
+    if (!prompt) {
+      setSearchError("Please enter a search term.");
+      return;
+    }
+    try {
+      setSearchLoading(true);
+      setSearchError("");
+      setShowSearchResults(true);
+
+      const reqbody = { filename: prompt };
+      const endpoint = `https://syncdjango.site/tenant-admin/globalSearch/`;
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reqbody),
+      });
+
+      if (!response.ok) {
+        setSearchLoading(false);
+        setSearchError("Error fetching search results");
+        setSearchResult(null);
+        return;
+      }
+
+      const result: SearchResult = await response.json();
+      setSearchResult(result);
+      setSearchLoading(false);
+      setSearchError("");
+    } catch (error: any) {
+      setSearchLoading(false);
+      setSearchError(`Error searching: ${error.message}`);
+      setSearchResult(null);
+    }
   };
 
   return (
@@ -271,14 +310,14 @@ const PromptScheduler: React.FC = () => {
               <TabsTrigger value="scheduled" className="w-[11rem]">
                 Scheduled Tasks
               </TabsTrigger>
-              {/* Removed the Information TabTrigger */}
             </TabsList>
             <TabsContent value="prompt" className="p-6 bg-[#0f1219] text-white">
               <PromptInputSection
                 date={date}
                 time={time}
                 recurrence={recurrence}
-                prompt={prompt}
+                prompt={prompt} // Using the shared 'prompt' state
+                setPrompt={setPrompt} // Using the shared 'setPrompt' state
                 ScheduledTask={scheduledTaskInstance}
                 isScheduled={isScheduled}
                 isExecuting={isExecuting}
@@ -288,26 +327,144 @@ const PromptScheduler: React.FC = () => {
                 setSessionid={setSession_id}
                 promptResponse={promptResponse}
                 setPromptResponse={setPromptResponse}
-                setError={setError}
+                setError={setPromptError}
                 setLogs={setLogs}
                 setDate={setDate}
                 setTime={setTime}
                 setRecurrence={setRecurrence}
-                setPrompt={setPrompt}
                 handleExecute={handleExecute}
                 handleSchedule={handleSchedule}
                 handleRunTask={handleRunTask}
                 handleSmartRun={handleSmartRun}
+                onSearchClick={searchFile} // Passing the search function
               />
-              <div className="my-4">
-                <LogsAndResultSection
-                  logs={logs}
-                  result={result}
-                  isExecuting={isExecuting}
-                  updatedLogs={updatedLogs}
-                  setUpdatedLogs={setUpdatedLogs}
-                  handleRerun={handleRerunWithEditedLogs}
-                />
+
+              {searchError !== "" && <div className="text-red-500 mt-2">{searchError}</div>}
+
+              {/* Combined Output Area */}
+              <div className="my-4 border-t border-gray-800 pt-4">
+                <h2 className="text-lg font-semibold text-gray-300 mb-2">
+                  {isExecuting ? "Prompt Execution Logs" : showSearchResults ? "Search Results" : "Output"}
+                </h2>
+                {isExecuting ? (
+                  <LogsAndResultSection
+                    logs={logs}
+                    result={result}
+                    isExecuting={isExecuting}
+                    updatedLogs={updatedLogs}
+                    setUpdatedLogs={setUpdatedLogs}
+                    handleRerun={handleRerunWithEditedLogs}
+                  />
+                ) : showSearchResults && searchLoading ? (
+                  <div className="w-full max-w-xl">
+                    <div className="h-4 mb-2 w-full bg-[#1a1d29] rounded animate-pulse"></div>
+                    <div className="h-4 mb-2 w-full bg-[#1a1d29] rounded animate-pulse"></div>
+                    <div className="h-4 w-3/4 bg-[#1a1d29] rounded animate-pulse"></div>
+                  </div>
+                ) : showSearchResults && searchResult ? (
+                  <div className="w-full max-w-xl rounded-xl bg-[#1a1d29] border border-gray-800 overflow-hidden">
+                    <div className="p-4 border-b border-gray-800">
+                      <div className="flex items-center">
+                        <FileIcon className="mr-2 h-5 w-5 text-purple-500" />
+                        <h2 className="text-lg font-semibold">Search Results for "{prompt}"</h2>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      {searchResult.results.googleDrive && (
+                        <div className="mb-6">
+                          <div className="flex items-center mb-3">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/20 mr-3">
+                              <FileIcon className="h-4 w-4 text-blue-400" />
+                            </div>
+                            <h3 className="font-semibold text-gray-200">Google Drive</h3>
+                          </div>
+                          <div className="ml-11 p-3 rounded-lg bg-[#232631]">
+                            <p className="text-gray-300 mb-1">
+                              <span className="text-gray-400 mr-2">File:</span>
+                              {searchResult.results.googleDrive.fileName}
+                            </p>
+                            <p className="text-gray-300">
+                              <span className="text-gray-400 mr-2">Type:</span>
+                              {searchResult.results.googleDrive.fileType}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {searchResult.results.emails && searchResult.results.emails.length > 0 && (
+                        <div className="mb-6">
+                          <div className="flex items-center mb-3">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/20 mr-3">
+                              <MailIcon className="h-4 w-4 text-red-400" />
+                            </div>
+                            <h3 className="font-semibold text-gray-200">Emails</h3>
+                          </div>
+                          <div className="space-y-3">
+                            {searchResult.results.emails.map((email, index) => (
+                              <div key={index} className="ml-11 p-3 rounded-lg bg-[#232631]">
+                                <p className="text-gray-300 mb-1">
+                                  <span className="text-gray-400 mr-2">Subject:</span>
+                                  {email.subject}
+                                </p>
+                                <p className="text-gray-300 mb-1">
+                                  <span className="text-gray-400 mr-2">From:</span>
+                                  {email.from}
+                                </p>
+                                <p className="text-gray-300 mb-1">
+                                  <span className="text-gray-400 mr-2">Date:</span>
+                                  {email.date}
+                                </p>
+                                <p className="text-gray-300">
+                                  <span className="text-gray-400 mr-2">Body:</span>
+                                  {email.body}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {searchResult.results.calendarEvents && searchResult.results.calendarEvents.length > 0 && (
+                        <div>
+                          <div className="flex items-center mb-3">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-500/20 mr-3"><CalendarIcon className="h-4 w-4 text-green-400" />
+                            </div>
+                            <h3 className="font-semibold text-gray-200">Calendar Events</h3>
+                          </div>
+                          <div className="space-y-3">
+                            {searchResult.results.calendarEvents.map((event, index) => (
+                              <div key={index} className="ml-11 p-3 rounded-lg bg-[#232631]">
+                                <p className="text-gray-300 mb-1">
+                                  <span className="text-gray-400 mr-2">Event:</span>
+                                  {event.title || "Untitled Event"}
+                                </p>
+                                <p className="text-gray-300 mb-1">
+                                  <span className="text-gray-400 mr-2">Date:</span>
+                                  {event.date}
+                                </p>
+                                <p className="text-gray-300">
+                                  <span className="text-gray-400 mr-2">Time:</span>
+                                  {event.time}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {!searchResult.results.googleDrive &&
+                        (!searchResult.results.emails || searchResult.results.emails.length === 0) &&
+                        (!searchResult.results.calendarEvents || searchResult.results.calendarEvents.length === 0) &&
+                        searchResult.results.message && (
+                          <div className="p-3 rounded-lg bg-[#232631] text-gray-300">
+                            <ReactMarkdown>{searchResult.results.message}</ReactMarkdown>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-400">Enter a command and click the "Search" icon or "Smart Run".</div>
+                )}
               </div>
             </TabsContent>
             <TabsContent
@@ -316,7 +473,6 @@ const PromptScheduler: React.FC = () => {
             >
               <ScheduledPromptsSection />
             </TabsContent>
-            {/* No need for Information TabContent anymore */}
           </Tabs>
         </CardContent>
         <CardFooter className="p-4 border-t border-gray-800 bg-[#0f1219]">
@@ -349,7 +505,6 @@ const PromptScheduler: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="text-gray-300 space-y-8 overflow-y-auto max-h-[70vh]">
-              {/* Getting Started Guide */}
               <div>
                 <h3 className="text-lg font-semibold text-purple-400 mb-3 flex items-center">
                   <AlertCircle className="h-5 w-5 mr-2" /> Getting Started
@@ -368,7 +523,6 @@ const PromptScheduler: React.FC = () => {
                   <li>View your scheduled tasks in the "Scheduled Tasks" tab.</li>
                 </ol>
               </div>
-              {/* Main Scheduling Types */}
               <div>
                 <h3 className="text-lg font-semibold text-blue-400 mb-3">Main Scheduling Types</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -407,7 +561,6 @@ const PromptScheduler: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* Additional Scheduling Features */}
               <div>
                 <h3 className="text-lg font-semibold text-amber-400 mb-3">Additional Scheduling Features</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -435,7 +588,6 @@ const PromptScheduler: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* Scheduling Benefits */}
               <div>
                 <h3 className="text-lg font-semibold text-blue-400 mb-3 flex items-center">
                   <AlertCircle className="h-6 w-6 mr-2" /> Why Use Scheduling?
@@ -456,4 +608,3 @@ const PromptScheduler: React.FC = () => {
 };
 
 export default PromptScheduler;
-
