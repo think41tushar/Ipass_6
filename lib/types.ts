@@ -48,4 +48,5 @@ export interface PromptInputSectionProps {
   handleSchedule: (taskData: ScheduledTask) => void;
   handleRunTask: (isRerun: boolean) => void;
   handleSmartRun?: () => void;
+  onSearchClick?: () => void;
 }

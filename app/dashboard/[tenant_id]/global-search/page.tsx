@@ -1,6 +1,5 @@
 "use client"
 import { useState } from "react"
-import { useParams } from "next/navigation"
 import { FileIcon, MailIcon, CalendarIcon, Search } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 

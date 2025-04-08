@@ -3,13 +3,8 @@
 import React, { useState, useCallback } from "react";
 import { format } from "date-fns";
 import {
-  CalendarIcon,
   RotateCcw,
-  Play,
-  LucideCalendar,
   ListTodo,
-  Clock,
-  Repeat,
   CalendarDays,
   Calendar as CalendarIcon2,
   Clock3,
@@ -19,6 +14,7 @@ import {
   CheckCircle2,
   Settings,
   AlertCircle,
+  Search,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -66,7 +62,8 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   handleExecute,
   handleSchedule,
   handleRunTask,
-  handleSmartRun
+  handleSmartRun,
+  onSearchClick
 }) => {
   const [executionTime, setExecutionTime] = useState("");
   const [intervalValue, setIntervalValue] = useState(""); // New state for interval value
@@ -251,12 +248,14 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
       {/* Prompt Input */}
       <div className="space-y-3">
-        <Label htmlFor="prompt" className="text-gray-300 flex items-center text-sm font-medium">
-          <div className="bg-purple-600/10 p-1.5 rounded-md mr-2">
-            <Play className="h-4 w-4 text-purple-400" />
-          </div>
-          Prompt
-        </Label>
+        <Button
+            variant="outline"
+            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
+            onClick={handleReset}
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            
+          </Button>
         <Textarea
           id="prompt"
           placeholder="Enter your prompt here..."
@@ -273,56 +272,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
       <div className="flex flex-wrap justify-between items-center pt-3 border-t border-gray-800/50 mt-4">
         {/* Left side buttons - Backend and Todo */}
         <div className="flex flex-wrap gap-3">
-          <Button
-            variant="default"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-300 rounded-md"
-            onClick={sendToBackend}
-            disabled={isBackendSendCalled || !prompt.trim}
-          >
-            {isBackendSendCalled ? (
-              <div className="flex items-center justify-center">
-                <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-indigo-300 animate-spin mr-2"></div>
-                Generate Summary In GChat
-              </div>
-            ) : (
-              <>
-                <Play className="mr-2 h-4 w-4" />
-                Generate Summary In GChat
-              </>
-            )}
-          </Button>
-          
-          <Button
-            variant="default"
-            className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white transition-all duration-300 rounded-md shadow-md"
-            onClick={handleGetTodo}
-            disabled={isTodoCalled}
-          >
-            {isTodoCalled ? (
-              <div className="flex items-center justify-center">
-                <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin mr-2"></div>
-                Generate Todo In GChat
-              </div>
-            ) : (
-              <>
-                <ListTodo className="mr-2 h-4 w-4" />
-                Generate Todo In GChat
-              </>
-            )}
-          </Button>
-        </div>
-        
-        {/* Right side buttons - Reset and Smart Run */}
-        <div className="flex flex-wrap gap-3 ml-auto">
-          <Button
-            variant="outline"
-            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
-            onClick={handleReset}
-          >
-            <RotateCcw className="mr-2 h-4 w-4" />
-            Reset
-          </Button>
-          <Button
+        <Button
             variant="default"
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 rounded-md shadow-md"
             onClick={handleSmartRunWithLoading}
@@ -353,6 +303,37 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
               </>
             )}
           </Button>
+          <Button
+            variant="default"
+            className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white transition-all duration-300 rounded-md shadow-md"
+            onClick={handleGetTodo}
+            disabled={isTodoCalled}
+          >
+            {isTodoCalled ? (
+              <div className="flex items-center justify-center">
+                <div className="h-5 w-5 rounded-full border-2 border-gray-700 border-t-purple-300 animate-spin mr-2"></div>
+                Generate Todo In GChat
+              </div>
+            ) : (
+              <>
+                <ListTodo className="mr-2 h-4 w-4" />
+                Generate Todo In GChat
+              </>
+            )}
+          </Button>
+        </div>
+        
+        {/* Right side buttons - Reset and Smart Run */}
+        <div className="flex flex-wrap gap-3 ml-auto">
+          <Button
+            variant="outline"
+            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
+            onClick={onSearchClick}
+          >
+            <Search className="mr-2 h-4 w-4" />
+            Search
+          </Button>
+          
         </div>
         <ToastContainer 
           position="top-right"
