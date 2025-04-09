@@ -249,21 +249,23 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
 
       {/* Prompt Input */}
       <div className="space-y-3">
-        <Button
+        <div className="relative">
+          <Textarea
+            id="prompt"
+            placeholder="Enter your prompt here..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="min-h-[120px] pb-10 border-gray-700 bg-[#111827]/80 text-white focus:border-purple-500 focus:ring-purple-500/20 rounded-md transition-all duration-300 placeholder:text-gray-500"
+          />
+          <Button
             variant="outline"
-            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
+            className="absolute bottom-2 right-2 h-8 w-8 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-full z-10"
             onClick={handleReset}
+            size="icon"
           >
-            <RotateCcw className="mr-2 h-4 w-4" />
-            
+            <RotateCcw className="h-4 w-4" />
           </Button>
-        <Textarea
-          id="prompt"
-          placeholder="Enter your prompt here..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] border-gray-700 bg-[#111827]/80 text-white focus:border-purple-500 focus:ring-purple-500/20 rounded-md transition-all duration-300 placeholder:text-gray-500"
-        />
+        </div>
         <p className="text-xs text-gray-400 italic">
           Enter the task you want to schedule or execute. Be specific with dates, times, and recurrence patterns if needed.
         </p>
@@ -273,7 +275,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
       <div className="flex flex-wrap justify-between items-center pt-3 border-t border-gray-800/50 mt-4">
         {/* Left side buttons - Backend and Todo */}
         <div className="flex flex-wrap gap-3">
-        <Button
+          <Button
             variant="default"
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 rounded-md shadow-md"
             onClick={handleSmartRunWithLoading}
