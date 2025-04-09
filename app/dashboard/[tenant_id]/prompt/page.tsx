@@ -29,6 +29,7 @@ import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
 import { ScheduledTask } from "@/lib/types";
 import ReactMarkdown from "react-markdown";
+import { SearchSection } from "@/components/searchSection";
 
 interface SearchResult {
   results: {
@@ -91,6 +92,7 @@ const PromptScheduler: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [connectLoading, setConnectLoading] = useState<boolean>(false);
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
+  const [showLogsAndResults, setShowLogsAndResults] = useState<boolean>(false);
 
   // Global Search State
   const [searchLoading, setSearchLoading] = useState(false);
@@ -101,6 +103,13 @@ const PromptScheduler: React.FC = () => {
   useEffect(() => {
     setUpdatedLogs([...logs]);
   }, [logs.length]);
+
+  useEffect(() => {
+    // Show logs section when execution starts or when there are logs
+    if (isExecuting || logs.length > 0) {
+      setShowLogsAndResults(true);
+    }
+  }, [isExecuting, logs]);
 
   const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
@@ -355,115 +364,14 @@ const PromptScheduler: React.FC = () => {
                     setUpdatedLogs={setUpdatedLogs}
                     handleRerun={handleRerunWithEditedLogs}
                   />
-                ) : showSearchResults && searchLoading ? (
-                  <div className="w-full max-w-xl">
-                    <div className="h-4 mb-2 w-full bg-[#1a1d29] rounded animate-pulse"></div>
-                    <div className="h-4 mb-2 w-full bg-[#1a1d29] rounded animate-pulse"></div>
-                    <div className="h-4 w-3/4 bg-[#1a1d29] rounded animate-pulse"></div>
-                  </div>
-                ) : showSearchResults && searchResult ? (
-                  <div className="w-full max-w-xl rounded-xl bg-[#1a1d29] border border-gray-800 overflow-hidden">
-                    <div className="p-4 border-b border-gray-800">
-                      <div className="flex items-center">
-                        <FileIcon className="mr-2 h-5 w-5 text-purple-500" />
-                        <h2 className="text-lg font-semibold">Search Results for "{prompt}"</h2>
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      {searchResult.results.googleDrive && (
-                        <div className="mb-6">
-                          <div className="flex items-center mb-3">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/20 mr-3">
-                              <FileIcon className="h-4 w-4 text-blue-400" />
-                            </div>
-                            <h3 className="font-semibold text-gray-200">Google Drive</h3>
-                          </div>
-                          <div className="ml-11 p-3 rounded-lg bg-[#232631]">
-                            <p className="text-gray-300 mb-1">
-                              <span className="text-gray-400 mr-2">File:</span>
-                              {searchResult.results.googleDrive.fileName}
-                            </p>
-                            <p className="text-gray-300">
-                              <span className="text-gray-400 mr-2">Type:</span>
-                              {searchResult.results.googleDrive.fileType}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {searchResult.results.emails && searchResult.results.emails.length > 0 && (
-                        <div className="mb-6">
-                          <div className="flex items-center mb-3">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/20 mr-3">
-                              <MailIcon className="h-4 w-4 text-red-400" />
-                            </div>
-                            <h3 className="font-semibold text-gray-200">Emails</h3>
-                          </div>
-                          <div className="space-y-3">
-                            {searchResult.results.emails.map((email, index) => (
-                              <div key={index} className="ml-11 p-3 rounded-lg bg-[#232631]">
-                                <p className="text-gray-300 mb-1">
-                                  <span className="text-gray-400 mr-2">Subject:</span>
-                                  {email.subject}
-                                </p>
-                                <p className="text-gray-300 mb-1">
-                                  <span className="text-gray-400 mr-2">From:</span>
-                                  {email.from}
-                                </p>
-                                <p className="text-gray-300 mb-1">
-                                  <span className="text-gray-400 mr-2">Date:</span>
-                                  {email.date}
-                                </p>
-                                <p className="text-gray-300">
-                                  <span className="text-gray-400 mr-2">Body:</span>
-                                  {email.body}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {searchResult.results.calendarEvents && searchResult.results.calendarEvents.length > 0 && (
-                        <div>
-                          <div className="flex items-center mb-3">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-500/20 mr-3"><CalendarIcon className="h-4 w-4 text-green-400" />
-                            </div>
-                            <h3 className="font-semibold text-gray-200">Calendar Events</h3>
-                          </div>
-                          <div className="space-y-3">
-                            {searchResult.results.calendarEvents.map((event, index) => (
-                              <div key={index} className="ml-11 p-3 rounded-lg bg-[#232631]">
-                                <p className="text-gray-300 mb-1">
-                                  <span className="text-gray-400 mr-2">Event:</span>
-                                  {event.title || "Untitled Event"}
-                                </p>
-                                <p className="text-gray-300 mb-1">
-                                  <span className="text-gray-400 mr-2">Date:</span>
-                                  {event.date}
-                                </p>
-                                <p className="text-gray-300">
-                                  <span className="text-gray-400 mr-2">Time:</span>
-                                  {event.time}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {!searchResult.results.googleDrive &&
-                        (!searchResult.results.emails || searchResult.results.emails.length === 0) &&
-                        (!searchResult.results.calendarEvents || searchResult.results.calendarEvents.length === 0) &&
-                        searchResult.results.message && (
-                          <div className="p-3 rounded-lg bg-[#232631] text-gray-300">
-                            <ReactMarkdown>{searchResult.results.message}</ReactMarkdown>
-                          </div>
-                        )}
-                    </div>
-                  </div>
                 ) : (
-                  <div className="text-gray-400">Enter a command and click the "Search" icon or "Smart Run".</div>
+                  <SearchSection
+                    searchError={searchError}
+                    searchLoading={searchLoading}
+                    showSearchResults={showSearchResults}
+                    searchResult={searchResult}
+                    prompt={prompt}
+                  />
                 )}
               </div>
             </TabsContent>
