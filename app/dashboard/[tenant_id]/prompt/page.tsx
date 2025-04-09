@@ -70,6 +70,7 @@ const PromptScheduler: React.FC = () => {
     logs,
     setLogs,
     result,
+    setResult,
     isSSEconnected,
     setIsSSEconnected,
     activeTab,
@@ -77,19 +78,25 @@ const PromptScheduler: React.FC = () => {
     setSession_id,
     setActiveTab,
     isExecuting,
+    setIsExecuting,
+    executionComplete,
+    setExecutionComplete,
     isScheduled,
     isConnected,
+    history,
+    setHistory,
+    addLog,
     handleExecute,
     handleSchedule,
     deleteTask,
     handleConnect,
-    handleSmartRun,
+    resetForm,
     planScheduling,
+    handleSmartRun,
     handleRerun,
   } = usePromptScheduler();
 
   const [updatedLogs, setUpdatedLogs] = useState<any[]>([]);
-  const [history, setHistory] = useState<any[]>([]);
   const [connectLoading, setConnectLoading] = useState<boolean>(false);
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
   const [showLogsAndResults, setShowLogsAndResults] = useState<boolean>(false);
@@ -99,6 +106,8 @@ const PromptScheduler: React.FC = () => {
   const [searchError, setSearchError] = useState("");
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [displayMode, setDisplayMode] = useState<'none' | 'execution' | 'search'>('none');
 
   useEffect(() => {
     setUpdatedLogs([...logs]);
@@ -106,10 +115,21 @@ const PromptScheduler: React.FC = () => {
 
   useEffect(() => {
     // Show logs section when execution starts or when there are logs
+    // Only hide logs section when execution is complete AND there are no logs
     if (isExecuting || logs.length > 0) {
       setShowLogsAndResults(true);
+    } else if (!isExecuting && logs.length === 0) {
+      setShowLogsAndResults(false);
     }
   }, [isExecuting, logs]);
+
+  useEffect(() => {
+    setDisplayMode('none');
+    setShowSearchResults(false);
+    setSearchResult(null);
+    setLogs([]);
+    setResult(null);
+  }, [activeTab]);
 
   const backendUrl = "https://rishit41.online";
   const djangoUrl = "https://syncdjango.site";
@@ -193,14 +213,17 @@ const PromptScheduler: React.FC = () => {
     const sessid = getRandomString(10);
     setSession_id(sessid);
     localStorage.setItem("current_session_id", sessid);
+    setIsExecuting(true); // Set executing to true when starting
     try {
       await handleConnect(sessid);
       const result = await callPrompt(prompt, sessid, isRerun);
       setPromptResponse(result.message.response);
+      setResult(result.message.response);
       setShowSearchResults(false);
-      return;
     } catch (error) {
       console.error("Failed to establish sse connection: ", error);
+      setPromptError("Failed to execute prompt");
+      setResult("Error: Failed to execute prompt. Please try again."); // Set error message as result
     }
   };
 
@@ -220,7 +243,7 @@ const PromptScheduler: React.FC = () => {
     setConnectLoading(false);
   };
 
-  // Global Search Functionality using the 'prompt' state
+  // Global Search Functionality using a separate searchQuery state
   const searchFile = async () => {
     if (!prompt) {
       setSearchError("Please enter a search term.");
@@ -229,7 +252,9 @@ const PromptScheduler: React.FC = () => {
     try {
       setSearchLoading(true);
       setSearchError("");
+      setDisplayMode('search');
       setShowSearchResults(true);
+      setSearchQuery(prompt); // Store the search query when search is clicked
 
       const reqbody = { filename: prompt };
       const endpoint = `https://syncdjango.site/tenant-admin/globalSearch/`;
@@ -256,6 +281,11 @@ const PromptScheduler: React.FC = () => {
       setSearchError(`Error searching: ${error.message}`);
       setSearchResult(null);
     }
+  };
+
+  const handleSmartRunWrapper = async () => {
+    setDisplayMode('execution');
+    await handleSmartRun();
   };
 
   return (
@@ -344,7 +374,7 @@ const PromptScheduler: React.FC = () => {
                 handleExecute={handleExecute}
                 handleSchedule={handleSchedule}
                 handleRunTask={handleRunTask}
-                handleSmartRun={handleSmartRun}
+                handleSmartRun={handleSmartRunWrapper}
                 onSearchClick={searchFile} // Passing the search function
               />
 
@@ -353,9 +383,10 @@ const PromptScheduler: React.FC = () => {
               {/* Combined Output Area */}
               <div className="my-4 border-t border-gray-800 pt-4">
                 <h2 className="text-lg font-semibold text-gray-300 mb-2">
-                  {isExecuting ? "Prompt Execution Logs" : showSearchResults ? "Search Results" : "Output"}
+                  {displayMode === 'execution' ? (isExecuting ? "Prompt Execution Logs" : "Execution Results") : 
+                   displayMode === 'search' ? "Search Results" : "Output"}
                 </h2>
-                {isExecuting ? (
+                {displayMode === 'execution' ? (
                   <LogsAndResultSection
                     logs={logs}
                     result={result}
@@ -364,15 +395,15 @@ const PromptScheduler: React.FC = () => {
                     setUpdatedLogs={setUpdatedLogs}
                     handleRerun={handleRerunWithEditedLogs}
                   />
-                ) : (
+                ) : displayMode === 'search' ? (
                   <SearchSection
                     searchError={searchError}
                     searchLoading={searchLoading}
                     showSearchResults={showSearchResults}
                     searchResult={searchResult}
-                    prompt={prompt}
+                    prompt={searchQuery}
                   />
-                )}
+                ) : null}
               </div>
             </TabsContent>
             <TabsContent
