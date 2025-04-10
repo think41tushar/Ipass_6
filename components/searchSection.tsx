@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type React from "react"
-import { FileIcon, MailIcon, CalendarIcon, ChevronRight, Search, AlertCircle, Loader2 } from "lucide-react"
+import { FileIcon, MailIcon, CalendarIcon, ChevronRight, Search, AlertCircle, Loader2, Briefcase } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -26,6 +26,10 @@ interface SearchResult {
       time: string
       description?: string
     }[]
+    hubspot?: {
+      title: string
+      snippet: string
+    }[]
   }
 }
 
@@ -48,50 +52,102 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
     googleDrive: false,
     emails: false,
     calendar: false,
+    hubspot: false,
   })
+
+  // Helper function to clean text from stars
+  const cleanText = (text: string) => {
+    return text
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove double stars
+      .replace(/\*([^*]+)\*/g, '$1');     // Remove single stars
+  };
 
   // Helper function to categorize messages
   const categorizeMessage = (message: string) => {
-    const lowerMessage = message.toLowerCase();
+    const cleanedMessage = cleanText(message);
+    const lowerMessage = cleanedMessage.toLowerCase();
+    
     if (lowerMessage.includes("mail") || lowerMessage.includes("email") || lowerMessage.includes("subject:") || lowerMessage.includes("from:")) {
       return {
         type: "email",
         data: {
-          subject: message.match(/Subject:\s*([^\n]*)/)?.[1] || "",
-          from: message.match(/From:\s*([^\n]*)/)?.[1] || "",
-          date: message.match(/Date:\s*([^\n]*)/)?.[1] || "",
-          body: message.replace(/Subject:.*\n|From:.*\n|Date:.*\n/g, "").trim()
+          subject: cleanText(cleanedMessage.match(/Subject:\s*([^\n]*)/)?.[1] || ""),
+          from: cleanText(cleanedMessage.match(/From:\s*([^\n]*)/)?.[1] || ""),
+          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
+          body: cleanText(cleanedMessage.replace(/Subject:.*\n|From:.*\n|Date:.*\n/g, "").trim())
         }
       };
     } else if (lowerMessage.includes("calendar") || lowerMessage.includes("event") || lowerMessage.includes("meeting")) {
       return {
         type: "calendar",
         data: {
-          title: message.match(/Event:\s*([^\n]*)/)?.[1] || message.match(/Title:\s*([^\n]*)/)?.[1] || "Untitled Event",
-          date: message.match(/Date:\s*([^\n]*)/)?.[1] || "",
-          time: message.match(/Time:\s*([^\n]*)/)?.[1] || "",
-          description: message.replace(/Event:.*\n|Title:.*\n|Date:.*\n|Time:.*\n/g, "").trim()
+          title: cleanText(cleanedMessage.match(/Event:\s*([^\n]*)/)?.[1] || cleanedMessage.match(/Title:\s*([^\n]*)/)?.[1] || "Untitled Event"),
+          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
+          time: cleanText(cleanedMessage.match(/Time:\s*([^\n]*)/)?.[1] || ""),
+          description: cleanText(cleanedMessage.replace(/Event:.*\n|Title:.*\n|Date:.*\n|Time:.*\n/g, "").trim())
         }
       };
     } else if (lowerMessage.includes("file:") || lowerMessage.includes("document") || lowerMessage.includes("drive")) {
       return {
         type: "drive",
         data: {
-          fileName: message.match(/File:\s*([^\n]*)/)?.[1] || "",
-          fileType: message.match(/Type:\s*([^\n]*)/)?.[1] || "Document"
+          fileName: cleanText(cleanedMessage.match(/File:\s*([^\n]*)/)?.[1] || ""),
+          fileType: cleanText(cleanedMessage.match(/Type:\s*([^\n]*)/)?.[1] || "Document")
+        }
+      };
+    } else if (lowerMessage.includes("hubspot") || cleanedMessage.includes("HubSpot Notes:")) {
+      // Try to extract HubSpot notes format first
+      const hubspotMatch = cleanedMessage.match(/HubSpot Notes:[\s\S]*?(?=\n\d|$)/i);
+      if (hubspotMatch) {
+        const notes = hubspotMatch[0];
+        const titleMatch = notes.match(/Title:\s*([^\n]+)/);
+        const summaryMatch = notes.match(/Summary:\s*([^\n]+)/);
+        
+        if (titleMatch && summaryMatch) {
+          return {
+            type: "hubspot",
+            data: {
+              title: cleanText(titleMatch[1].trim()),
+              snippet: cleanText(summaryMatch[1].trim())
+            }
+          };
+        }
+      }
+      
+      // Fallback to simple format
+      const lines = cleanedMessage.split('\n');
+      const firstLine = cleanText(lines[0].trim());
+      const restContent = cleanText(lines.slice(1).join('\n').trim());
+      
+      return {
+        type: "hubspot",
+        data: {
+          title: firstLine,
+          snippet: restContent || firstLine
         }
       };
     }
-    return { type: "other", data: message };
+    return { type: "other", data: cleanText(message) };
   };
 
   // Process and categorize the messages if they're not already categorized
   const processSearchResult = (result: SearchResult): SearchResult => {
-    if (!result.results.emails && !result.results.calendarEvents && !result.results.googleDrive && result.results.message) {
-      const messages = result.results.message.split('\n\n').filter(msg => msg.trim());
+    console.log('Raw Search Result:', result);
+    if (
+      !result.results.emails &&
+      !result.results.calendarEvents &&
+      !result.results.googleDrive &&
+      !result.results.hubspot &&
+      result.results.message
+    ) {
+      const messages = cleanText(result.results.message)
+        .split('\n\n')
+        .filter(msg => msg.trim());
+
       const categorized = {
         emails: [] as any[],
         calendarEvents: [] as any[],
+        hubspot: [] as any[],
         googleDrive: undefined as any,
       };
 
@@ -109,19 +165,57 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               categorized.googleDrive = data;
             }
             break;
+          case "hubspot":
+            categorized.hubspot.push(data);
+            break;
         }
       });
 
-      return {
+      const processedResult = {
         results: {
           ...result.results,
+          message: cleanText(result.results.message),
           emails: categorized.emails.length > 0 ? categorized.emails : undefined,
           calendarEvents: categorized.calendarEvents.length > 0 ? categorized.calendarEvents : undefined,
+          hubspot: categorized.hubspot.length > 0 ? categorized.hubspot : undefined,
           googleDrive: categorized.googleDrive
         }
       };
+      
+      return processedResult;
     }
-    return result;
+    
+    // If the result is already categorized, clean any text content
+    return {
+      results: {
+        ...result.results,
+        message: result.results.message ? cleanText(result.results.message) : undefined,
+        emails: result.results.emails?.map(email => ({
+          ...email,
+          subject: cleanText(email.subject),
+          from: cleanText(email.from),
+          date: cleanText(email.date),
+          body: cleanText(email.body)
+        })),
+        calendarEvents: result.results.calendarEvents?.map(event => ({
+          ...event,
+          title: cleanText(event.title || ""),
+          date: cleanText(event.date),
+          time: cleanText(event.time),
+          description: cleanText(event.description || "")
+        })),
+        hubspot: result.results.hubspot?.map(item => ({
+          ...item,
+          title: cleanText(item.title),
+          snippet: cleanText(item.snippet)
+        })),
+        googleDrive: result.results.googleDrive ? {
+          ...result.results.googleDrive,
+          fileName: cleanText(result.results.googleDrive.fileName),
+          fileType: cleanText(result.results.googleDrive.fileType)
+        } : undefined
+      }
+    };
   };
 
   const toggleSection = (sectionName: string) => {
@@ -219,6 +313,24 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                   <div className="h-4 w-2/3 animate-pulse rounded bg-gray-800"></div>
                   <div className="h-4 w-1/2 animate-pulse rounded bg-gray-800"></div>
                   <div className="h-4 w-1/3 animate-pulse rounded bg-gray-800"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Hubspot Loading */}
+            <div className="w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20">
+                    <Briefcase className="h-5 w-5 text-purple-400 animate-pulse" />
+                  </div>
+                  <div className="h-6 w-32 animate-pulse rounded bg-gray-800"></div>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="space-y-3">
+                  <div className="h-4 w-3/4 animate-pulse rounded bg-gray-800"></div>
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-gray-800"></div>
                 </div>
               </div>
             </div>
@@ -455,10 +567,80 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             </div>
           )}
 
+          {/* Hubspot Section */}
+          {processedSearchResult.results.hubspot && processedSearchResult.results.hubspot.length > 0 ? (
+            <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 shadow-inner shadow-purple-500/10">
+                    <Briefcase className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-200">Hubspot</h3>
+                </div>
+              </div>
+              <div className="px-4 pt-0">
+                <div className="space-y-4">
+                  {(expandedSections.hubspot
+                    ? processedSearchResult.results.hubspot
+                    : processedSearchResult.results.hubspot.slice(0, 1)
+                  ).map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-purple-500/10 rounded-xl bg-[#1a1d29] p-4 transition-all duration-200"
+                    >
+                      <p className="mb-2 flex flex-col text-gray-300 sm:flex-row sm:items-center">
+                        <span className="mr-2 min-w-[70px] text-gray-400">Title:</span>
+                        <span className="font-medium">{item.title}</span>
+                      </p>
+                      <p className="mb-2 flex flex-col text-gray-300 sm:flex-row sm:items-center">
+                        <span className="mr-2 min-w-[70px] text-gray-400">Snippet:</span>
+                        <span className="font-medium">{item.snippet}</span>
+                      </p>
+                    </div>
+                  ))}
+                  {!expandedSections.hubspot && processedSearchResult.results.hubspot.length > 1 && (
+                    <p className="mt-2 text-center text-sm text-gray-400">
+                      +{processedSearchResult.results.hubspot.length - 1} more results
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="p-4 pt-2">
+                <Button
+                  variant="ghost"
+                  className="ml-auto text-purple-400 hover:bg-purple-500/10 hover:text-purple-300 group-hover:bg-purple-500/5"
+                  onClick={() => toggleSection("hubspot")}
+                >
+                  {expandedSections.hubspot ? "View Less" : "View More"}{" "}
+                  <ChevronRight
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSections.hubspot ? "rotate-90" : ""}`}
+                  />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 shadow-inner shadow-purple-500/10">
+                    <Briefcase className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-200">Hubspot</h3>
+                </div>
+              </div>
+              <div className="px-4 pt-0">
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <p className="text-gray-400">No Hubspot results found for this search</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Message Section (if no other results) */}
           {!processedSearchResult.results.googleDrive &&
             (!processedSearchResult.results.emails || processedSearchResult.results.emails.length === 0) &&
             (!processedSearchResult.results.calendarEvents || processedSearchResult.results.calendarEvents.length === 0) &&
+            (!processedSearchResult.results.hubspot || processedSearchResult.results.hubspot.length === 0) &&
             processedSearchResult.results.message && (
               <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
                 <div className="p-4 pb-2">
