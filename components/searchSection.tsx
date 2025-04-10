@@ -2,7 +2,16 @@
 
 import { useState } from "react"
 import type React from "react"
-import { FileIcon, MailIcon, CalendarIcon, ChevronRight, Search, AlertCircle, Loader2, Briefcase } from "lucide-react"
+import {
+  FileIcon,
+  MailIcon,
+  CalendarIcon,
+  ChevronRight,
+  Search,
+  AlertCircle,
+  Loader2,
+  Briefcase
+} from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -14,22 +23,22 @@ interface SearchResult {
       fileName: string
       fileType: string
     }
-    emails?: {
+    emails?: Array<{
       subject: string
       from: string
       date: string
       body: string
-    }[]
-    calendarEvents?: {
-      title?: string
+    }>
+    calendarEvents?: Array<{
+      title: string
       date: string
       time: string
       description?: string
-    }[]
-    hubspot?: {
+    }>
+    hubspot?: Array<{
       title: string
       snippet: string
-    }[]
+    }>
   }
 }
 
@@ -55,60 +64,94 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
     hubspot: false,
   })
 
+  // Helper function to clean text from stars
+  const cleanText = (text: string) => {
+    return text
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove double stars
+      .replace(/----([^-]+)----/g, '$1') // Remove text between ----
+      .replace(/\*([^*]+)\*/g, '$1');     // Remove single stars
+  };
+
   // Helper function to categorize messages
   const categorizeMessage = (message: string) => {
-    const lowerMessage = message.toLowerCase();
-    if (lowerMessage.includes("mail") || lowerMessage.includes("email") || lowerMessage.includes("subject:") || lowerMessage.includes("from:")) {
+    const cleanedMessage = cleanText(message);
+    const lowerMessage = cleanedMessage.toLowerCase();
+    
+    if (
+      lowerMessage.includes("mail") ||
+      lowerMessage.includes("email") ||
+      lowerMessage.includes("subject:") ||
+      lowerMessage.includes("from:")
+    ) {
       return {
         type: "email",
         data: {
-          subject: message.match(/Subject:\s*([^\n]*)/)?.[1] || "",
-          from: message.match(/From:\s*([^\n]*)/)?.[1] || "",
-          date: message.match(/Date:\s*([^\n]*)/)?.[1] || "",
-          body: message.replace(/Subject:.*\n|From:.*\n|Date:.*\n/g, "").trim()
+          subject: cleanText(cleanedMessage.match(/Subject:\s*([^\n]*)/)?.[1] || ""),
+          from: cleanText(cleanedMessage.match(/From:\s*([^\n]*)/)?.[1] || ""),
+          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
+          body: cleanText(
+            cleanedMessage.replace(/Subject:.*\n|From:.*\n|Date:.*\n/g, "").trim()
+          )
         }
       };
-    } else if (lowerMessage.includes("calendar") || lowerMessage.includes("event") || lowerMessage.includes("meeting")) {
+    } else if (
+      lowerMessage.includes("calendar") ||
+      lowerMessage.includes("event") ||
+      lowerMessage.includes("meeting")
+    ) {
       return {
         type: "calendar",
         data: {
-          title: message.match(/Event:\s*([^\n]*)/)?.[1] || message.match(/Title:\s*([^\n]*)/)?.[1] || "Untitled Event",
-          date: message.match(/Date:\s*([^\n]*)/)?.[1] || "",
-          time: message.match(/Time:\s*([^\n]*)/)?.[1] || "",
-          description: message.replace(/Event:.*\n|Title:.*\n|Date:.*\n|Time:.*\n/g, "").trim()
+          title: cleanText(
+            cleanedMessage.match(/Event:\s*([^\n]*)/)?.[1] ||
+              cleanedMessage.match(/Title:\s*([^\n]*)/)?.[1] ||
+              "Untitled Event"
+          ),
+          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
+          time: cleanText(cleanedMessage.match(/Time:\s*([^\n]*)/)?.[1] || ""),
+          description: cleanText(
+            cleanedMessage.replace(/Event:.*\n|Title:.*\n|Date:.*\n|Time:.*\n/g, "").trim()
+          )
         }
       };
-    } else if (lowerMessage.includes("file:") || lowerMessage.includes("document") || lowerMessage.includes("drive")) {
+    } else if (
+      lowerMessage.includes("file:") ||
+      lowerMessage.includes("document") ||
+      lowerMessage.includes("drive")
+    ) {
       return {
         type: "drive",
         data: {
-          fileName: message.match(/File:\s*([^\n]*)/)?.[1] || "",
-          fileType: message.match(/Type:\s*([^\n]*)/)?.[1] || "Document"
+          fileName: cleanText(cleanedMessage.match(/File:\s*([^\n]*)/)?.[1] || ""),
+          fileType: cleanText(cleanedMessage.match(/Type:\s*([^\n]*)/)?.[1] || "Document")
         }
       };
-    } else if (lowerMessage.includes("hubspot") || message.includes("**HubSpot Notes**:")) {
+    } else if (
+      lowerMessage.includes("hubspot") ||
+      cleanedMessage.includes("HubSpot Notes:")
+    ) {
       // Try to extract HubSpot notes format first
-      const hubspotMatch = message.match(/\*\*HubSpot Notes\*\*:[\s\S]*?(?=\n\d|$)/i);
+      const hubspotMatch = cleanedMessage.match(/HubSpot Notes:[\s\S]*?(?=\n\d|$)/i);
       if (hubspotMatch) {
         const notes = hubspotMatch[0];
-        const titleMatches = notes.match(/\*\*Title\*\*: ([^\n]+)/g);
-        const summaryMatches = notes.match(/\*\*Summary\*\*: ([^\n]+)/g);
+        const titleMatch = notes.match(/Title:\s*([^\n]+)/);
+        const summaryMatch = notes.match(/Summary:\s*([^\n]+)/);
         
-        if (titleMatches && summaryMatches) {
-          // Return the first title/summary pair
-          const title = titleMatches[0].replace(/\*\*Title\*\*: /, '').trim();
-          const snippet = summaryMatches[0].replace(/\*\*Summary\*\*: /, '').trim();
+        if (titleMatch && summaryMatch) {
           return {
             type: "hubspot",
-            data: { title, snippet }
+            data: {
+              title: cleanText(titleMatch[1].trim()),
+              snippet: cleanText(summaryMatch[1].trim())
+            }
           };
         }
       }
       
       // Fallback to simple format
-      const lines = message.split('\n');
-      const firstLine = lines[0].trim();
-      const restContent = lines.slice(1).join('\n').trim();
+      const lines = cleanedMessage.split('\n');
+      const firstLine = cleanText(lines[0].trim());
+      const restContent = cleanText(lines.slice(1).join('\n').trim());
       
       return {
         type: "hubspot",
@@ -118,7 +161,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
         }
       };
     }
-    return { type: "other", data: message };
+    return { type: "other", data: cleanText(message) };
   };
 
   // Process and categorize the messages if they're not already categorized
@@ -131,7 +174,10 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       !result.results.hubspot &&
       result.results.message
     ) {
-      const messages = result.results.message.split('\n\n').filter(msg => msg.trim());
+      const messages = cleanText(result.results.message)
+        .split('\n\n')
+        .filter(msg => msg.trim());
+
       const categorized = {
         emails: [] as any[],
         calendarEvents: [] as any[],
@@ -162,22 +208,51 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       const processedResult = {
         results: {
           ...result.results,
+          message: cleanText(result.results.message),
           emails: categorized.emails.length > 0 ? categorized.emails : undefined,
-          calendarEvents: categorized.calendarEvents.length > 0 ? categorized.calendarEvents : undefined,
+          calendarEvents:
+            categorized.calendarEvents.length > 0 ? categorized.calendarEvents : undefined,
           hubspot: categorized.hubspot.length > 0 ? categorized.hubspot : undefined,
           googleDrive: categorized.googleDrive
         }
       };
-      console.log('Categorized Messages:', {
-        emails: categorized.emails,
-        calendarEvents: categorized.calendarEvents,
-        hubspot: categorized.hubspot,
-        googleDrive: categorized.googleDrive
-      });
-      console.log('Final Processed Result:', processedResult);
+      
       return processedResult;
     }
-    return result;
+    
+    // If the result is already categorized, clean any text content
+    return {
+      results: {
+        ...result.results,
+        message: result.results.message ? cleanText(result.results.message) : "",
+        emails: result.results.emails?.map(email => ({
+          ...email,
+          subject: cleanText(email.subject),
+          from: cleanText(email.from),
+          date: cleanText(email.date),
+          body: cleanText(email.body)
+        })),
+        calendarEvents: result.results.calendarEvents?.map(event => ({
+          ...event,
+          title: cleanText(event.title || ""),
+          date: cleanText(event.date),
+          time: cleanText(event.time),
+          description: cleanText(event.description || "")
+        })),
+        hubspot: result.results.hubspot?.map(item => ({
+          ...item,
+          title: cleanText(item.title),
+          snippet: cleanText(item.snippet)
+        })),
+        googleDrive: result.results.googleDrive
+          ? {
+              ...result.results.googleDrive,
+              fileName: cleanText(result.results.googleDrive.fileName),
+              fileType: cleanText(result.results.googleDrive.fileType)
+            }
+          : undefined
+      }
+    };
   };
 
   const toggleSection = (sectionName: string) => {
@@ -203,7 +278,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       <div className="w-full rounded-xl border border-gray-800/50 bg-[#1a1d29]/50 p-8 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col items-center justify-center text-center">
           <Search className="mb-4 h-12 w-12 opacity-50 text-gray-400" />
-          <p className="text-lg text-gray-400">Enter a command and click the "Search" icon or "Smart Run".</p>
+          <p className="text-lg text-gray-400">
+            Enter a command and click the "Search" icon or "Smart Run".
+          </p>
         </div>
       </div>
     )
@@ -299,14 +376,14 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   if (!searchResult) {
     return null
   }
 
-  const processedSearchResult = processSearchResult(searchResult);
+  const processedSearchResult = processSearchResult(searchResult)
 
   return (
     <div className="w-full space-y-6">
@@ -457,7 +534,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Calendar Events Section */}
-          {processedSearchResult.results.calendarEvents && processedSearchResult.results.calendarEvents.length > 0 ? (
+          {processedSearchResult.results.calendarEvents &&
+          processedSearchResult.results.calendarEvents.length > 0 ? (
             <div className="group w-full overflow-hidden rounded-xl border border-green-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-green-500/20">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -491,11 +569,12 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                       </p>
                     </div>
                   ))}
-                  {!expandedSections.calendar && processedSearchResult.results.calendarEvents.length > 1 && (
-                    <p className="mt-2 text-center text-sm text-gray-400">
-                      +{processedSearchResult.results.calendarEvents.length - 1} more events
-                    </p>
-                  )}
+                  {!expandedSections.calendar &&
+                    processedSearchResult.results.calendarEvents.length > 1 && (
+                      <p className="mt-2 text-center text-sm text-gray-400">
+                        +{processedSearchResult.results.calendarEvents.length - 1} more events
+                      </p>
+                    )}
                 </div>
               </div>
               <div className="p-4 pt-2">
@@ -506,7 +585,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 >
                   {expandedSections.calendar ? "View Less" : "View More"}{" "}
                   <ChevronRight
-                    className={`ml-1 h-4 w-4 transition-transform ${expandedSections.calendar ? "rotate-90" : ""}`}
+                    className={`ml-1 h-4 w-4 transition-transform ${
+                      expandedSections.calendar ? "rotate-90" : ""
+                    }`}
                   />
                 </Button>
               </div>
@@ -530,7 +611,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Hubspot Section */}
-          {processedSearchResult.results.hubspot && processedSearchResult.results.hubspot.length > 0 ? (
+          {processedSearchResult.results.hubspot &&
+          processedSearchResult.results.hubspot.length > 0 ? (
             <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -560,11 +642,12 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                       </p>
                     </div>
                   ))}
-                  {!expandedSections.hubspot && processedSearchResult.results.hubspot.length > 1 && (
-                    <p className="mt-2 text-center text-sm text-gray-400">
-                      +{processedSearchResult.results.hubspot.length - 1} more results
-                    </p>
-                  )}
+                  {!expandedSections.hubspot &&
+                    processedSearchResult.results.hubspot.length > 1 && (
+                      <p className="mt-2 text-center text-sm text-gray-400">
+                        +{processedSearchResult.results.hubspot.length - 1} more results
+                      </p>
+                    )}
                 </div>
               </div>
               <div className="p-4 pt-2">
@@ -575,7 +658,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 >
                   {expandedSections.hubspot ? "View Less" : "View More"}{" "}
                   <ChevronRight
-                    className={`ml-1 h-4 w-4 transition-transform ${expandedSections.hubspot ? "rotate-90" : ""}`}
+                    className={`ml-1 h-4 w-4 transition-transform ${
+                      expandedSections.hubspot ? "rotate-90" : ""
+                    }`}
                   />
                 </Button>
               </div>
@@ -600,9 +685,12 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
 
           {/* Message Section (if no other results) */}
           {!processedSearchResult.results.googleDrive &&
-            (!processedSearchResult.results.emails || processedSearchResult.results.emails.length === 0) &&
-            (!processedSearchResult.results.calendarEvents || processedSearchResult.results.calendarEvents.length === 0) &&
-            (!processedSearchResult.results.hubspot || processedSearchResult.results.hubspot.length === 0) &&
+            (!processedSearchResult.results.emails ||
+              processedSearchResult.results.emails.length === 0) &&
+            (!processedSearchResult.results.calendarEvents ||
+              processedSearchResult.results.calendarEvents.length === 0) &&
+            (!processedSearchResult.results.hubspot ||
+              processedSearchResult.results.hubspot.length === 0) &&
             processedSearchResult.results.message && (
               <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
                 <div className="p-4 pb-2">
