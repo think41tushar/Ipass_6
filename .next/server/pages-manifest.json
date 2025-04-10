@@ -1,4 +1,3 @@
 {
-  "/api/gemini-proxy": "pages/api/gemini-proxy.js",
   "/api/validate-query": "pages/api/validate-query.js"
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type React from "react"
-import { FileIcon, MailIcon, CalendarIcon, ChevronRight, Search, AlertCircle, Loader2 } from "lucide-react"
+import { FileIcon, MailIcon, CalendarIcon, ChevronRight, Search, AlertCircle, Loader2, Briefcase } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -26,6 +26,10 @@ interface SearchResult {
       time: string
       description?: string
     }[]
+    hubspot?: {
+      title: string
+      snippet: string
+    }[]
   }
 }
 
@@ -48,6 +52,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
     googleDrive: false,
     emails: false,
     calendar: false,
+    hubspot: false,
   })
 
   // Helper function to categorize messages
@@ -81,17 +86,56 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           fileType: message.match(/Type:\s*([^\n]*)/)?.[1] || "Document"
         }
       };
+    } else if (lowerMessage.includes("hubspot") || message.includes("**HubSpot Notes**:")) {
+      // Try to extract HubSpot notes format first
+      const hubspotMatch = message.match(/\*\*HubSpot Notes\*\*:[\s\S]*?(?=\n\d|$)/i);
+      if (hubspotMatch) {
+        const notes = hubspotMatch[0];
+        const titleMatches = notes.match(/\*\*Title\*\*: ([^\n]+)/g);
+        const summaryMatches = notes.match(/\*\*Summary\*\*: ([^\n]+)/g);
+        
+        if (titleMatches && summaryMatches) {
+          // Return the first title/summary pair
+          const title = titleMatches[0].replace(/\*\*Title\*\*: /, '').trim();
+          const snippet = summaryMatches[0].replace(/\*\*Summary\*\*: /, '').trim();
+          return {
+            type: "hubspot",
+            data: { title, snippet }
+          };
+        }
+      }
+      
+      // Fallback to simple format
+      const lines = message.split('\n');
+      const firstLine = lines[0].trim();
+      const restContent = lines.slice(1).join('\n').trim();
+      
+      return {
+        type: "hubspot",
+        data: {
+          title: firstLine,
+          snippet: restContent || firstLine
+        }
+      };
     }
     return { type: "other", data: message };
   };
 
   // Process and categorize the messages if they're not already categorized
   const processSearchResult = (result: SearchResult): SearchResult => {
-    if (!result.results.emails && !result.results.calendarEvents && !result.results.googleDrive && result.results.message) {
+    console.log('Raw Search Result:', result);
+    if (
+      !result.results.emails &&
+      !result.results.calendarEvents &&
+      !result.results.googleDrive &&
+      !result.results.hubspot &&
+      result.results.message
+    ) {
       const messages = result.results.message.split('\n\n').filter(msg => msg.trim());
       const categorized = {
         emails: [] as any[],
         calendarEvents: [] as any[],
+        hubspot: [] as any[],
         googleDrive: undefined as any,
       };
 
@@ -109,17 +153,29 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               categorized.googleDrive = data;
             }
             break;
+          case "hubspot":
+            categorized.hubspot.push(data);
+            break;
         }
       });
 
-      return {
+      const processedResult = {
         results: {
           ...result.results,
           emails: categorized.emails.length > 0 ? categorized.emails : undefined,
           calendarEvents: categorized.calendarEvents.length > 0 ? categorized.calendarEvents : undefined,
+          hubspot: categorized.hubspot.length > 0 ? categorized.hubspot : undefined,
           googleDrive: categorized.googleDrive
         }
       };
+      console.log('Categorized Messages:', {
+        emails: categorized.emails,
+        calendarEvents: categorized.calendarEvents,
+        hubspot: categorized.hubspot,
+        googleDrive: categorized.googleDrive
+      });
+      console.log('Final Processed Result:', processedResult);
+      return processedResult;
     }
     return result;
   };
@@ -219,6 +275,24 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                   <div className="h-4 w-2/3 animate-pulse rounded bg-gray-800"></div>
                   <div className="h-4 w-1/2 animate-pulse rounded bg-gray-800"></div>
                   <div className="h-4 w-1/3 animate-pulse rounded bg-gray-800"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Hubspot Loading */}
+            <div className="w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20">
+                    <Briefcase className="h-5 w-5 text-purple-400 animate-pulse" />
+                  </div>
+                  <div className="h-6 w-32 animate-pulse rounded bg-gray-800"></div>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="space-y-3">
+                  <div className="h-4 w-3/4 animate-pulse rounded bg-gray-800"></div>
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-gray-800"></div>
                 </div>
               </div>
             </div>
@@ -455,10 +529,80 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             </div>
           )}
 
+          {/* Hubspot Section */}
+          {processedSearchResult.results.hubspot && processedSearchResult.results.hubspot.length > 0 ? (
+            <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 shadow-inner shadow-purple-500/10">
+                    <Briefcase className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-200">Hubspot</h3>
+                </div>
+              </div>
+              <div className="px-4 pt-0">
+                <div className="space-y-4">
+                  {(expandedSections.hubspot
+                    ? processedSearchResult.results.hubspot
+                    : processedSearchResult.results.hubspot.slice(0, 1)
+                  ).map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-purple-500/10 rounded-xl bg-[#1a1d29] p-4 transition-all duration-200"
+                    >
+                      <p className="mb-2 flex flex-col text-gray-300 sm:flex-row sm:items-center">
+                        <span className="mr-2 min-w-[70px] text-gray-400">Title:</span>
+                        <span className="font-medium">{item.title}</span>
+                      </p>
+                      <p className="mb-2 flex flex-col text-gray-300 sm:flex-row sm:items-center">
+                        <span className="mr-2 min-w-[70px] text-gray-400">Snippet:</span>
+                        <span className="font-medium">{item.snippet}</span>
+                      </p>
+                    </div>
+                  ))}
+                  {!expandedSections.hubspot && processedSearchResult.results.hubspot.length > 1 && (
+                    <p className="mt-2 text-center text-sm text-gray-400">
+                      +{processedSearchResult.results.hubspot.length - 1} more results
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="p-4 pt-2">
+                <Button
+                  variant="ghost"
+                  className="ml-auto text-purple-400 hover:bg-purple-500/10 hover:text-purple-300 group-hover:bg-purple-500/5"
+                  onClick={() => toggleSection("hubspot")}
+                >
+                  {expandedSections.hubspot ? "View Less" : "View More"}{" "}
+                  <ChevronRight
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSections.hubspot ? "rotate-90" : ""}`}
+                  />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md">
+              <div className="p-4 pb-2">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 shadow-inner shadow-purple-500/10">
+                    <Briefcase className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-200">Hubspot</h3>
+                </div>
+              </div>
+              <div className="px-4 pt-0">
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <p className="text-gray-400">No Hubspot results found for this search</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Message Section (if no other results) */}
           {!processedSearchResult.results.googleDrive &&
             (!processedSearchResult.results.emails || processedSearchResult.results.emails.length === 0) &&
             (!processedSearchResult.results.calendarEvents || processedSearchResult.results.calendarEvents.length === 0) &&
+            (!processedSearchResult.results.hubspot || processedSearchResult.results.hubspot.length === 0) &&
             processedSearchResult.results.message && (
               <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
                 <div className="p-4 pb-2">
