@@ -1,7 +1,4 @@
 {
-  "/_app": "pages/_app.js",
-  "/_document": "pages/_document.js",
-  "/_error": "pages/_error.js",
   "/api/gemini-proxy": "pages/api/gemini-proxy.js",
   "/api/validate-query": "pages/api/validate-query.js"
 }

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MailIcon, FileIcon, CalendarIcon } from "lucide-react";
 
 interface LogsAndResultSectionProps {
   logs: string[];
@@ -14,6 +15,30 @@ interface LogsAndResultSectionProps {
   setUpdatedLogs: (logs: string[]) => void;
   updatedLogs: string[];
   handleRerun: (updatedLogs: string[]) => void;
+}
+
+interface FormattedResult {
+  type: 'email' | 'drive' | 'calendar' | 'text';
+  data: {
+    emails?: Array<{
+      subject: string;
+      from: string;
+      date: string;
+      body: string;
+    }>;
+    driveFiles?: Array<{
+      fileName: string;
+      fileType: string;
+      content?: string;
+    }>;
+    calendarEvents?: Array<{
+      title: string;
+      date: string;
+      time: string;
+      description?: string;
+    }>;
+    text?: string;
+  };
 }
 
 export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
@@ -66,6 +91,66 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
     newLogs[index] = newValue;
     setUpdatedLogs(newLogs);
     console.log("Updated log at index", index, "to:", newValue);
+  };
+
+  const parseResult = (result: string | null): FormattedResult => {
+    if (!result) {
+      return { type: 'text', data: { text: '' } };
+    }
+
+    try {
+      // Try to parse the result as JSON first
+      const parsed = JSON.parse(result);
+      
+      if (parsed.emails?.length > 0) {
+        return {
+          type: 'email',
+          data: { emails: parsed.emails }
+        };
+      }
+      
+      if (parsed.googleDrive?.length > 0 || parsed.driveFiles?.length > 0) {
+        return {
+          type: 'drive',
+          data: { driveFiles: parsed.googleDrive || parsed.driveFiles }
+        };
+      }
+      
+      if (parsed.calendarEvents?.length > 0) {
+        return {
+          type: 'calendar',
+          data: { calendarEvents: parsed.calendarEvents }
+        };
+      }
+    } catch (error) {
+      // If not JSON or parsing fails, look for patterns in the text
+      if (result.includes('Subject:') && result.includes('From:')) {
+        const emails = result.split('\n\n')
+          .filter(block => block.includes('Subject:'))
+          .map(block => {
+            const subject = block.match(/Subject:\s*([^\n]*)/)?.[1] || '';
+            const from = block.match(/From:\s*([^\n]*)/)?.[1] || '';
+            const date = block.match(/Date:\s*([^\n]*)/)?.[1] || '';
+            const bodyStart = block.indexOf('Body:');
+            const body = bodyStart > -1 ? block.slice(bodyStart + 5).trim() : '';
+            
+            return { subject, from, date, body };
+          });
+          
+        if (emails.length > 0) {
+          return {
+            type: 'email',
+            data: { emails }
+          };
+        }
+      }
+    }
+    
+    // Default to text if no structured data is found
+    return {
+      type: 'text',
+      data: { text: result }
+    };
   };
 
   return (
@@ -192,9 +277,83 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-gray-300 whitespace-pre-wrap"
+                  className="text-gray-300"
                 >
-                  {result}
+                  <div className="space-y-4">
+                    {(() => {
+                      try {
+                        const formattedResult: FormattedResult = parseResult(result);
+                        
+                        switch (formattedResult.type) {
+                          case 'email':
+                            return formattedResult.data.emails?.map((email, idx) => (
+                              <div key={idx} className="p-4 border border-gray-800 rounded-md bg-[#131825] hover:border-purple-500/20 transition-colors">
+                                <div className="space-y-2">
+                                  <div className="flex items-center">
+                                    <MailIcon className="h-5 w-5 text-purple-400 mr-2" />
+                                    <h4 className="font-medium text-purple-300">{email.subject}</h4>
+                                  </div>
+                                  <div className="text-sm space-y-1 text-gray-400">
+                                    <p><span className="text-gray-500">From:</span> {email.from}</p>
+                                    <p><span className="text-gray-500">Date:</span> {email.date}</p>
+                                  </div>
+                                  <div className="mt-2 text-gray-300 whitespace-pre-wrap">
+                                    {email.body}
+                                  </div>
+                                </div>
+                              </div>
+                            ));
+                            
+                          case 'drive':
+                            return formattedResult.data.driveFiles?.map((file, idx) => (
+                              <div key={idx} className="p-4 border border-gray-800 rounded-md bg-[#131825] hover:border-purple-500/20 transition-colors">
+                                <div className="space-y-2">
+                                  <div className="flex items-center">
+                                    <FileIcon className="h-5 w-5 text-blue-400 mr-2" />
+                                    <h4 className="font-medium text-blue-300">{file.fileName}</h4>
+                                  </div>
+                                  <div className="text-sm space-y-1">
+                                    <p className="text-gray-400"><span className="text-gray-500">Type:</span> {file.fileType}</p>
+                                    {file.content && (
+                                      <div className="mt-2 text-gray-300 whitespace-pre-wrap">
+                                        {file.content}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ));
+                            
+                          case 'calendar':
+                            return formattedResult.data.calendarEvents?.map((event, idx) => (
+                              <div key={idx} className="p-4 border border-gray-800 rounded-md bg-[#131825] hover:border-purple-500/20 transition-colors">
+                                <div className="space-y-2">
+                                  <div className="flex items-center">
+                                    <CalendarIcon className="h-5 w-5 text-green-400 mr-2" />
+                                    <h4 className="font-medium text-green-300">{event.title}</h4>
+                                  </div>
+                                  <div className="text-sm space-y-1 text-gray-400">
+                                    <p><span className="text-gray-500">Date:</span> {event.date}</p>
+                                    <p><span className="text-gray-500">Time:</span> {event.time}</p>
+                                    {event.description && (
+                                      <div className="mt-2 text-gray-300">
+                                        {event.description}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ));
+                            
+                          default:
+                            return <div className="whitespace-pre-wrap">{formattedResult.data.text}</div>;
+                        }
+                      } catch (error) {
+                        // If parsing fails, display as plain text
+                        return <div className="whitespace-pre-wrap">{result}</div>;
+                      }
+                    })()}
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
