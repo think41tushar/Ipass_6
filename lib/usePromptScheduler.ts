@@ -32,6 +32,20 @@ export const usePromptScheduler = () => {
   const [tasks, setTasks] = useState<ScheduledTask[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  // Function to get the current EventSource for external components
+  const getEventSource = (): EventSource | null => {
+    console.log("getEventSource called, returning:", eventSourceRef.current);
+    if (eventSourceRef.current) {
+      console.log("EventSource details:", {
+        url: eventSourceRef.current.url,
+        readyState: eventSourceRef.current.readyState,
+        withCredentials: eventSourceRef.current.withCredentials,
+        hasOnMessage: !!eventSourceRef.current.onmessage
+      });
+    }
+    return eventSourceRef.current;
+  };
+
   // Load tasks from localStorage on component mount
   useEffect(() => {
     const loadedTasks = loadTasksFromLocalStorage();
@@ -69,22 +83,27 @@ export const usePromptScheduler = () => {
   };
 
   // Setup SSE connection for real-time logs
-  const setupSSEConnection = async (
-    sessionId: string,
-    updatedLogs: any[] = []
-  ): Promise<EventSource> => {
-    const backendUrl = "https://rishit41.online";
-
-    // Start event stream for logs
+  const setupSSEConnection = (sessionId: string): Promise<EventSource> => {
     return new Promise((resolve, reject) => {
-      const eventSource = new EventSource(
-        `${backendUrl}/logevents/${sessionId}`
-      );
-      console.log(`Event source created for session ${sessionId}`);
+      const backendUrl = "https://rishit41.online";
+      const url = `${backendUrl}/logevents/${sessionId}`;
 
-      // Set a timeout to prevent hanging connections
+      // Close any existing connection
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+
+      // Create a new EventSource
+      const eventSource = new EventSource(url);
+      console.log("Event source created for session", sessionId);
+      
+      // Store the EventSource reference immediately
+      eventSourceRef.current = eventSource;
+
+      // Set a timeout for connection
       const connectionTimeout = setTimeout(() => {
-        console.log("SSE connection timeout after 30 seconds");
+        console.error("SSE connection timeout");
         eventSource.close();
         setIsSSEconnected(false);
         setIsExecuting(false);
@@ -97,10 +116,12 @@ export const usePromptScheduler = () => {
         setIsSSEconnected(true);
         // Clear the timeout when connection is established
         clearTimeout(connectionTimeout);
+        // Make sure the reference is still set
+        eventSourceRef.current = eventSource;
         resolve(eventSource); // Resolve the promise when connected
       };
 
-      eventSource.onmessage = (event) => {
+      const handleMessage = (event: MessageEvent) => {
         // Reset the activity timeout on each message
         clearTimeout(connectionTimeout);
 
@@ -146,6 +167,10 @@ export const usePromptScheduler = () => {
           }
         }
       };
+
+      // Use addEventListener to allow multiple components to listen to the same EventSource
+      eventSource.addEventListener('message', handleMessage);
+      console.log("Added message event listener to EventSource");
 
       eventSource.onerror = (event) => {
         console.error("SSE connection error occurred");
@@ -805,6 +830,7 @@ export const usePromptScheduler = () => {
 
           if (prompt === "royalchecker") {
             console.warn("Sending directly to express backend");
+            setActiveTab("royal");
             const response = await fetch(
               "https://rishit41.online/getComplains"
             );
@@ -1145,7 +1171,7 @@ export const usePromptScheduler = () => {
       }
 
       // Setup SSE connection
-      const eventSource = await setupSSEConnection(sessid, updatedLogs);
+      const eventSource = await setupSSEConnection(sessid);
 
       // Find all edited logs
       const editedLogs = [];
@@ -1252,5 +1278,6 @@ export const usePromptScheduler = () => {
     planScheduling,
     handleSmartRun,
     handleRerun,
+    getEventSource,
   };
 };

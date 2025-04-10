@@ -19,7 +19,7 @@ export default async function handler(
     }
 
     // Get the API key from environment variables
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_KEY || "";
     
     if (!apiKey) {
       return res.status(500).json({ error: 'API key not configured' });

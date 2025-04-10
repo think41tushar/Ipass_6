@@ -28,6 +28,7 @@ import { usePromptScheduler } from "@/lib/usePromptScheduler";
 import { PromptInputSection } from "@/components/promptInputSection";
 import { LogsAndResultSection } from "@/components/logsAndResultSection";
 import { ScheduledPromptsSection } from "@/components/scheduledTasksSection";
+import StatusTable from "@/components/StatusTable";
 
 import { ScheduledTask, RecurrenceType } from "@/lib/types";
 
@@ -65,6 +66,7 @@ const PromptScheduler: React.FC = () => {
     handleSmartRun,
     planScheduling,
     handleRerun,
+    getEventSource,
   } = usePromptScheduler();
 
   const [updatedLogs, setUpdatedLogs] = useState<any[]>([]);
@@ -257,18 +259,34 @@ const PromptScheduler: React.FC = () => {
         </CardHeader>
 
         <CardContent className="p-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="">
-            <TabsList className="mx-6">
-              <TabsTrigger value="prompt" className="w-[11rem]">
+          <Tabs
+            defaultValue={activeTab}
+            value={activeTab}
+            onValueChange={(value) => {
+              console.log("Tab changed to:", value);
+              setActiveTab(value);
+            }}
+            className="w-full"
+          >
+            <TabsList className="grid grid-cols-4 mb-8">
+              <TabsTrigger value="prompt" className="data-[state=active]:bg-purple-500">
                 Prompt
               </TabsTrigger>
-              <TabsTrigger value="scheduled" className="w-[11rem]">
+              <TabsTrigger value="scheduled" className="data-[state=active]:bg-purple-500">
                 Scheduled Tasks
               </TabsTrigger>
-              <TabsTrigger value="information" className="w-[11rem]">
+              <TabsTrigger value="information" className="data-[state=active]:bg-purple-500">
                 Information
               </TabsTrigger>
+              <TabsTrigger value="royal" className="data-[state=active]:bg-purple-500">
+                Royal
+              </TabsTrigger>
             </TabsList>
+
+            {(() => {
+              console.log("Current activeTab:", activeTab);
+              return null;
+            })()}
 
             <TabsContent value="prompt" className="p-6 bg-[#0f1219] text-white">
               <PromptInputSection
@@ -510,6 +528,34 @@ const PromptScheduler: React.FC = () => {
                   
                 </div>
               )}
+            </TabsContent>
+
+            <TabsContent
+              value="royal"
+              className="p-6 bg-[#0f1219] text-white"
+            >
+              {/* Show a message if there's no connection */}
+              {(!isSSEconnected || !getEventSource()) && (
+                  <div className="text-center p-6 mt-4 bg-gray-800/50 rounded-lg">
+                    <p className="mb-4">No active connection. Use "Smart Run" with "royalchecker" to view process status.</p>
+                  </div>
+                )}
+
+              {(isSSEconnected && getEventSource()) && (
+                <div className="flex flex-col items-center justify-center">
+                  <h1 className="text-2xl font-bold mb-6">Compliant Emails Context Extraction</h1>
+                  {(() => {
+                    const eventSourceObj = getEventSource();
+                    console.log("Royal tab: isSSEconnected =", isSSEconnected, "getEventSource() =", eventSourceObj);
+                  return null;
+                })()}
+                
+                {/* Always render the StatusTable component with the EventSource if available */}
+                <StatusTable eventSource={getEventSource() || undefined} />
+                
+              </div>
+              )}
+              
             </TabsContent>
           </Tabs>
         </CardContent>
