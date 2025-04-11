@@ -38,17 +38,22 @@ interface SearchResult {
       fileName: string;
       fileType: string;
     };
-    emails?: {
+    emails?: Array<{
       subject: string;
       from: string;
       date: string;
       body: string;
-    }[];
-    calendarEvents?: {
-      title?: string;
+    }>;
+    calendarEvents?: Array<{
+      title: string;
       date: string;
       time: string;
-    }[];
+      description?: string;
+    }>;
+    hubspot?: Array<{
+      title: string;
+      snippet: string;
+    }>;
   };
 }
 
