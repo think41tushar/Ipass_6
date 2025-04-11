@@ -55,13 +55,6 @@ export const usePromptScheduler = () => {
     return isDuplicate;
   };
 
-  // Helper function to clean response text
-  const cleanResponseText = (text: string) => {
-    return text
-      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove double stars
-      .replace(/\*([^*]+)\*/g, '$1');     // Remove single stars
-  };
-
   // Helper function to add a log with timestamp and prevent duplicates
   const addLog = (message: string) => {
     const timestamp = format(new Date(), "HH:mm:ss");
@@ -72,9 +65,7 @@ export const usePromptScheduler = () => {
       return;
     }
     
-    // Clean the message before adding it to logs
-    const cleanedMessage = cleanResponseText(message);
-    setLogs((prev) => [...prev, `[${timestamp}] ${cleanedMessage}`]);
+    setLogs((prev) => [...prev, `[${timestamp}] ${message}`]);
   };
 
   // Setup SSE connection for real-time logs
@@ -121,18 +112,17 @@ export const usePromptScheduler = () => {
           // Mark execution as complete but keep logs visible
           setIsExecuting(false);
           setExecutionComplete(true);
-          addLog("✅ Execution completed");
           return;
         }
 
         // Handle other message types
         if (parsedData.response) {
-          // Clean the response before adding to logs or setting as result
-          const cleanedResponse = cleanResponseText(parsedData.response);
-          addLog(cleanedResponse);
-          // Only update result for final responses
+          // For final responses, only update the result
           if (parsedData.step_type === "plan_final_response") {
-            setResult(cleanedResponse);
+            setResult(parsedData.response);
+          } else {
+            // For other responses, add to logs
+            addLog(parsedData.response);
           }
         }
         
@@ -154,7 +144,6 @@ export const usePromptScheduler = () => {
         setError("Connection error with server. Please try again.");
         setIsExecuting(false);
         setExecutionComplete(true);
-        addLog("❌ Error: Connection error with server");
         clearTimeout(connectionTimeout);
         eventSource.close();
         reject(new Error("SSE connection error")); // Reject the promise on error

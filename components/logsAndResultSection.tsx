@@ -151,7 +151,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold text-white flex items-center">
-              <span className="mr-2">✨</span> Result
+              <span className="mr-2">✨</span> Generated Result
             </h3>
             {logs.length > 0 && editableIndices.length > 0 && (
               <Button
@@ -180,10 +180,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                     </div>
                   </div>
                   <p className="text-purple-300 text-sm font-medium">
-                    Processing prompt...
-                  </p>
-                  <p className="text-gray-400 text-xs">
-                    This may take a few moments
+                    Generating result...
                   </p>
                 </motion.div>
               ) : result ? (
@@ -192,7 +189,7 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-gray-300 whitespace-pre-wrap"
+                  className="text-gray-300 whitespace-pre-wrap font-mono text-sm"
                 >
                   {result}
                 </motion.div>
@@ -202,35 +199,13 @@ export const LogsAndResultSection: React.FC<LogsAndResultSectionProps> = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center h-[200px] space-y-2 text-gray-400"
+                  className="flex items-center justify-center h-[200px]"
                 >
-                  <div className="h-12 w-12 text-gray-600 flex items-center justify-center">
-                    <span className="text-2xl">📄</span>
-                  </div>
-                  <p>No result yet</p>
-                  <p className="text-xs text-gray-500">
-                    Execute a prompt to see results
-                  </p>
+                  <p className="text-gray-500">No result to display yet</p>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-          {result && (
-            <div className="mt-2 flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-300 border-gray-700 hover:bg-gray-800"
-                onClick={() => {
-                  if (result) {
-                    navigator.clipboard.writeText(result);
-                  }
-                }}
-              >
-                Copy Result
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
