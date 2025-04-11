@@ -81,7 +81,7 @@ export default function DashboardSidebar() {
           <Settings className={`h-5 w-5 ${selected === "integrations" ? "text-purple-500" : ""}`} />
           <span className="text-lg font-medium">Integrations</span>
         </Link>
-
+{/* 
         <Link
           href={`/dashboard/${tenant_id}/global-search`}
           className={`flex items-center gap-4 p-2 px-4 rounded-md transition-colors duration-200 ${
@@ -91,7 +91,7 @@ export default function DashboardSidebar() {
         >
           <Search className={`h-5 w-5 ${selected === "global-search" ? "text-purple-500" : ""}`} />
           <span className="text-lg font-medium">Search</span>
-        </Link>
+        </Link> */}
 
         <Link
           href={`/dashboard/${tenant_id}/prompt`}

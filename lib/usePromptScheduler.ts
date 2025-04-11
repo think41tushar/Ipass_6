@@ -10,7 +10,6 @@ import {
   saveTasksToLocalStorage,
 } from "@/lib/taskUtil";
 // import { GoogleGenAI } from "@google/genai";
-import { Console } from "console";
 
 export const usePromptScheduler = () => {
   const params = useParams<{ tenant_id: string }>();
@@ -24,6 +23,7 @@ export const usePromptScheduler = () => {
   const [activeTab, setActiveTab] = useState("prompt");
   const [error, setError] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
+  const [executionComplete, setExecutionComplete] = useState(false);
   const [isScheduled, setIsScheduled] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isSSEconnected, setIsSSEconnected] = useState(false);
@@ -55,6 +55,13 @@ export const usePromptScheduler = () => {
     return isDuplicate;
   };
 
+  // Helper function to clean response text
+  const cleanResponseText = (text: string) => {
+    return text
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove double stars
+      .replace(/\*([^*]+)\*/g, '$1');     // Remove single stars
+  };
+
   // Helper function to add a log with timestamp and prevent duplicates
   const addLog = (message: string) => {
     const timestamp = format(new Date(), "HH:mm:ss");
@@ -65,7 +72,9 @@ export const usePromptScheduler = () => {
       return;
     }
     
-    setLogs((prev) => [...prev, `[${timestamp}] ${message}`]);
+    // Clean the message before adding it to logs
+    const cleanedMessage = cleanResponseText(message);
+    setLogs((prev) => [...prev, `[${timestamp}] ${cleanedMessage}`]);
   };
 
   // Setup SSE connection for real-time logs
@@ -104,32 +113,39 @@ export const usePromptScheduler = () => {
         
         const parsedData = JSON.parse(event.data);
         console.log("Message received: ", parsedData);
+        
+        // Handle interaction complete
         if (parsedData.step_type === "interaction_complete") {
           // Store history state for potential reruns
           setHistory(parsedData.final_messages_state);
-          // Ensure execution state is cleared
+          // Mark execution as complete but keep logs visible
           setIsExecuting(false);
+          setExecutionComplete(true);
+          addLog("✅ Execution completed");
+          return;
         }
 
-        if (
-          parsedData.step_type !== "interaction_complete" ||
-          "plan_final_response"
-        ) {
-          if (parsedData.response) {
-            addLog(parsedData.response);
-            // If we get a response, update the result
-            setResult(parsedData.response);
+        // Handle other message types
+        if (parsedData.response) {
+          // Clean the response before adding to logs or setting as result
+          const cleanedResponse = cleanResponseText(parsedData.response);
+          addLog(cleanedResponse);
+          // Only update result for final responses
+          if (parsedData.step_type === "plan_final_response") {
+            setResult(cleanedResponse);
           }
-          if (parsedData.step_type === "execute_action") {
-            const toolExecutionLog =
-              "Executing tool: " +
-              parsedData.executed_action_id +
-              "\n" +
-              "Params: " +
-              JSON.stringify(parsedData.action_parameters);
+        }
+        
+        // Handle tool execution logs
+        if (parsedData.step_type === "execute_action") {
+          const toolExecutionLog =
+            "Executing tool: " +
+            parsedData.executed_action_id +
+            "\n" +
+            "Params: " +
+            JSON.stringify(parsedData.action_parameters);
 
-            addLog(toolExecutionLog);
-          }
+          addLog(toolExecutionLog);
         }
       };
 
@@ -137,6 +153,8 @@ export const usePromptScheduler = () => {
         console.error("SSE connection error occurred");
         setError("Connection error with server. Please try again.");
         setIsExecuting(false);
+        setExecutionComplete(true);
+        addLog("❌ Error: Connection error with server");
         clearTimeout(connectionTimeout);
         eventSource.close();
         reject(new Error("SSE connection error")); // Reject the promise on error
@@ -148,6 +166,7 @@ export const usePromptScheduler = () => {
         eventSource.close();
         setIsSSEconnected(false);
         setIsExecuting(false);
+        setExecutionComplete(true);
       });
     });
   };
@@ -738,12 +757,26 @@ export const usePromptScheduler = () => {
         body: JSON.stringify({ prompt }),
       });
       const data = await response.json();
-      if (data.accepted === "no") {
+      
+      // Handle rate limit case
+      if (response.status === 429 && data.bypassValidation) {
+        addLog("⚠️ Validation skipped due to API rate limit - proceeding with execution");
+        // Continue with execution without validation
+      } else if (!response.ok) {
+        setLogs((logs) => [
+          ...logs,
+          "Error during prompt validation",
+          `❌ ${data.message || "Unknown error"}`,
+        ]);
+        setIsExecuting(false);
+        return;
+      } else if (data.accepted === "no") {
         setLogs((logs) => [
           ...logs,
           "----Prompt Rejected-----",
           ...data.reasons.map((r: any, i: any) => `❌ ${i + 1}. ${r}`),
         ]);
+        setIsExecuting(false);
         return;
       }
       console.log("🔍 Starting Smart Run analysis for prompt:", prompt);
@@ -1189,25 +1222,31 @@ export const usePromptScheduler = () => {
     setTime,
     recurrence,
     setRecurrence,
-    isSSEconnected,
-    setIsSSEconnected,
-    session_id,
-    setSession_id,
     prompt,
     setPrompt,
-    tasks,
     promptResponse,
     setPromptResponse,
+    tasks,
     logs,
     setLogs,
     result,
+    setResult,
+    isSSEconnected,
+    setIsSSEconnected,
     activeTab,
+    session_id,
+    setSession_id,
+    setActiveTab,
     error,
     setError,
-    setActiveTab,
     isExecuting,
+    setIsExecuting,
+    executionComplete,
+    setExecutionComplete,
     isScheduled,
     isConnected,
+    history,
+    setHistory,
     addLog,
     handleExecute,
     handleSchedule,
