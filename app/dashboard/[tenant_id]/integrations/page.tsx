@@ -46,7 +46,7 @@ const handleGoogleAuth = async () => {
 
   // https://ipass-6-tusharbisht-think41coms-projects.vercel.app/callback
   const CLIENT_ID = "934128942917-lel7crgqajr5dffnhh054sgosffke9fl.apps.googleusercontent.com"
-  const REDIRECT_URI = "https://ipass-6-tusharbisht-think41coms-projects.vercel.app/callback"
+  const REDIRECT_URI = "http://localhost:3000/callback"
   const SCOPES = [
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",

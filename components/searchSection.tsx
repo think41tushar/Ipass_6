@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react" // Import useEffect
 import type React from "react"
 import {
   FileIcon,
@@ -16,30 +16,18 @@ import ReactMarkdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
+// Define the structure matching the Gemini API response
+interface FormattedSearchResult {
+  googleDrive: { fileName: string; fileType: string } | null;
+  emails: Array<{ subject: string; from: string; date: string; body: string }>;
+  calendarEvents: Array<{ title: string; date: string; time: string; description?: string }>;
+  hubspot: Array<{ title: string; snippet: string }>;
+}
+
 interface SearchResult {
   results: {
-    message: string
-    googleDrive?: {
-      fileName: string
-      fileType: string
-    }
-    emails?: Array<{
-      subject: string
-      from: string
-      date: string
-      body: string
-    }>
-    calendarEvents?: Array<{
-      title: string
-      date: string
-      time: string
-      description?: string
-    }>
-    hubspot?: Array<{
-      title: string
-      snippet: string
-    }>
-  }
+    message: string // The original raw message
+  } | (FormattedSearchResult & { message: string }) | null; // It can be the raw message initially or the formatted result with message later
 }
 
 interface SearchSectionProps {
@@ -54,7 +42,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   searchError,
   searchLoading,
   showSearchResults,
-  searchResult,
+  searchResult: initialSearchResult, // Renamed to avoid shadowing
   prompt,
 }) => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -62,205 +50,56 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
     emails: false,
     calendar: false,
     hubspot: false,
-  })
+  });
+  const [formattedSearchResult, setFormattedSearchResult] = useState<FormattedSearchResult | null>(null);
+  const [formattingLoading, setFormattingLoading] = useState(false);
+  const [formattingError, setFormattingError] = useState<string | null>(null);
 
-  // Helper function to clean text from stars
-  const cleanText = (text: string) => {
-    return text
-      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove double stars
-      .replace(/----([^-]+)----/g, '$1') // Remove text between ----
-      .replace(/\*([^*]+)\*/g, '$1');     // Remove single stars
-  };
-
-  // Helper function to categorize messages
-  const categorizeMessage = (message: string) => {
-    const cleanedMessage = cleanText(message);
-    const lowerMessage = cleanedMessage.toLowerCase();
-    
-    if (
-      lowerMessage.includes("mail") ||
-      lowerMessage.includes("email") ||
-      lowerMessage.includes("subject:") ||
-      lowerMessage.includes("from:")
-    ) {
-      return {
-        type: "email",
-        data: {
-          subject: cleanText(cleanedMessage.match(/Subject:\s*([^\n]*)/)?.[1] || ""),
-          from: cleanText(cleanedMessage.match(/From:\s*([^\n]*)/)?.[1] || ""),
-          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
-          body: cleanText(
-            cleanedMessage.replace(/Subject:.*\n|From:.*\n|Date:.*\n/g, "").trim()
-          )
-        }
-      };
-    } else if (
-      lowerMessage.includes("calendar") ||
-      lowerMessage.includes("event") ||
-      lowerMessage.includes("meeting")
-    ) {
-      return {
-        type: "calendar",
-        data: {
-          title: cleanText(
-            cleanedMessage.match(/Event:\s*([^\n]*)/)?.[1] ||
-              cleanedMessage.match(/Title:\s*([^\n]*)/)?.[1] ||
-              "Untitled Event"
-          ),
-          date: cleanText(cleanedMessage.match(/Date:\s*([^\n]*)/)?.[1] || ""),
-          time: cleanText(cleanedMessage.match(/Time:\s*([^\n]*)/)?.[1] || ""),
-          description: cleanText(
-            cleanedMessage.replace(/Event:.*\n|Title:.*\n|Date:.*\n|Time:.*\n/g, "").trim()
-          )
-        }
-      };
-    } else if (
-      lowerMessage.includes("file:") ||
-      lowerMessage.includes("document") ||
-      lowerMessage.includes("drive")
-    ) {
-      return {
-        type: "drive",
-        data: {
-          fileName: cleanText(cleanedMessage.match(/File:\s*([^\n]*)/)?.[1] || ""),
-          fileType: cleanText(cleanedMessage.match(/Type:\s*([^\n]*)/)?.[1] || "Document")
-        }
-      };
-    } else if (
-      lowerMessage.includes("hubspot") ||
-      cleanedMessage.includes("HubSpot Notes:")
-    ) {
-      // Try to extract HubSpot notes format first
-      const hubspotMatch = cleanedMessage.match(/HubSpot Notes:[\s\S]*?(?=\n\d|$)/i);
-      if (hubspotMatch) {
-        const notes = hubspotMatch[0];
-        const titleMatch = notes.match(/Title:\s*([^\n]+)/);
-        const summaryMatch = notes.match(/Summary:\s*([^\n]+)/);
-        
-        if (titleMatch && summaryMatch) {
-          return {
-            type: "hubspot",
-            data: {
-              title: cleanText(titleMatch[1].trim()),
-              snippet: cleanText(summaryMatch[1].trim())
-            }
-          };
-        }
-      }
-      
-      // Fallback to simple format
-      const lines = cleanedMessage.split('\n');
-      const firstLine = cleanText(lines[0].trim());
-      const restContent = cleanText(lines.slice(1).join('\n').trim());
-      
-      return {
-        type: "hubspot",
-        data: {
-          title: firstLine,
-          snippet: restContent || firstLine
-        }
-      };
+  useEffect(() => {
+    if (initialSearchResult?.results?.message && !formattedSearchResult && !formattingLoading && !formattingError) {
+      // If we have a raw message and haven't formatted it yet, call the Gemini API
+      formatSearchResultWithGemini(initialSearchResult.results.message);
+    } else if (initialSearchResult?.results && !(initialSearchResult.results as any)?.message && !formattedSearchResult) {
+      // If the initial result is already in the formatted structure (or null), use it directly
+      setFormattedSearchResult(initialSearchResult.results as FormattedSearchResult | null);
     }
-    return { type: "other", data: cleanText(message) };
-  };
+  }, [initialSearchResult, formattedSearchResult, formattingLoading, formattingError]);
 
-  // Process and categorize the messages if they're not already categorized
-  const processSearchResult = (result: SearchResult): SearchResult => {
-    console.log('Raw Search Result:', result);
-    if (
-      !result.results.emails &&
-      !result.results.calendarEvents &&
-      !result.results.googleDrive &&
-      !result.results.hubspot &&
-      result.results.message
-    ) {
-      const messages = cleanText(result.results.message)
-        .split('\n\n')
-        .filter(msg => msg.trim());
-
-      const categorized = {
-        emails: [] as any[],
-        calendarEvents: [] as any[],
-        hubspot: [] as any[],
-        googleDrive: undefined as any,
-      };
-
-      messages.forEach(msg => {
-        const { type, data } = categorizeMessage(msg);
-        switch (type) {
-          case "email":
-            categorized.emails.push(data);
-            break;
-          case "calendar":
-            categorized.calendarEvents.push(data);
-            break;
-          case "drive":
-            if (!categorized.googleDrive) {
-              categorized.googleDrive = data;
-            }
-            break;
-          case "hubspot":
-            categorized.hubspot.push(data);
-            break;
-        }
+  const formatSearchResultWithGemini = async (rawMessage: string) => {
+    setFormattingLoading(true);
+    setFormattingError(null);
+    try {
+      const response = await fetch('http://localhost:3000/api/gemini-searchformatter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rawSearchResult: rawMessage }),
       });
 
-      const processedResult = {
-        results: {
-          ...result.results,
-          message: cleanText(result.results.message),
-          emails: categorized.emails.length > 0 ? categorized.emails : undefined,
-          calendarEvents:
-            categorized.calendarEvents.length > 0 ? categorized.calendarEvents : undefined,
-          hubspot: categorized.hubspot.length > 0 ? categorized.hubspot : undefined,
-          googleDrive: categorized.googleDrive
-        }
-      };
-      
-      return processedResult;
-    }
-    
-    // If the result is already categorized, clean any text content
-    return {
-      results: {
-        ...result.results,
-        message: result.results.message ? cleanText(result.results.message) : "",
-        emails: result.results.emails?.map(email => ({
-          ...email,
-          subject: cleanText(email.subject),
-          from: cleanText(email.from),
-          date: cleanText(email.date),
-          body: cleanText(email.body)
-        })),
-        calendarEvents: result.results.calendarEvents?.map(event => ({
-          ...event,
-          title: cleanText(event.title || ""),
-          date: cleanText(event.date),
-          time: cleanText(event.time),
-          description: cleanText(event.description || "")
-        })),
-        hubspot: result.results.hubspot?.map(item => ({
-          ...item,
-          title: cleanText(item.title),
-          snippet: cleanText(item.snippet)
-        })),
-        googleDrive: result.results.googleDrive
-          ? {
-              ...result.results.googleDrive,
-              fileName: cleanText(result.results.googleDrive.fileName),
-              fileType: cleanText(result.results.googleDrive.fileType)
-            }
-          : undefined
+      if (!response.ok) {
+        const errorData = await response.json();
+        setFormattingError(errorData.error || 'Failed to format search result.');
+        setFormattingLoading(false);
+        return;
       }
-    };
+
+      const formattedData: FormattedSearchResult = await response.json();
+      setFormattedSearchResult(formattedData);
+      setFormattingLoading(false);
+    } catch (error: any) {
+      console.error('Error formatting search result:', error);
+      setFormattingError(error.message || 'An unexpected error occurred.');
+      setFormattingLoading(false);
+    }
   };
 
   const toggleSection = (sectionName: string) => {
     setExpandedSections((prev) => ({
       ...prev,
       [sectionName]: !prev[sectionName],
-    }))
-  }
+    }));
+  };
 
   if (searchError !== "") {
     return (
@@ -270,7 +109,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           <p>{searchError}</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!showSearchResults) {
@@ -283,10 +122,10 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           </p>
         </div>
       </div>
-    )
+    );
   }
 
-  if (searchLoading) {
+  if (searchLoading || formattingLoading) {
     return (
       <div className="w-full space-y-6">
         {/* Loading Header */}
@@ -300,7 +139,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
 
           {/* Loading Content */}
           <div className="p-5 space-y-6">
-            {/* Google Drive Loading */}
             <div className="w-full overflow-hidden rounded-xl border border-blue-500/10 bg-[#232631] shadow-md">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -317,8 +155,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* Email Loading */}
             <div className="w-full overflow-hidden rounded-xl border border-red-500/10 bg-[#232631] shadow-md">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -336,8 +172,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* Calendar Loading */}
             <div className="w-full overflow-hidden rounded-xl border border-green-500/10 bg-[#232631] shadow-md">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -355,8 +189,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* Hubspot Loading */}
             <div className="w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -376,14 +208,30 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  if (!searchResult) {
-    return null
+  if (formattingError) {
+    return (
+      <div className="w-full rounded-xl border border-red-500/20 bg-red-500/5 p-6 shadow-lg backdrop-blur-sm">
+        <div className="flex items-center gap-3 text-red-500">
+          <AlertCircle className="h-5 w-5" />
+          <p>Error formatting search result: {formattingError}</p>
+        </div>
+      </div>
+    );
   }
 
-  const processedSearchResult = processSearchResult(searchResult)
+  if (!showSearchResults) {
+    return null;
+  }
+
+  if (!formattedSearchResult && initialSearchResult?.results?.message) {
+    // Still waiting for the formatted result
+    return null; // Or a loading indicator if you prefer
+  }
+
+  const resultsToDisplay = formattedSearchResult || (initialSearchResult?.results as FormattedSearchResult) || null;
 
   return (
     <div className="w-full space-y-6">
@@ -401,8 +249,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
         {/* Content */}
         <div className="p-5 space-y-6">
           {/* Google Drive Section */}
-          {processedSearchResult.results.googleDrive ? (
+          {resultsToDisplay?.googleDrive ? (
             <div className="group w-full overflow-hidden rounded-xl border border-blue-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-blue-500/20">
+              {/* ... (rest of the Google Drive rendering logic using resultsToDisplay.googleDrive) */}
               <div className="p-4 pb-2">
                 <div className="flex items-center">
                   <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 shadow-inner shadow-blue-500/10">
@@ -415,11 +264,11 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 <div className="space-y-2">
                   <p className="flex flex-col text-gray-300 sm:flex-row sm:items-center">
                     <span className="mr-2 min-w-[50px] text-gray-400">File:</span>
-                    <span className="font-medium">{processedSearchResult.results.googleDrive.fileName}</span>
+                    <span className="font-medium">{resultsToDisplay.googleDrive.fileName}</span>
                   </p>
                   <p className="flex flex-col text-gray-300 sm:flex-row sm:items-center">
                     <span className="mr-2 min-w-[50px] text-gray-400">Type:</span>
-                    <span className="font-medium">{processedSearchResult.results.googleDrive.fileType}</span>
+                    <span className="font-medium">{resultsToDisplay.googleDrive.fileType}</span>
                   </p>
                 </div>
               </div>
@@ -438,6 +287,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             </div>
           ) : (
             <div className="w-full overflow-hidden rounded-xl border border-blue-500/10 bg-[#232631] shadow-md">
+              {/* ... (no Google Drive results UI) */}
               <div className="p-4 pb-2">
                 <div className="flex items-center">
                   <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 shadow-inner shadow-blue-500/10">
@@ -455,11 +305,12 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Emails Section */}
-          {processedSearchResult.results.emails && processedSearchResult.results.emails.length > 0 ? (
+          {resultsToDisplay?.emails && resultsToDisplay.emails.length > 0 ? (
             <div className="group w-full overflow-hidden rounded-xl border border-red-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-red-500/20">
+              {/* ... (rest of the Emails rendering logic using resultsToDisplay.emails) */}
               <div className="p-4 pb-2">
                 <div className="flex items-center">
-                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/20 shadow-inner shadow-red-500/10">
+                  <div className="mr-3 flex h-10 w-10 items-center justify-justify-center rounded-xl bg-red-500/20 shadow-inner shadow-red-500/10">
                     <MailIcon className="h-5 w-5 text-red-400" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-200">Emails</h3>
@@ -468,8 +319,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               <div className="px-4 pt-0">
                 <div className="space-y-4">
                   {(expandedSections.emails
-                    ? processedSearchResult.results.emails
-                    : processedSearchResult.results.emails.slice(0, 1)
+                    ? resultsToDisplay.emails
+                    : resultsToDisplay.emails.slice(0, 1)
                   ).map((email, index) => (
                     <div
                       key={index}
@@ -495,9 +346,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                       )}
                     </div>
                   ))}
-                  {!expandedSections.emails && processedSearchResult.results.emails.length > 1 && (
+                  {!expandedSections.emails && resultsToDisplay.emails.length > 1 && (
                     <p className="mt-2 text-center text-sm text-gray-400">
-                      +{processedSearchResult.results.emails.length - 1} more emails
+                      +{resultsToDisplay.emails.length - 1} more emails
                     </p>
                   )}
                 </div>
@@ -534,8 +385,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Calendar Events Section */}
-          {processedSearchResult.results.calendarEvents &&
-          processedSearchResult.results.calendarEvents.length > 0 ? (
+          {resultsToDisplay?.calendarEvents &&
+          resultsToDisplay.calendarEvents.length > 0 ? (
             <div className="group w-full overflow-hidden rounded-xl border border-green-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-green-500/20">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -548,8 +399,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               <div className="px-4 pt-0">
                 <div className="space-y-4">
                   {(expandedSections.calendar
-                    ? processedSearchResult.results.calendarEvents
-                    : processedSearchResult.results.calendarEvents.slice(0, 1)
+                    ? resultsToDisplay.calendarEvents
+                    : resultsToDisplay.calendarEvents.slice(0, 1)
                   ).map((event, index) => (
                     <div
                       key={index}
@@ -570,9 +421,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                     </div>
                   ))}
                   {!expandedSections.calendar &&
-                    processedSearchResult.results.calendarEvents.length > 1 && (
+                    resultsToDisplay.calendarEvents.length > 1 && (
                       <p className="mt-2 text-center text-sm text-gray-400">
-                        +{processedSearchResult.results.calendarEvents.length - 1} more events
+                        +{resultsToDisplay.calendarEvents.length - 1} more events
                       </p>
                     )}
                 </div>
@@ -611,8 +462,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Hubspot Section */}
-          {processedSearchResult.results.hubspot &&
-          processedSearchResult.results.hubspot.length > 0 ? (
+          {resultsToDisplay?.hubspot &&
+          resultsToDisplay.hubspot.length > 0 ? (
             <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
               <div className="p-4 pb-2">
                 <div className="flex items-center">
@@ -625,8 +476,8 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               <div className="px-4 pt-0">
                 <div className="space-y-4">
                   {(expandedSections.hubspot
-                    ? processedSearchResult.results.hubspot
-                    : processedSearchResult.results.hubspot.slice(0, 1)
+                    ? resultsToDisplay.hubspot
+                    : resultsToDisplay.hubspot.slice(0, 1)
                   ).map((item, index) => (
                     <div
                       key={index}
@@ -643,9 +494,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                     </div>
                   ))}
                   {!expandedSections.hubspot &&
-                    processedSearchResult.results.hubspot.length > 1 && (
+                    resultsToDisplay.hubspot.length > 1 && (
                       <p className="mt-2 text-center text-sm text-gray-400">
-                        +{processedSearchResult.results.hubspot.length - 1} more results
+                        +{resultsToDisplay.hubspot.length - 1} more results
                       </p>
                     )}
                 </div>
@@ -684,14 +535,16 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           )}
 
           {/* Message Section (if no other results) */}
-          {!processedSearchResult.results.googleDrive &&
-            (!processedSearchResult.results.emails ||
-              processedSearchResult.results.emails.length === 0) &&
-            (!processedSearchResult.results.calendarEvents ||
-              processedSearchResult.results.calendarEvents.length === 0) &&
-            (!processedSearchResult.results.hubspot ||
-              processedSearchResult.results.hubspot.length === 0) &&
-            processedSearchResult.results.message && (
+          {!resultsToDisplay?.googleDrive &&
+            (!resultsToDisplay?.emails ||
+              resultsToDisplay.emails.length === 0) &&
+            (!resultsToDisplay?.calendarEvents ||
+              resultsToDisplay.calendarEvents.length === 0) &&
+            (!resultsToDisplay?.hubspot ||
+              resultsToDisplay.hubspot.length === 0) &&
+            initialSearchResult?.results &&
+            typeof initialSearchResult.results === 'object' &&
+            'message' in initialSearchResult.results && (
               <div className="group w-full overflow-hidden rounded-xl border border-purple-500/10 bg-[#232631] shadow-md transition-all duration-300 hover:border-purple-500/20">
                 <div className="p-4 pb-2">
                   <div className="flex items-center">
@@ -702,12 +555,12 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                   </div>
                 </div>
                 <div className="px-4 pt-0 prose prose-invert max-w-none">
-                  <ReactMarkdown>{processedSearchResult.results.message}</ReactMarkdown>
+                  <ReactMarkdown>{initialSearchResult.results.message}</ReactMarkdown>
                 </div>
               </div>
             )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

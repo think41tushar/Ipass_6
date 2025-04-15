@@ -36,11 +36,25 @@ import {
 } from "@/components/ui/select";
 import { ToastContainer, toast } from "react-toastify";
 import type { ScheduledTask } from "@/lib/types";
-
 import type { PromptInputSectionProps } from "@/lib/types";
+import { SearchSection } from "@/components/searchSection";
 
 // Memoize Calendar to prevent unnecessary re-renders
 const MemoizedCalendar = React.memo(Calendar);
+
+// Define the structure matching the Gemini API response
+interface FormattedSearchResult {
+  googleDrive: { fileName: string; fileType: string } | null;
+  emails: Array<{ subject: string; from: string; date: string; body: string }>;
+  calendarEvents: Array<{ title: string; date: string; time: string; description?: string }>;
+  hubspot: Array<{ title: string; snippet: string }>;
+}
+
+interface SearchResult {
+  results: {
+    message: string // The original raw message
+  } | (FormattedSearchResult & { message: string }) | null; // It can be the raw message initially or the formatted result with message later
+}
 
 export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   date,
@@ -74,6 +88,9 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
   const [isTodoCalled, setIsTodoCalled] = useState(false);
   const [isBackendSendCalled, setIsBackendSendCalled] = useState(false);
   const [isSmartRunCalled, setIsSmartRunCalled] = useState(false);
+  const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
   function showToastTodo(success: boolean) {
     if (success) {
@@ -235,6 +252,73 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
     }
   };
 
+  const handleSearch = async (query: string) => {
+    console.log('Starting search with query:', query);
+    setSearchLoading(true);
+    setSearchError("");
+    
+    try {
+      // Step 1: Get search results from backend server
+      const tenant_id = localStorage.getItem("tenant_id");
+      const user_id = localStorage.getItem("user_id");
+      console.log('Making request to backend server...');
+      const backendResponse = await fetch("https://rishit41.online/api/search", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userid: user_id,
+          tenantid: tenant_id,
+          query: query,
+        }),
+      });
+
+      if (!backendResponse.ok) {
+        throw new Error("Failed to fetch search results from backend");
+      }
+
+      const backendData = await backendResponse.json();
+      console.log('Received backend search results:', backendData);
+
+      // Step 2: Format results using Gemini
+      console.log('Sending to Gemini for formatting...');
+      const geminiResponse = await fetch('http://localhost:3000/api/gemini-searchformatter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          rawSearchResult: backendData.message || JSON.stringify(backendData)
+        }),
+      });
+
+      if (!geminiResponse.ok) {
+        const errorData = await geminiResponse.json();
+        console.error('Gemini API error:', errorData);
+        throw new Error(errorData.error || "Failed to format search results");
+      }
+
+      const formattedData = await geminiResponse.json();
+      console.log('Received formatted search results:', formattedData);
+      setSearchResult({
+        results: formattedData
+      });
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchError("Failed to fetch search results. Please try again.");
+    } finally {
+      setSearchLoading(false);
+      console.log('Search completed');
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (prompt.trim()) {
+      handleSearch(prompt);
+    }
+  };
+
   return (
     <div className="space-y-6 bg-gradient-to-b from-gray-900/60 to-gray-900/40 border border-gray-800 rounded-lg p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-purple-900/10">
       {/* Header */}
@@ -270,6 +354,17 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           Enter the task you want to schedule or execute. Be specific with dates, times, and recurrence patterns if needed.
         </p>
       </div>
+
+      {/* Search Results */}
+      {searchResult && (
+        <SearchSection
+          searchError={searchError}
+          searchLoading={searchLoading}
+          showSearchResults={true}
+          searchResult={searchResult}
+          prompt={prompt}
+        />
+      )}
 
       {/* Action Buttons */}
       <div className="flex flex-wrap justify-between items-center pt-3 border-t border-gray-800/50 mt-4">
@@ -331,7 +426,7 @@ export const PromptInputSection: React.FC<PromptInputSectionProps> = ({
           <Button
             variant="outline"
             className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 rounded-md"
-            onClick={onSearchClick}
+            onClick={handleSearchClick}
           >
             <Search className="mr-2 h-4 w-4" />
             Search
